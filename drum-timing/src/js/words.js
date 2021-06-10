@@ -88,22 +88,21 @@ const words = {
             {text:'Ho', count:1, audio:'high'},
             {text:'o', count:1, audio:'high'},
             {text:'o', count:1, audio:'high'},
-            {text:'o', count:1, audio:'high'},
+            {text:'o', count:2, audio:'high'},
             {text:'rω', count:1, audio:'low'},
-            {text:'iⲝ', count:2, audio:'high'}
+            {text:'iⲝ', count:2, audio:'low'}
         ]
     },
     'vav':{
         background: '#FF4E00',
         imgSrc: '006.png',
-        minDuration: 1000 * 2,
+        minDuration: 1000 * 1.5,
         parts: [
             // Vuaretza
-            {text:'', count:1, audio:'high'},
-            {text:'', count:1, audio:'low'},
-            {text:'', count:1, audio:'low'},
-            {text:'', count:1, audio:'low'},
-            {text:'', count:1, audio:'low'}
+            {text:'Vu', count:6, audio:'low'},
+            {text:'a', count:2, audio:'high'},
+            {text:'re', count:4, audio:'high'}, // maybe 3?
+            {text:'tza', count:5, audio:'high'}
         ]
     },
     'zain':{
@@ -112,24 +111,33 @@ const words = {
         minDuration: 1000 * 2,
         parts: [
             // Zooωasar
-            {text:'', count:1, audio:'high'},
-            {text:'', count:1, audio:'low'},
-            {text:'', count:1, audio:'low'},
-            {text:'', count:1, audio:'low'},
-            {text:'', count:1, audio:'low'}
+            {text:'Z', count:1},
+            {text:'o', count:3, audio:'high'},
+            {text:'o', count:3, audio:'high'},
+            {text:'ω', count:4, audio:'low'},
+            {text:'a', count:2, audio:'high'},
+            {text:'sar', count:3, audio:'high'}
         ]
     },
     'cheth':{
         background: '#ffb734',
         imgSrc: '008.png',
-        minDuration: 1000 * 2,
+        minDuration: 1000 * 3.5,
         parts: [
             // Chiva-abrahadabra-cadaxviii
-            {text:'', count:1, audio:'high'},
-            {text:'', count:1, audio:'low'},
-            {text:'', count:1, audio:'low'},
-            {text:'', count:1, audio:'low'},
-            {text:'', count:1, audio:'low'}
+            {text:'Chi', count:2, audio:'low'},
+            {text:'va', count:2, audio:'low'},
+            {text:'a', count:1, audio:'high'},
+            {text:'bra', count:1, audio:'high'},
+            {text:'ha', count:1, audio:'high'},
+            {text:'da', count:3, audio:'high'},
+            {text:'bra', count:2, audio:'high'},
+
+            {text:'ca', count:2, audio:'low'},
+            {text:'dax', count:2, audio:'low'},
+            {text:'vi', count:2, audio:'high'},
+            {text:'i', count:2, audio:'high'},
+            {text:'i', count:4, audio:'high'},
         ]
     },
     'teth':{
