@@ -73,6 +73,8 @@ function initPageJs() {
     });
 
     function showSpirit(spirit) {
+
+        // load the config from words
         const wordConfig = words[spirit];
 
         // override customtimes with any word specific
@@ -83,12 +85,28 @@ function initPageJs() {
             }
         }
 
+        // add clicks in if specified
+        if (spirit.includeClicks) addClicks(wordConfig);
 
         const timingKey = getQueryParams('timing') || 'long';
         const timeConfig = times[timingKey];
 
         init(wordConfig, timeConfig);
         startDrawing();
+    }
+
+    function addClicks(wordConfig) {
+        // add in click tracks if asked for
+        // {text:'', count:1, audio:'click'},
+        const partsWithClick = [];
+        wordConfig.parts.forEach(part => {
+            // add the original, but with a single beat
+            partsWithClick.push({text: part.text, count: 1, audio: part.audio});
+            for (let i = 0; i < part.count - 1; i++) {
+                partsWithClick.push({text: '', count: 1, audio: 'click'});
+            }
+        });
+        wordConfig.parts = partsWithClick;
     }
 
     function showIndex() {

@@ -1,4 +1,4 @@
-﻿let state = null;
+let state = null;
 
 function fullscreenCanvas(id) {
 
@@ -59,10 +59,21 @@ function init(wordConfig, timeConfig) {
         }
     };
 
+    let synthConfigClick = {
+        envelope: {
+            attack: 0.005,
+            decay: 0.02,
+            sustain: 0.01,
+            release: 0.02,
+        }
+    };
+
 
     // now the alt synth
     const synth1 = new Tone.Synth(synthConfig1).toDestination();
     const synth2 = new Tone.Synth(synthConfig2).toDestination();
+
+    const synthClick = new Tone.Synth(synthConfigClick).toDestination();
 
     $('body').css('background-color', state.config.background);
 
@@ -91,6 +102,9 @@ function init(wordConfig, timeConfig) {
             else if (name === 'high') {
                 synth2.triggerAttackRelease("C4", 0.005);
             }
+            else if (name === 'click') {
+                synthClick.triggerAttackRelease("C2", 0.001);
+            }
             //play a middle 'C' for the duration of an 8th note
 
         }
@@ -111,6 +125,11 @@ function init(wordConfig, timeConfig) {
             synth2.triggerAttackRelease("C5", 0.005);
             state.lastCount = countDown;
         }
+    });
+
+    state.timer.on('click', beat => {
+        //console.log(` .`);
+        synthClick.triggerAttackRelease("C2", 0.001);
     });
 
     state.img = new Image();

@@ -1,6 +1,6 @@
 
 class BeatTimer {
-    constructor({parts, initialDuration, minDuration, totalTime, easingFunction, paused = true}) {
+    constructor({parts, initialDuration, minDuration, totalTime, easingFunction, paused = true, clicksPerMeasure = 16}) {
         this.initialDuration = initialDuration;
 
         this.finalDuration = minDuration;
@@ -21,6 +21,8 @@ class BeatTimer {
         this.countDown = 5000;
 
         this.beatOffset = 150;
+
+        this.clicksPerMeasure = clicksPerMeasure;
 
         this.setupTick();
     }
@@ -49,6 +51,9 @@ class BeatTimer {
         let lastPart = null;
         let lastEarlyPart = null;
 
+        let clicksPerMeasure = this.clicksPerMeasure;
+        let lastClick = -1;
+
         // user should call this as often as possible
         this.onTick = () => {
 
@@ -64,6 +69,7 @@ class BeatTimer {
             // process countdown
             if (this.countDown > 0) {
 
+                // time to play a beat
                 if (this.countDown - this.beatOffset < 0) {
                     // stolen from below
                     let earlyPart = this.lookupPartByPercent(0);
@@ -159,6 +165,14 @@ class BeatTimer {
                 this.emit('early-beat', Object.assign({duration: earlyPart.count * timePerCount}, earlyPart));
                 lastEarlyPart = earlyPart;
             }
+
+            let currentClick = Math.floor(earlyPercent * clicksPerMeasure);
+            if (currentClick !== lastClick) {
+                this.emit('click', {count: currentClick})
+                lastClick = currentClick;
+            }
+            //clicksPerMeasure
+            //lastClick;
 
             // else if (lastCount !== count) {
             //

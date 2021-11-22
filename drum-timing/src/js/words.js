@@ -123,9 +123,11 @@ const words = {
         background: '#ffb734',
         imgSrc: '008.png',
         minDuration: 1000 * 3.5,
+        includeClicks: true,
         parts: [
             // Chiva-abrahadabra-cadaxviii
             {text:'Chi', count:2, audio:'low'},
+            //{text:'', count:1, audio:'click'},
             {text:'va', count:2, audio:'low'},
             {text:'a', count:1, audio:'high'},
             {text:'bra', count:1, audio:'high'},
@@ -143,27 +145,38 @@ const words = {
     'teth':{
         background: '#E5D708',
         imgSrc: '009.png',
-        minDuration: 1000 * 2,
+        minDuration: 1000 * 2.5,
+        includeClicks: true,
+        clicksPerMeasure: 12,
         parts: [
-            // θalعⲝer-ā-dekerval
-            {text:'', count:1, audio:'high'},
-            {text:'', count:1, audio:'low'},
-            {text:'', count:1, audio:'low'},
-            {text:'', count:1, audio:'low'},
-            {text:'', count:1, audio:'low'}
+            {text:'θa', count:5, audio:'low'},
+            {text:'lع', count:3, audio:'high'},
+            {text:'ⲝer', count:8, audio:'high'},
+            {text:'ā', count:8, audio:'low'},
+
+            {text:'de', count:5, audio:'high'},
+            {text:'ker', count:3, audio:'low'},
+            {text:'val', count:5, audio:'low'},
+            {text:'|', count:11}
         ]
     },
+
     'yod':{
         background: '#59B934',
         imgSrc: '010.png',
-        minDuration: 1000 * 2,
+        minDuration: 1000 * 3,
         parts: [
             // Iehuvahaⲝanعθatan
-            {text:'', count:1, audio:'high'},
-            {text:'', count:1, audio:'low'},
-            {text:'', count:1, audio:'low'},
-            {text:'', count:1, audio:'low'},
-            {text:'', count:1, audio:'low'}
+            {text:'I', count:2, audio:'high'},
+            {text:'e', count:2, audio:'high'},
+            {text:'hu', count:2, audio:'high'},
+            {text:'vah', count:2, audio:'high'},
+
+            {text:'a', count:1, audio:'low'},
+            {text:'ⲝan', count:2, audio:'low'},
+            {text:'ع', count:1, audio:'high'},
+            {text:'θa', count:1, audio:'low'},
+            {text:'tan', count:3, audio:'low'}
         ]
     },
     'kaph': {
@@ -183,13 +196,16 @@ const words = {
         background: '#00A550',
         imgSrc: '030.png',
         minDuration: 1000 * 2,
+        clicksPerMeasure: 16,
         parts: [
-            // Lusanaherandraton
-            {text:'', count:1, audio:'high'},
-            {text:'', count:1, audio:'low'},
-            {text:'', count:1, audio:'low'},
-            {text:'', count:1, audio:'low'},
-            {text:'', count:1, audio:'low'}
+            // Lusana her andraton
+            {text:'Lu', count:3, audio:'low'},
+            {text:'sa', count:1, audio:'high'},
+            {text:'na', count:2, audio:'high'},
+            {text:'her', count:2},
+            {text:'an', count:3, audio:'low'},
+            {text:'dra', count:1, audio:'high'},
+            {text:'ton', count:4, audio:'high'}
         ]
     },
     'mem': {
@@ -213,27 +229,42 @@ const words = {
     'nun':{
         background: '#00958d',
         imgSrc: '050.png',
-        minDuration: 1000 * 2,
+        minDuration: 1000 * 3.7,
+        clicksPerMeasure: 30,
         parts: [
             // Nadimraphoroiozعθalai
-            {text:'', count:1, audio:'high'},
-            {text:'', count:1, audio:'low'},
-            {text:'', count:1, audio:'low'},
-            {text:'', count:1, audio:'low'},
-            {text:'', count:1, audio:'low'}
+
+            {text:'Na', count:1, audio:'high'},//4
+            {text:'dim', count:3, audio:'low'},
+
+            {text:'ra', count:3, audio:'high'},//15
+            {text:'pho', count:3, audio:'high'},
+            {text:'ro', count:2, audio:'high'},
+            {text:'i', count:1, audio:'high'},
+            {text:'o', count:3, audio:'high'},
+            {text:'zع', count:3, audio:'high'},
+
+            {text:'tha', count:3, audio:'low'},//11
+            {text:'la', count:3, audio:'low'},
+            {text:'i', count:5, audio:'high'}
         ]
     },
     'samekh':{
         background: '#0085ca',
         imgSrc: '060.png',
-        minDuration: 1000 * 2,
+        minDuration: 1000 * 3,
+        clicksPerMeasure: 14,
         parts: [
             // Salaθlala-amrodnaqعiⲝ
-            {text:'', count:1, audio:'high'},
-            {text:'', count:1, audio:'low'},
-            {text:'', count:1, audio:'low'},
-            {text:'', count:1, audio:'low'},
-            {text:'', count:1, audio:'low'}
+            {text:'Sa', count:2, audio:'high'},
+            {text:'laθ', count:2, audio:'low'},
+            {text:'la', count:2, audio:'low'},
+            {text:'la', count:6, audio:'low'},
+            {text:'am', count:2, audio:'high'},
+            {text:'rod', count:4, audio:'high'},
+            {text:'na', count:2, audio:'low'},
+            {text:'θع', count:2, audio:'low'},
+            {text:'iⲝ', count:6, audio:'low'}
         ]
     },
     'ayin':{
