@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Perlin noise</title>
+</head>
+<style>
+    canvas {
+        position: absolute;
+        top: 50%; left: 50%;
+        transform: translate(-50%, -50%);
+    }
+</style>
+<body>
+<canvas width="500" height="500"></canvas>
+<script>
+
+    function drawMap(map, width, height) {
+        for(let y = 0; y < width; y++) {
+            for (let x = 0; x < height; x++) {
+                const n = map[x][y];
+                const rgb = Math.round(255 * n);
+                ctx.fillStyle = "rgba(" + rgb + "," + rgb + "," + rgb + ",1.0)";
+                ctx.fillRect(x, y, 1, 1);
+            }
+        }
+    }
+
+    function drawMapSections(map, width, height) {
+        for(let y = 0; y < width; y++) {
+            for (let x = 0; x < height; x++) {
+                const n = map[x][y];
+
+                let rgb = Math.round(255*n);
+                // blue
+                if(n < 0.5)
+                    ctx.fillStyle = "rgba(0.0,0.0,"+(rgb*2)+",1.0)";
+
+                // green blue
+                else if(n < 0.9)
+                    ctx.fillStyle = "rgba(0.0,"+rgb+","+Math.round(rgb*0.5)+",1.0)";
+
+                // grey
+                else
+                    ctx.fillStyle = "rgba("+rgb+","+rgb+","+rgb+",1.0)";
+
+                ctx.fillRect(x, y, 1, 1);
+            }
+        }
+    }
+
+    function drawMapTileSections(map, width, height) {
+        for(let y = 0; y < width; y++) {
+            for (let x = 0; x < height; x++) {
+                const n = map[x][y];
+
+                let rgb = Math.round(255*n);
+
+                // 0-.5
+                if (n < 0.55) {
+                    const start = 0;
+                    const end = 0.55;
+                    const range = end - start;
+                    const percent = (n - start) * (1 / range);
+
+                    const b = Math.round(255*percent);
+                    ctx.fillStyle = `rgba(0.0,0.0,${b},1.0)`;
+                }
+
+                else if (n < 0.6) {
+                    const start = 0.55;
+                    const end = 0.6;
+                    const range = end - start;
+                    const percent = (n - start) * (1 / range);
+
+                    const b = 255 - Math.round(128 * percent);
+                    const g = Math.round(128 * percent);
+                    ctx.fillStyle = `rgba(0.0,${g},${b},1.0)`;
+                }
+
+                // .6-.9
+                else if (n < 0.9) {
+                    const start = 0.6;
+                    const end = 0.9;
+                    const range = end - start;
+                    const percent = (n - start) * (1 / range);
+
+                    const g = Math.round(128*percent)+128;
+                    const b = 128 - Math.round(128*percent);
+                    ctx.fillStyle = `rgba(0.0,${g},${b},1.0)`;
+                }
+
+                // .9-1
+                else {
+                    ctx.fillStyle = `rgba(`+rgb+`,`+rgb+`,`+rgb+`,1.0)`;
+                }
+
+                ctx.fillRect(x, y, 1, 1);
+            }
+        }
+    }
+
+    const P = MakePermutation();
+
+    const ctx = document.getElementsByTagName("canvas")[0].getContext("2d");
+
+    const width = 500;
+    const height = 500;
+
+    //const map = getNoiseMap(width, height);
+    const map = getFractalNoiseMap(width, height);
+    compressMap(map, width, height);
+    drawMap(map, width, height);
+    //drawMapTileSections(map, width, height);
+
+
+/*
+    //Generates a color heightmap with fractal brownian motion
+    for (let y = 0; y < 500; y++){
+        for (let x = 0; x < 500; x++){
+            // draw the pixel
+            let rgb = Math.round(255*n);
+            // blue
+            if(n < 0.5)
+                ctx.fillStyle = "rgba(0.0,0.0,"+(rgb*2)+",1.0)";
+
+            // green blue
+            else if(n < 0.9)
+                ctx.fillStyle = "rgba(0.0,"+rgb+","+Math.round(rgb*0.5)+",1.0)";
+
+            // grey
+            else
+                ctx.fillStyle = "rgba("+rgb+","+rgb+","+rgb+",1.0)";
+
+            ctx.fillRect(x, y, 1, 1);
+        }
+    }*/
+</script>
+</body>
+</html>

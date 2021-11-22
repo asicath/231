@@ -20,19 +20,6 @@ function exportCanvasToImage(canvas, name) {
             resolve();
         });
 
-
-/*        const stream = canvas.createPNGStream({
-            quality: 1,
-            chromaSubsampling: false, progressive: false
-        });
-        const out = fs.createWriteStream(filename.replace(".jpg", ".png"));
-        stream.pipe(out);
-        out.on('finish', () => {
-            console.log(`${filename} was created.`);
-            resolve();
-        });*/
-
-
     });
 }
 
