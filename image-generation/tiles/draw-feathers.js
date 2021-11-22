@@ -1,11 +1,108 @@
 const {all: sephirothColors} = require('./colors');
 
+const tipPercent = 0.8;
+
+function drawSingleFeather({ctx, v, y, vCount, isShifted, featherWidth, featherHeight, tipWidth, overflow, style = 'tapered', isFill = true}) {
+
+    const points = 6;
+
+    // total x delta
+    const xDelta = tipWidth;
+    const xStart = featherWidth - tipWidth;
+
+    // total y delta
+    const yDelta = featherHeight / 2;
+    let yStart = y;
+
+    // the first
+    if (isShifted && v === 0) {
+        yStart -= yDelta;
+
+        // start at the tip
+        if (isFill) {
+            ctx.lineTo(xStart + xDelta, yStart + yDelta);
+        }
+        else {
+            ctx.moveTo(xStart + xDelta, yStart + yDelta);
+        }
+
+        // then move back to beginning of tip
+        if (style === 'diamond') {
+            ctx.lineTo(xStart, yStart + yDelta*2);
+        }
+        else if (style === 'tapered') {
+            for (let i = points; i > 0; i--) {
+                let percent = (i-1) / points;
+                const xNext = xStart + percent * xDelta;
+                percent = percent ** 2;
+                const yNext = yStart + yDelta + (1-percent) * yDelta;
+                ctx.lineTo(xNext, yNext);
+            }
+        }
+
+        // reset
+        if (isFill) {
+            ctx.lineTo(-overflow, yStart + yDelta*2);
+        }
+        else {
+            ctx.moveTo(-overflow, yStart + yDelta*2);
+        }
+
+    }
+    // the last
+    else if (isShifted && v === vCount) {
+        ctx.lineTo(featherWidth - tipWidth, y);
+        ctx.lineTo(featherWidth, y + featherHeight / 2);
+        ctx.lineTo(-overflow, y + featherHeight / 2);
+    }
+    else {
+        // move to the start of the tip
+        ctx.lineTo(xStart, yStart);
+
+        if (style === 'diamond') {
+            ctx.lineTo(xStart + xDelta, yStart + yDelta); // tip
+            ctx.lineTo(xStart, yStart + yDelta*2);
+        }
+        else if (style === 'round') {
+            ctx.arcTo(featherWidth, y, featherWidth, y + featherHeight / 2, featherHeight*0.6)
+            ctx.arcTo(featherWidth, y + featherHeight, featherWidth - tipWidth, y + featherHeight, featherHeight*0.6)
+        }
+        else if (style === 'tapered') {
+            // to the tip
+            for (let i = 0; i < points; i++) {
+                let percent = (i+1) / points;
+                const xNext = xStart + percent * xDelta;
+                percent = percent ** 2;
+                const yNext = yStart + percent * yDelta;
+                ctx.lineTo(xNext, yNext);
+            }
+            // from the tip
+            for (let i = points; i > 0; i--) {
+                let percent = (i-1) / points;
+                const xNext = xStart + percent * xDelta;
+                percent = percent ** 2;
+                const yNext = yStart + yDelta + (1-percent) * yDelta;
+                ctx.lineTo(xNext, yNext);
+            }
+        }
+
+        if (isFill) {
+            ctx.lineTo(-overflow, y + yDelta*2);
+        }
+        else {
+            ctx.moveTo(-overflow, y + yDelta*2);
+        }
+
+    }
+
+}
+
 function fillFeatherColor({ctx, xStart, yStart, width, height, colors}) {
     const hCount = colors.length;
     const vCount = 24;
 
     const featherWidth = width / hCount;
-    const tipWidth = featherWidth * 0.5;
+    const tipWidth = featherWidth * tipPercent;
     const featherHeight = height / vCount;
 
     let malkuthIndex = 0;
@@ -27,38 +124,20 @@ function fillFeatherColor({ctx, xStart, yStart, width, height, colors}) {
                 y -= featherHeight / 2;
             }
 
+            // draw and fill each feather, one at a time
             ctx.beginPath();
             ctx.moveTo(-overflow, y);
-
-            // the first
-            if (isShifted && v === 0) {
-                ctx.lineTo(featherWidth, y);
-                ctx.lineTo(featherWidth - tipWidth, y + featherHeight / 2);
-                ctx.lineTo(-overflow, y + featherHeight / 2);
-            }
-            // the last
-            else if (isShifted && v === vCount) {
-                ctx.lineTo(featherWidth - tipWidth, y);
-                ctx.lineTo(featherWidth, y + featherHeight / 2);
-                ctx.lineTo(-overflow, y + featherHeight / 2);
-            }
-            else {
-                ctx.lineTo(featherWidth - tipWidth, y);
-                //ctx.lineTo(featherWidth, y + featherHeight / 2); // tip
-                //ctx.lineTo(featherWidth - tipWidth, y + featherHeight);
-                ctx.arcTo(featherWidth, y, featherWidth, y + featherHeight / 2, featherHeight*0.6)
-                ctx.arcTo(featherWidth, y + featherHeight, featherWidth - tipWidth, y + featherHeight, featherHeight*0.6)
-                ctx.lineTo(-overflow, y + featherHeight);
-            }
-
+            drawSingleFeather({ctx, y, v, vCount, isShifted, featherWidth, featherHeight, tipWidth, overflow});
             ctx.closePath();
-            ctx.fillStyle = v % 2 === 0 ? colors[h].king : colors[h].queen;
 
+            // find the fill style
+            ctx.fillStyle = v % 2 === 0 ? colors[h].king : colors[h].queen;
             if (colors[h] === sephirothColors.s10) { //  && v % 2 === 0
                 ctx.fillStyle = malkuthColors[malkuthIndex % 4];
                 malkuthIndex++;
             }
 
+            // finalize
             ctx.fill();
         }
 
@@ -71,7 +150,7 @@ function traceFeatherOutlines({ctx, xStart, yStart, width, height}) {
     const vCount = 24;
 
     const featherWidth = width / hCount;
-    const tipWidth = featherWidth * 0.5;
+    const tipWidth = featherWidth * tipPercent;
     const featherHeight = height / vCount;
 
     for (let h = hCount-1; h >= 0; h--) {
@@ -90,32 +169,9 @@ function traceFeatherOutlines({ctx, xStart, yStart, width, height}) {
                 y -= featherHeight / 2;
             }
 
-            // the first
-            if (isShifted && v === 0) {
-                ctx.lineTo(featherWidth, y);
-                ctx.lineTo(featherWidth - tipWidth, y + featherHeight / 2);
-                ctx.lineTo(0, y + featherHeight / 2);
-            }
-            // the last
-            else if (isShifted && v === vCount) {
-                ctx.lineTo(featherWidth - tipWidth, y);
-                ctx.lineTo(featherWidth, y + featherHeight / 2);
-                ctx.lineTo(0, y + featherHeight / 2);
-            } else {
-                ctx.lineTo(featherWidth - tipWidth, y);
-                //ctx.lineTo(featherWidth, y + featherHeight / 2);
-                //ctx.lineTo(featherWidth - tipWidth, y + featherHeight);
-
-                ctx.arcTo(featherWidth, y, featherWidth, y + featherHeight / 2, featherHeight*0.6)
-                ctx.arcTo(featherWidth, y + featherHeight, featherWidth - tipWidth, y + featherHeight, featherHeight*0.6)
-
-                ctx.lineTo(0, y + featherHeight);
-            }
+            drawSingleFeather({ctx, y, v, vCount, isShifted, featherWidth, featherHeight, tipWidth, overflow: 0, isFill: false});
 
         }
-        //ctx.closePath();
-        //ctx.fillStyle = (h%2 === 0 ? '#ff0000' : '#00ff00');
-        //ctx.fill();
 
         ctx.restore();
     }
