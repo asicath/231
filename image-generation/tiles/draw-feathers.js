@@ -14,10 +14,26 @@ function drawSingleFeather({ctx, v, y, vCount, isShifted, featherWidth, featherH
     const yDelta = featherHeight / 2;
     let yStart = y;
 
+    let drawTop = true, drawBottom = true;
+
     // the first
     if (isShifted && v === 0) {
         yStart -= yDelta;
+        drawTop = false;
+    }
+    // the last
+    else if (isShifted && v === vCount) {
+        //drawBottom = false
+        //ctx.lineTo(featherWidth - tipWidth, y);
+        //ctx.lineTo(featherWidth, y + featherHeight / 2);
+        //ctx.lineTo(-overflow, y + featherHeight / 2);
+    }
 
+    if (drawTop) {
+        // move to the start of the tip
+        ctx.lineTo(xStart, yStart);
+    }
+    else {
         // start at the tip
         if (isFill) {
             ctx.lineTo(xStart + xDelta, yStart + yDelta);
@@ -25,49 +41,19 @@ function drawSingleFeather({ctx, v, y, vCount, isShifted, featherWidth, featherH
         else {
             ctx.moveTo(xStart + xDelta, yStart + yDelta);
         }
-
-        // then move back to beginning of tip
-        if (style === 'diamond') {
-            ctx.lineTo(xStart, yStart + yDelta*2);
-        }
-        else if (style === 'tapered') {
-            for (let i = points; i > 0; i--) {
-                let percent = (i-1) / points;
-                const xNext = xStart + percent * xDelta;
-                percent = percent ** 2;
-                const yNext = yStart + yDelta + (1-percent) * yDelta;
-                ctx.lineTo(xNext, yNext);
-            }
-        }
-
-        // reset
-        if (isFill) {
-            ctx.lineTo(-overflow, yStart + yDelta*2);
-        }
-        else {
-            ctx.moveTo(-overflow, yStart + yDelta*2);
-        }
-
     }
-    // the last
-    else if (isShifted && v === vCount) {
-        ctx.lineTo(featherWidth - tipWidth, y);
-        ctx.lineTo(featherWidth, y + featherHeight / 2);
-        ctx.lineTo(-overflow, y + featherHeight / 2);
-    }
-    else {
-        // move to the start of the tip
-        ctx.lineTo(xStart, yStart);
 
-        if (style === 'diamond') {
-            ctx.lineTo(xStart + xDelta, yStart + yDelta); // tip
-            ctx.lineTo(xStart, yStart + yDelta*2);
-        }
-        else if (style === 'round') {
-            ctx.arcTo(featherWidth, y, featherWidth, y + featherHeight / 2, featherHeight*0.6)
-            ctx.arcTo(featherWidth, y + featherHeight, featherWidth - tipWidth, y + featherHeight, featherHeight*0.6)
-        }
-        else if (style === 'tapered') {
+
+    if (style === 'diamond') {
+        if (drawTop) ctx.lineTo(xStart + xDelta, yStart + yDelta); // tip
+        ctx.lineTo(xStart, yStart + yDelta*2);
+    }
+    else if (style === 'round') {
+        if (drawTop) ctx.arcTo(featherWidth, y, featherWidth, y + featherHeight / 2, featherHeight*0.6)
+        ctx.arcTo(featherWidth, y + featherHeight, featherWidth - tipWidth, y + featherHeight, featherHeight*0.6)
+    }
+    else if (style === 'tapered') {
+        if (drawTop) {
             // to the tip
             for (let i = 0; i < points; i++) {
                 let percent = (i+1) / points;
@@ -76,23 +62,23 @@ function drawSingleFeather({ctx, v, y, vCount, isShifted, featherWidth, featherH
                 const yNext = yStart + percent * yDelta;
                 ctx.lineTo(xNext, yNext);
             }
-            // from the tip
-            for (let i = points; i > 0; i--) {
-                let percent = (i-1) / points;
-                const xNext = xStart + percent * xDelta;
-                percent = percent ** 2;
-                const yNext = yStart + yDelta + (1-percent) * yDelta;
-                ctx.lineTo(xNext, yNext);
-            }
         }
 
-        if (isFill) {
-            ctx.lineTo(-overflow, y + yDelta*2);
+        // from the tip
+        for (let i = points; i > 0; i--) {
+            let percent = (i-1) / points;
+            const xNext = xStart + percent * xDelta;
+            percent = percent ** 2;
+            const yNext = yStart + yDelta + (1-percent) * yDelta;
+            ctx.lineTo(xNext, yNext);
         }
-        else {
-            ctx.moveTo(-overflow, y + yDelta*2);
-        }
+    }
 
+    if (isFill) {
+        ctx.lineTo(-overflow, yStart + yDelta*2);
+    }
+    else {
+        ctx.moveTo(-overflow, yStart + yDelta*2);
     }
 
 }
