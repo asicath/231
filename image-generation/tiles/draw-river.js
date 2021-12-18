@@ -1,4 +1,6 @@
 
+const repeatCount = 12;
+
 function getRiverPath(width, height) {
 
     const patternHeight = width / 2;
@@ -17,8 +19,8 @@ function getRiverPath(width, height) {
     return path;
 }
 
-function fillRiverBands({ctx, xStart, yStart, width, height}) {
-    const patternHeight = height / 11;
+function fillRiverBands({ctx, xStart, yStart, width, height, margin}) {
+    const patternHeight = height / repeatCount;
     const sectionWidth = width / 8;
 
 
@@ -26,18 +28,43 @@ function fillRiverBands({ctx, xStart, yStart, width, height}) {
     ctx.translate(xStart, yStart);
 
     // edge
-    function fillEdge({x, color}) {
-        let y = 0;
-        ctx.beginPath();
-        ctx.moveTo(0, 0);
-        while (y * patternHeight < height) {
-            ctx.lineTo((x+1) * sectionWidth, y * patternHeight + patternHeight / 2);
-            ctx.lineTo((x+0) * sectionWidth, y * patternHeight + patternHeight);
-            y += 1;
+    function fillEdge({x, colors}) {
+
+        for (let h = 0; h < repeatCount; h++) {
+            const x0 = (x+0) * sectionWidth;
+            const x1 = (x+1) * sectionWidth;
+
+            const y0 = h * patternHeight;
+            const y1 = y0 + patternHeight / 2;
+            const y2 = y0 + patternHeight;
+
+            // 1 triangle
+            ctx.beginPath();
+            ctx.moveTo(x0, y0);
+            ctx.lineTo(x1, y1);
+            ctx.lineTo(x0, y1);
+            ctx.closePath();
+            ctx.fillStyle = colors[0];
+            ctx.fill();
+
+            // 1 square
+            //ctx.fillStyle = colors[0];
+            //ctx.fillRect(x0-margin, y0, margin, patternHeight / 2);
+
+            // 2
+            ctx.beginPath();
+            ctx.moveTo(x0, y1);
+            ctx.lineTo(x1, y1);
+            ctx.lineTo(x0, y2);
+            ctx.closePath();
+            ctx.fillStyle = colors[1];
+            ctx.fill();
+
+            // 2 square
+            //ctx.fillStyle = colors[1];
+            //ctx.fillRect(x0-margin, y1, margin, patternHeight / 2);
+
         }
-        ctx.closePath()
-        ctx.fillStyle = color;
-        ctx.fill();
     }
 
     // band
@@ -127,7 +154,7 @@ function fillRiverBands({ctx, xStart, yStart, width, height}) {
 
     }
 
-    //fillEdge({x:0, color:'#000000'});
+    fillEdge({x:0, colors:['#000000', '#ffffff']});
 
     // fill the middle
     fillMiddle({colors: ['#731817', '#dedb2c', '#000000', '#708d01']});
@@ -144,7 +171,7 @@ function fillRiverBands({ctx, xStart, yStart, width, height}) {
 }
 
 function traceRiverBands({ctx, xStart, yStart, width, height}) {
-    const patternHeight = height / 11;
+    const patternHeight = height / repeatCount;
     const sectionWidth = width / 8;
 
 

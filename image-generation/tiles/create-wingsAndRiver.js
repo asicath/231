@@ -13,8 +13,8 @@ const count = 10;
 
 async function execute() {
 
-    const width = 1024 * 2;
-    const height = 1024 * 2;
+    const width = 1024 * 4;
+    const height = 1024 * 4;
 
     // create the height map
     const canvasHeight = createCanvas(width, height);
@@ -27,7 +27,7 @@ async function execute() {
 
     // spec
     const canvasSpec = createCanvas(width, height);
-    const shiftedMap = Perlin.shiftMap(compressedMap, -0.9 / 2, width, height);
+    const shiftedMap = Perlin.shiftMap(compressedMap, 0.3 / 2, width, height);
     drawMap(canvasSpec, shiftedMap, width, height);
 
     // then the grout
@@ -155,12 +155,16 @@ function combinedPathDraw(canvas) {
     // first the bands
     //drawBandPaths({canvas, ctx, bandWidth});
 
+    const squareWidth = (canvas.width / 24);
+
     const riverWidth = canvas.width*1/3;
-    const riverMargins = riverWidth * 0.2;
+    const riverMargins = squareWidth * 2;
+
+    const wingsWidth = canvas.width - riverWidth - squareWidth * 2;
 
     traceRiverBands({
         ctx,
-        xStart: riverMargins/2,
+        xStart: riverMargins,
         yStart: 0,
         width: riverWidth - riverMargins,
         height: canvas.height
@@ -170,8 +174,24 @@ function combinedPathDraw(canvas) {
         ctx,
         xStart: canvas.width*1/3,
         yStart: 0,
-        width: canvas.width*2/3,
+        width: wingsWidth,
         height: canvas.height
+    });
+
+    // fill the b&w squares
+    [(riverWidth + wingsWidth), 0].forEach(x => {
+        for (let i = 0; i < 24; i++) {
+            const y = squareWidth * i;
+            ctx.moveTo(x, y);
+            ctx.lineTo(x + squareWidth * 2, y);
+        }
+
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, canvas.height);
+        ctx.moveTo(x + squareWidth, 0);
+        ctx.lineTo(x + squareWidth, canvas.height);
+        ctx.moveTo(x + squareWidth * 2, 0);
+        ctx.lineTo(x + squareWidth * 2, canvas.height);
     });
 }
 
@@ -184,24 +204,45 @@ function combinedFillColor(canvas) {
 
     //fillBandColor({canvas, bandWidth});
 
+    // margin squares
+    const squareWidth = (canvas.width / 24);
+
     const riverWidth = canvas.width*1/3;
-    const riverMargins = riverWidth * 0.2;
+    const riverMargins = squareWidth * 2;
+
+    const wingsWidth = canvas.width - riverWidth - squareWidth * 2;
+
 
     fillRiverBands({
         ctx,
-        xStart: riverMargins/2,
+        xStart: riverMargins,
         yStart: 0,
         width: riverWidth - riverMargins,
-        height: canvas.height
+        height: canvas.height,
+        margin: riverMargins/2
     });
 
     fillSephirothWings({
         ctx,
         xStart: riverWidth,
         yStart: 0,
-        width: canvas.width - riverWidth,
+        width: wingsWidth,
         height: canvas.height
+    });
+
+    // fill the b&w squares
+    [(riverWidth + wingsWidth), 0].forEach(x => {
+        for (let i = 0; i < 24; i++) {
+            const y = squareWidth * i;
+            ctx.fillStyle = i % 2 === 1 ? '#ffffff' : '#000000';
+            ctx.fillRect(x, y, squareWidth, squareWidth);
+
+            ctx.fillStyle = i % 2 === 0 ? '#ffffff' : '#000000';
+            ctx.fillRect(x+squareWidth, y, squareWidth, squareWidth);
+        }
     })
+
+
 }
 
 

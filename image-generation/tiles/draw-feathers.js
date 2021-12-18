@@ -84,17 +84,65 @@ function drawSingleFeather({ctx, v, y, vCount, isShifted, featherWidth, featherH
 }
 
 function fillFeatherColor({ctx, xStart, yStart, width, height, colors}) {
-    const hCount = colors.length;
+    const hCount = 11;
     const vCount = 24;
 
     const featherWidth = width / hCount;
     const tipWidth = featherWidth * tipPercent;
     const featherHeight = height / vCount;
 
+    // draw malkuth
     let malkuthIndex = 0;
     const malkuthColors = ['#731817', '#dedb2c', '#000000', '#708d01'];
 
-    for (let h = hCount-1; h >= 0; h--) {
+    const xMalkuth = featherWidth * (hCount-1);
+    ctx.save();
+    ctx.translate(xStart + xMalkuth, yStart);
+    for (let v = 0; v < vCount; v++) {
+
+        // the bounding points of the square wee need to fill
+        let x0 = 0 - tipWidth - 1;
+        const x1 = featherWidth;
+        const y0 = v * featherHeight;
+        const y1 = (v+1) * featherHeight;
+
+        const fillKing = v % 2 === 0;
+
+        if (fillKing) {
+            ctx.fillStyle = sephirothColors.s10.queen;
+            ctx.fillRect(x0, y0, x1 - x0, y1 - y0);
+        }
+        else {
+            // fill the whole with citrine
+            ctx.fillStyle = malkuthColors[1];
+            ctx.fillRect(x0, y0, x1 - x0, y1 - y0);
+
+            // lets shift the center a bit
+            x0 += tipWidth * 1;
+
+            const xCenter = (x0 + x1) / 2;
+            const yCenter = (y0 + y1) / 2;
+
+            [
+                //{p0: {x: x0, y: y0}, p1: {x: x0, y: y1}, colorIndex: 1}, // top
+                {p0: {x: x0, y: y1}, p1: {x: x1, y: y1}, colorIndex: 0}, // left
+                {p0: {x: x0, y: y0}, p1: {x: x1, y: y0}, colorIndex: 3}, // right
+                {p0: {x: x1, y: y0}, p1: {x: x1, y: y1}, colorIndex: 2}  // bottom
+            ].forEach(o => {
+                ctx.beginPath();
+                ctx.moveTo(xCenter, yCenter);
+                ctx.lineTo(o.p0.x, o.p0.y);
+                ctx.lineTo(o.p1.x, o.p1.y);
+                ctx.closePath();
+                ctx.fillStyle = malkuthColors[o.colorIndex];
+                ctx.fill();
+            });
+        }
+    }
+    ctx.restore();
+
+    // now, all the others
+    for (let h = hCount-2; h >= 0; h--) {
         const isShifted = h % 2 === 1;
         const x = featherWidth * h;
         ctx.save();
@@ -139,7 +187,39 @@ function traceFeatherOutlines({ctx, xStart, yStart, width, height}) {
     const tipWidth = featherWidth * tipPercent;
     const featherHeight = height / vCount;
 
-    for (let h = hCount-1; h >= 0; h--) {
+    // malkuth
+    const xMalkuth = featherWidth * (hCount-1);
+    ctx.save();
+    ctx.translate(xStart + xMalkuth, yStart);
+    for (let v = 0; v < vCount; v++) {
+
+        // the bounding points of the square wee need to fill
+        let x0 = 0 - tipWidth - 1;
+        const x1 = featherWidth;
+        const y0 = v * featherHeight;
+        const y1 = (v+1) * featherHeight;
+
+        const fillKing = v % 2 === 0;
+
+        x0 += tipWidth * 1;
+
+        ctx.moveTo(x0, y0);
+        ctx.lineTo(x1, y0);
+
+        if (!fillKing) {
+            // lets shift the center a bit
+
+            ctx.moveTo(x0, y0);
+            ctx.lineTo(x1, y1);
+
+            ctx.moveTo(x0, y1);
+            ctx.lineTo(x1, y0);
+        }
+    }
+    ctx.restore();
+
+    // now the rest
+    for (let h = hCount-2; h >= 0; h--) {
         const isShifted = h % 2 === 1;
         const x = featherWidth * h;
         ctx.save();
@@ -180,9 +260,9 @@ function fillSephirothWings({ctx, xStart, yStart, width, height}) {
             sephirothColors.s06,
             sephirothColors.s07,
             sephirothColors.s08,
-            sephirothColors.s09,
-            sephirothColors.s10
-        ]
+            sephirothColors.s09
+        ],
+        lastRow: sephirothColors.s10
     });
 }
 
