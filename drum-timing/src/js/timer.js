@@ -1,6 +1,6 @@
 
 class BeatTimer {
-    constructor({parts, initialDuration, minDuration, totalTime, easingFunction, paused = true, clicksPerMeasure = 16}) {
+    constructor({parts, initialDuration, minDuration, totalTime, easingFunction, paused = true, clicksPerMeasure = null}) {
         this.initialDuration = initialDuration;
 
         this.finalDuration = minDuration;
@@ -166,11 +166,14 @@ class BeatTimer {
                 lastEarlyPart = earlyPart;
             }
 
-            let currentClick = Math.floor(earlyPercent * clicksPerMeasure);
-            if (currentClick !== lastClick) {
-                this.emit('click', {count: currentClick})
-                lastClick = currentClick;
+            if (clicksPerMeasure !== null) {
+                let currentClick = Math.floor(earlyPercent * clicksPerMeasure);
+                if (currentClick !== lastClick) {
+                    this.emit('click', {count: currentClick})
+                    lastClick = currentClick;
+                }
             }
+
             //clicksPerMeasure
             //lastClick;
 
