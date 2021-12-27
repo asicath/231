@@ -270,14 +270,23 @@ const words = {
     'ayin':{
         background: '#001489',
         imgSrc: '070.png',
-        minDuration: 1000 * 2,
+        minDuration: 1000 * 4,
+        clicksPerMeasure: 16,
         parts: [
             // Oaoaaaoooع-iⲝ
-            {text:'', count:1, audio:'high'},
-            {text:'', count:1, audio:'low'},
-            {text:'', count:1, audio:'low'},
-            {text:'', count:1, audio:'low'},
-            {text:'', count:1, audio:'low'}
+            {text:'O', count:1, audio:'low'},
+            {text:'a', count:1, audio:'high'},
+            {text:'o', count:1, audio:'low'},
+            {text:'a', count:1, audio:'high'},
+            {text:'a', count:1, audio:'high'},
+            {text:'a', count:1, audio:'high'},
+            {text:'o', count:1, audio:'low'},
+            {text:'o', count:1, audio:'low'},
+            {text:'o', count:2, audio:'low'},
+
+            {text:'ع', count:2, audio:'low'},
+            {text:'i', count:2, audio:'high'},
+            {text:'ⲝ', count:2, audio:'click'},
         ]
     },
     'pe': {
