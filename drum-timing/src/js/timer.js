@@ -27,6 +27,8 @@ class BeatTimer {
         this.setupTick();
     }
 
+
+
     togglePause() {
         this.paused = !this.paused;
     }
@@ -97,6 +99,7 @@ class BeatTimer {
                     // past the end, no need to change the duration
                 }
                 else {
+                    // we've past the end mark, recalculate
                     recalculateDuration = true;
                 }
             }

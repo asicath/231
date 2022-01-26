@@ -1,0 +1,1 @@
+ffmpeg.exe -f image2 -framerate 60 -pattern_type sequence -start_number 0 -r 60 -i ./ayin/pe-short3-%%9d.jpg -i ./pe-short3.wav -s 1920x1080 -c:v libx264 -preset slow -crf 15 -map 0:v:0 -map 1:a:0 -c:a aac pe-short3.mp4

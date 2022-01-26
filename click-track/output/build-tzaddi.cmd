@@ -1,0 +1,3 @@
+ffmpeg.exe -f image2 -framerate 60 -pattern_type sequence -start_number 0 -r 60 -i ./tzaddi/short2/short2-%%9d.jpg -i ./tzaddi-short2.wav -s 1920x1080 -c:v libx264 -preset slow -crf 15 -map 0:v:0 -map 1:a:0 -c:a aac tzaddi-02min.mp4
+ffmpeg.exe -f image2 -framerate 60 -pattern_type sequence -start_number 0 -r 60 -i ./tzaddi/short3/short3-%%9d.jpg -i ./tzaddi-short3.wav -s 1920x1080 -c:v libx264 -preset slow -crf 15 -map 0:v:0 -map 1:a:0 -c:a aac tzaddi-03min.mp4
+ffmpeg.exe -f image2 -framerate 60 -pattern_type sequence -start_number 0 -r 60 -i ./tzaddi/long/long-%%9d.jpg -i ./tzaddi-long.wav -s 1920x1080 -c:v libx264 -preset slow -crf 15 -map 0:v:0 -map 1:a:0 -c:a aac tzaddi-11min.mp4

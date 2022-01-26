@@ -1,0 +1,17 @@
+{
+  "name": "click-track",
+  "version": "1.0.0",
+  "description": "",
+  "main": "wav.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "arcsecond": "^4.1.0",
+    "arcsecond-binary": "^1.2.0",
+    "canvas": "^2.8.0",
+    "construct-js": "^0.7.0"
+  }
+}
