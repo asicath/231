@@ -1,7 +1,10 @@
 const {writeWav, appendWav, createSilence, generateAllNotes, getAllNotes, createTone, applyEnvelope} = require('./wav');
+const readWavFile = require('./wav-read');
 const times = require('./times');
 const words = require('./words');
 const Program = require('./Program');
+const path = require('path');
+const fs = require('fs');
 
 const sampleRate = 48000;
 const notes = getAllNotes();
@@ -40,21 +43,50 @@ let toneClick = {
 };
 
 const tones = {
-    low: generateTone(toneLowConfig),
-    high: generateTone(toneHighConfig),
-    click: generateTone(toneClick)
+    //low: generateTone(toneLowConfig),
+    low: readWavAsPercent(path.join(__dirname, '/boom1.wav')),
+    high: readWavAsPercent(path.join(__dirname, '/bop1.wav')),
+    //high: generateTone(toneHighConfig),
+    //high: [0],
+    click: generateTone(toneClick, 0.2)
 };
+
+function readWavAsPercent(filename, amp = 0.5) {
+    const values = readWavFile(filename);
+
+    const max = values.reduce((max, v) => {
+        return Math.max(max, Math.abs(v));
+    });
+
+    return values.map(v => {
+        return (v / max) * amp;
+    });
+}
 
 (async () => {
     const timing = 'long';
-    const path = 'tzaddi';
+    const path = 'kaph';
 
-    const filename = `./output/${path}-${timing}.wav`;
+    const filepath = `./output/${path}`;
+    const filename = `${filepath}/${path}-${timing}.wav`;
+
+    //var dir = __dirname + '/upload';
+    if (!fs.existsSync(filepath)) {
+        fs.mkdirSync(filepath);
+    }
+
+    const word = words[path];
+    const time = times[timing];// minDuration
+    const totalParts = word.parts.reduce((total, value) => {
+        return total + value.count;
+    }, 0);
+
+    word.minDuration = 4000;
 
     // create an empty wav
     writeWav([], filename, sampleRate);
 
-    const program = new Program(words[path], times[timing]);
+    const program = new Program(word, time);
 
     // append each measure
     const measureBuffer = 1000;
@@ -99,9 +131,9 @@ function maxAmp(data) {
     }
 }
 
-function generateTone(config) {
+function generateTone(config, amp = 0.5) {
     const duration = Math.floor((config.envelope.attack + config.envelope.decay + config.envelope.sustain + config.envelope.release) * 1000);
-    let tone = createTone(sampleRate, duration, config.note.freq, 0.5);
+    let tone = createTone(sampleRate, duration, config.note.freq, amp);
     tone = applyEnvelope(tone, config.envelope);
     return tone;
 }

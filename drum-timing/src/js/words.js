@@ -335,13 +335,20 @@ const words = {
         background: '#AE0E36',
         imgSrc: '100.png',
         minDuration: 1000 * 2,
+        clicksPerMeasure: 12,
         parts: [
             // QaniΔnayx-ipamai
-            {text:'', count:1, audio:'high'},
-            {text:'', count:1, audio:'low'},
-            {text:'', count:1, audio:'low'},
-            {text:'', count:1, audio:'low'},
-            {text:'', count:1, audio:'low'}
+            {text:'Qa', count:1, audio:'low'},
+            {text:'ni', count:1, audio:'high'},
+            {text:'d', count:1},
+            {text:'na', count:1, audio:'high'},
+            {text:'y', count:1, audio:'low'},
+            {text:'x', count:2},
+
+            {text:'i', count:1, audio:'high'},
+            {text:'pa', count:1, audio:'low'},
+            {text:'ma', count:1, audio:'low'},
+            {text:'i', count:2, audio:'low'}
         ]
     },
     'resh': {

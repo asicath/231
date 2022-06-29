@@ -5,6 +5,10 @@ const B = require('arcsecond-binary');
 const C = require('construct-js');
 
 function getMainHeader(sampleRate) {
+    return getRiffChunkHeader(sampleRate).toBuffer();
+}
+
+function getRiffChunkHeader(sampleRate) {
     const riffChunkStruct = C.Struct('riffChunk')
         .field('magic', C.RawString('RIFF'))
         .field('size', C.U32LE(0))
@@ -31,7 +35,7 @@ function getMainHeader(sampleRate) {
         .field('fmtSubChunk', fmtSubChunkStruct)
         .field('dataSubChunk', dataSubChunkStruct);
 
-    return fileStruct.toBuffer();
+    return fileStruct;
 }
 
 function getSizeHeader(dataLength, bytesPerValue = 2) {

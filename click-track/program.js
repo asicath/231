@@ -82,6 +82,6 @@ module.exports = Program;
 if (module.parent === null) {
     const times = require('./times');
     const words = require('./words');
-    const program = new Program(words.nun, times.long);
+    const program = new Program(words.qoph, times.long);
     console.log(program.partCount);
 }
