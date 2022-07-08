@@ -1,4 +1,3 @@
-const ColorBlend = require('color-blend');
 
 function toCymk(color) {
     // start with inverse of RGB

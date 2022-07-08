@@ -9,7 +9,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "canvas": "^2.8.0",
-    "color-blend": "^3.0.1"
+    "canvas": "^2.8.0"
   }
 }
