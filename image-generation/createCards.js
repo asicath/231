@@ -1,6 +1,36 @@
 const { createCanvas, loadImage } = require('canvas');
 const {paths, cards} = require('./data');
 
+
+const EasingFunctions = {
+    // no easing, no acceleration
+    linear: t => t,
+    // accelerating from zero velocity
+    easeInQuad: t => t*t,
+    // decelerating to zero velocity
+    easeOutQuad: t => t*(2-t),
+    // acceleration until halfway, then deceleration
+    easeInOutQuad: t => t<.5 ? 2*t*t : -1+(4-2*t)*t,
+    // accelerating from zero velocity
+    easeInCubic: t => t*t*t,
+    // decelerating to zero velocity
+    easeOutCubic: t => (--t)*t*t+1,
+    // acceleration until halfway, then deceleration
+    easeInOutCubic: t => t<.5 ? 4*t*t*t : (t-1)*(2*t-2)*(2*t-2)+1,
+    // accelerating from zero velocity
+    easeInQuart: t => t*t*t*t,
+    // decelerating to zero velocity
+    easeOutQuart: t => 1-(--t)*t*t*t,
+    // acceleration until halfway, then deceleration
+    easeInOutQuart: t => t<.5 ? 8*t*t*t*t : 1-8*(--t)*t*t*t,
+    // accelerating from zero velocity
+    easeInQuint: t => t*t*t*t*t,
+    // decelerating to zero velocity
+    easeOutQuint: t => 1+(--t)*t*t*t*t,
+    // acceleration until halfway, then deceleration
+    easeInOutQuint: t => t<.5 ? 16*t*t*t*t*t : 1+16*(--t)*t*t*t*t
+};
+
 const pipPlacement = {
     1: {
         type: 'onCircle',
@@ -77,7 +107,7 @@ async function drawCards() {
 
         //if (!key.match(/^[2345]_/)) continue;
         //if (!key.match(/t\d\d/)) continue;
-        if (!key.match(/^0_/)) continue;
+        //if (!key.match(/^0_s02/)) continue;
         //if (!key.match(/t21/)) continue;
         //if (!key.match(/_[wc]10/)) continue;
 
@@ -99,11 +129,18 @@ async function drawCard(card, pipImage) {
     let width = 4096;
 
     let ratio = outerSize / 1200;
-    let layerSize = 150 * ratio;
+    const layerSize = 150 * ratio;
+    const canvasSizeMax = outerSize;
+    const canvasSizeMin = outerSize - layerSize * (layerCount-1);
+    //const canvasSizeMin = outerSize * 0.01;
 
     const canvas = [];
     for (let n = 0; n < layerCount; n++) {
-        let size = outerSize - layerSize * n;
+        const percentBase = n / (layerCount - 1);
+        const percent = percentBase;
+        //const percent = EasingFunctions.easeOutQuad(percentBase);
+
+        let size = Math.floor(canvasSizeMin + (canvasSizeMax - canvasSizeMin) * (1-percent));
         let cWidth = n === 0 ? width : size;
         canvas.push(createCanvas(cWidth, size));
     }
@@ -113,7 +150,7 @@ async function drawCard(card, pipImage) {
         let path = paths[pathKey];
 
         for (let i = 0; i < layerCount; i++) {
-            if (i > 0) continue;
+            //if (i > 0) continue;
 
             let color = path.colors[3 - i];
 
@@ -356,6 +393,101 @@ function alphaColor(color, alpha) {
 
 function drawFleck(ctx, color, xCenter, yCenter, ratio) {
 
+    const radiusMax = (Math.random() * 2 + 3) * ratio;
+    const radiusMin = radiusMax * Math.random() * 0.2 + 0.3;
+
+    const angleOffset = Math.random() * Math.PI * 2;
+
+    const pointCount = 2;
+    const subPointCount = 25;
+
+    // create the points
+    const mainPoints = [];
+    for (let i = 0; i < pointCount; i++) {
+        const radius = radiusMin + (radiusMax - radiusMin) * Math.random();
+
+        const angle = ((Math.PI * 2) / pointCount) * i;
+        const point = {
+            angle,
+            radius,
+            isMain: true
+        };
+        mainPoints.push(point);
+    }
+
+    // now the subpoints
+    const points = [];
+    for (let i = 0; i < mainPoints.length; i++) {
+        const p0 = mainPoints[i];
+        const p1 = mainPoints[(i+1) % mainPoints.length];
+        points.push(p0);
+
+        // now the inbetween
+        for (let j = 0; j < subPointCount; j++) {
+            const percentBase = (j + 1) / (subPointCount + 1);
+            const percent = EasingFunctions.easeInOutCubic(percentBase);
+
+            const extraAngle = p0.angle > p1.angle ? Math.PI * 2 : 0;
+            const angle = p0.angle + ((p1.angle + extraAngle) - p0.angle) * percentBase;
+            const radius = p0.radius + (p1.radius - p0.radius) * percent;
+
+            const point = {
+                angle,
+                radius,
+                isMain: false
+            };
+            points.push(point);
+        }
+    }
+
+    // now draw them
+    ctx.beginPath();
+    for (let i = 0; i < points.length; i++) {
+        const point = points[i];
+
+        const x = Math.cos(point.angle + angleOffset) * point.radius + xCenter;
+        const y = Math.sin(point.angle + angleOffset) * point.radius + yCenter;
+
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+    }
+    ctx.closePath();
+    ctx.fillStyle = `#${color}`;
+    ctx.fill();
+
+/*    ctx.strokeStyle = `#000`;
+    ctx.strokeWidth = 1;
+    ctx.stroke();
+
+
+
+    for (let i = 0; i < points.length; i++) {
+        ctx.beginPath();
+        ctx.moveTo(xCenter, yCenter);
+        const point = points[i];
+
+        const x = Math.cos(point.angle + angleOffset) * point.radius + xCenter;
+        const y = Math.sin(point.angle + angleOffset) * point.radius + yCenter;
+
+        ctx.lineTo(x, y);
+
+        if (point.isMain) ctx.strokeStyle = `rgba(0,0,0,0.5)`;
+        else ctx.strokeStyle = `rgba(0,0,0,0.25)`;
+
+        ctx.stroke();
+    }*/
+}
+
+function drawFleckCircle(ctx, color, xCenter, yCenter, ratio) {
+    const radius = 2 * ratio;
+    ctx.beginPath();
+    ctx.arc(xCenter, yCenter, radius, 0, Math.PI*2);
+    ctx.fillStyle = `#${color}`;
+    ctx.fill();
+}
+
+function drawFleckPoly(ctx, color, xCenter, yCenter, ratio) {
+
     let sides = Math.floor(Math.random() * 3) + 3;
     //let sides = 4;
     let angleIncr = Math.PI * 2 / sides;
@@ -387,7 +519,7 @@ function drawFleck(ctx, color, xCenter, yCenter, ratio) {
 }
 
 function fleckIt(canvas, color) {
-    let ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext('2d');
     let colorArray = Array.isArray(color.flecked) ? color.flecked : [color.flecked];
     let colorIndex = 0;
 
@@ -401,12 +533,20 @@ function fleckIt(canvas, color) {
     let idealDistance = 15 * ratio;
     let radiusIncrPerRevolution = 12 * ratio;
 
+    //let idealDistance = 60 * ratio;
+    //let radiusIncrPerRevolution = 48 * ratio;
+
     let maxTimes = 1000000;
 
     while (radius < maxRadius && maxTimes > 0) {
         // find point
         let x = Math.cos(angle) * radius + center.x;
         let y = Math.sin(angle) * radius + center.y;
+
+        // add some random
+        const randomSwing = 100;
+        x += (maxRadius / (randomSwing * 2)) - Math.random() * maxRadius / randomSwing;
+        y += (maxRadius / (randomSwing * 2)) - Math.random() * maxRadius / randomSwing;
 
         // draw at point
         drawFleck(ctx, colorArray[colorIndex++ % colorArray.length], x, y, ratio);
@@ -477,3 +617,4 @@ function drawCirclesOld(canvas, color, layerSize) {
     }
 
 }
+
