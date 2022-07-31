@@ -585,7 +585,7 @@ exports.paths = JSON.parse(`{
       },
       {
         "name": "Olive, flecked gold",
-        "back": "8D8800",
+        "back": "758c00",
         "flecked": "FEDD00"
       }
     ]
@@ -649,7 +649,7 @@ exports.paths = JSON.parse(`{
         "back": "DEDB2C",
         "quartered": [
           "DEDB2C",
-          "8D8800",
+          "758c00",
           "731817",
           "000000"
         ]
@@ -1245,7 +1245,7 @@ exports.paths = JSON.parse(`{
         "back": "DEDB2C",
         "quartered": [
           "DEDB2C",
-          "8D8800",
+          "758c00",
           "731817",
           "000000"
         ]
