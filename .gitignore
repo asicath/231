@@ -2,3 +2,4 @@
 node_modules/
 image-generation/output/
 click-track/output/
+package-lock.json
