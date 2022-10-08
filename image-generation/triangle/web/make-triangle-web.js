@@ -1,4 +1,7 @@
 
+let cells = null;
+let selectedKey = null;
+
 function drawFrame() {
     draw('#seal');
 }
@@ -10,6 +13,7 @@ function main() {
         },
         active: function () {
             $(document).ready(function () {
+                setupCanvas('#seal');
                 loadAtus()
                     .then(() => {
                         drawFrame();
@@ -17,6 +21,46 @@ function main() {
             });
         }
     });
+}
+
+function setupCanvas(id) {
+    // get canvas and parent
+    const canvas = $(id);
+    resizeCanvas(canvas);
+    setupMouseEvent(canvas);
+}
+
+function resizeCanvas(canvas) {
+    const container = $(canvas).parent();
+
+    // Get the width of parent, we will use all of this
+    const maxWidth = container.width();
+    //const maxWidth = $(window).innerWidth();
+    const maxHeight = $(window).innerHeight();
+
+    const size = Math.min(maxWidth, maxHeight);
+
+    // Set width and height
+    if ($(canvas).attr('width') !== size) { $(canvas).attr('width', size); }
+    if ($(canvas).attr('height') !== size) { $(canvas).attr('height', size); }
+}
+
+function setupMouseEvent(canvas) {
+    canvas[0].onmousedown = function(e) {
+
+        // important: correct mouse position:
+        const rect = this.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        console.log(x, y)
+
+        const gate = getDiamondByPoint(x, y);
+        if (gate) {
+            selectedKey = gate.key;
+        }
+        drawFrame();
+    };
 }
 
 async function draw(id) {
@@ -154,7 +198,7 @@ const rows = rowsRainbow;
 const images = {};
 
 async function loadThothImage(key) {
-    const filepath = `../thoth/${key}.jpg`;
+    const filepath = `./thoth-small/${key}.jpg`;
     return new Promise((resolve, reject) => {
         const newImg = new Image();
         newImg.onload = function() {
@@ -173,6 +217,23 @@ async function loadAtus() {
     }
 }
 
+function isPointInPoly(poly, pt){
+    for(var c = false, i = -1, l = poly.length, j = l - 1; ++i < l; j = i)
+        ((poly[i][1] <= pt[1] && pt[1] < poly[j][1]) || (poly[j][1] <= pt[1] && pt[1] < poly[i][1]))
+        && (pt[0] < (poly[j][0] - poly[i][0]) * (pt[1] - poly[i][1]) / (poly[j][1] - poly[i][1]) + poly[i][0])
+        && (c = !c);
+    return c;
+}
+
+function getDiamondByPoint(x, y) {
+    const pt = [x, y];
+    for (const key of Object.keys(cells)) {
+        const cell = cells[key];
+        if (isPointInPoly(cell.points, pt)) {
+            return cell;
+        }
+    }
+}
 
 async function drawTriangle(canvas) {
 
@@ -189,6 +250,20 @@ async function drawTriangle(canvas) {
     console.log('generating points');
     const tri = allPointOfTheTriangle(width, height, margin);
 
+    // for mouse
+    cells = {};
+    for (let row = 0; row < rows.length; row++) {
+        for (let cell = 0; cell < tri.rows[row].length; cell++) {
+            const key = `${row}-${cell}`;
+            cells[key] = {
+                key,
+                pointOrig: tri.rows[row][cell],
+                points: tri.rows[row][cell].map(p => [p.x, p.y]),
+                selected: false
+            }
+        }
+    }
+
     // color the diamonds
 
     function fillCell(d) {
@@ -200,6 +275,7 @@ async function drawTriangle(canvas) {
         ctx.closePath();
         ctx.fill();
     }
+
 
     // fill the diamonds
     console.log('filling diamonds');
@@ -215,7 +291,6 @@ async function drawTriangle(canvas) {
             fillCell(tri.rows[row][cell]);
         }
     }
-
 
     // draw the outlines
     ctx.strokeStyle = '#000';
@@ -347,9 +422,29 @@ async function drawTriangle(canvas) {
     ctx.moveTo(p4.x, p4.y);
     ctx.lineTo(p5.x, p5.y);
     ctx.lineTo(p6.x, p6.y);
-    ctx.lineWidth = (width/height) * 6;
+    ctx.lineWidth = (height / 1080) * 6;
     ctx.strokeStyle = '#FFF';
     ctx.stroke();
+
+    // draw the selected outline
+    if (selectedKey !== null) {
+
+        function outlineCell(d) {
+            ctx.beginPath();
+            ctx.moveTo(d[0].x, d[0].y);
+            for (let i = 1; i < d.length; i++) {
+                ctx.lineTo(d[i].x, d[i].y);
+            }
+            ctx.closePath();
+
+            ctx.lineWidth = (width/height) * 6;
+            ctx.strokeStyle = '#FFF';
+            ctx.stroke();
+        }
+
+        const cellSelected = cells[selectedKey];
+        outlineCell(cellSelected.pointOrig);
+    }
 
     ctx.restore();
 
