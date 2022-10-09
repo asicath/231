@@ -1,9 +1,11 @@
 
 let cells = null;
 let selectedKey = null;
+let mouseOverKey = null;
 
 function drawFrame() {
-    draw('#seal');
+    let canvas = $('#seal')[0];
+    draw(canvas);
 }
 
 function main() {
@@ -13,7 +15,18 @@ function main() {
         },
         active: function () {
             $(document).ready(function () {
-                setupCanvas('#seal');
+                const canvas = $('#seal');
+
+                // setup canvas and events
+                setupCanvas(canvas);
+
+                // initialize the points
+                const margin = 20;
+                const width = canvas.width();
+                const height = canvas.height();
+                initTriangle(width, height, margin);
+
+                // load the atus
                 loadAtus()
                     .then(() => {
                         drawFrame();
@@ -23,9 +36,7 @@ function main() {
     });
 }
 
-function setupCanvas(id) {
-    // get canvas and parent
-    const canvas = $(id);
+function setupCanvas(canvas) {
     resizeCanvas(canvas);
     setupMouseEvent(canvas);
 }
@@ -53,35 +64,172 @@ function setupMouseEvent(canvas) {
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
 
-        console.log(x, y)
+        const gate = getDiamondByPoint(x, y);
+        if (gate && gate.key !== selectedKey) {
+            onCellSelect(gate);
+        }
+
+    };
+
+    canvas[0].onmousemove = function(e) {
+
+        // important: correct mouse position:
+        const rect = this.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
 
         const gate = getDiamondByPoint(x, y);
-        if (gate) {
-            selectedKey = gate.key;
+        const key = gate ? gate.key : null;
+
+        if (key !== mouseOverKey) {
+            mouseOverKey = key;
+            drawFrame();
         }
-        drawFrame();
+
     };
 }
 
-async function draw(id) {
+function onCellSelect(cell) {
+    selectedKey = cell.key;
+    drawFrame();
 
-    // get the canvas and init
-    let canvas = $(id)[0];
-    let context = canvas.getContext('2d');
-    context.webkitImageSmoothingEnabled = true;
-
-    //let outerRadius = Math.min(width, height) / 2;
-
-    // clear the whole field
-    let width = canvas.width;
-    let height = canvas.height;
-    context.clearRect(0, 0, width, height);
-
-    // now the actual draw
-
-    // draw the text and circle
-    await drawTriangle(canvas);
+    $('#right').html(cell.key)
 }
+
+
+
+// *******************************************
+
+function initTriangle(width, height, margin) {
+
+    //console.log('generating points');
+    allPointOfTheTriangle(width, height, margin);
+
+    // for mouse
+    for (const cell of Object.values(cells)) {
+        cell.polygon = cell.points.map(p => [p.x, p.y]);
+        cell.selected = false;
+    }
+
+}
+
+function allPointOfTheTriangle(width, height, margin) {
+
+    const yOffsetGlobal = -height*0.07;
+
+    // reset the cells
+    cells = {};
+
+    const tri = {
+        center: {x: width / 2, y: height / 2},
+    };
+
+    // find the lowest point
+    tri.p2 = {x: width / 2, y: height - margin};
+
+    // find the other two points based on the radius implied by this point
+    const radius = tri.p2.y - tri.center.y;
+    // upper left
+    const angle0 = Math.PI * 0.5 + Math.PI * 2 * (1/3);
+    tri.p0 = {
+        x: Math.cos(angle0) * radius + tri.center.x,
+        y: Math.sin(angle0) * radius + tri.center.y
+    };
+    // upper right
+    const angle1 = Math.PI * 0.5 + Math.PI * 2 * (2/3);
+    tri.p1 = {
+        x: Math.cos(angle1) * radius + tri.center.x,
+        y: Math.sin(angle1) * radius + tri.center.y
+    };
+
+    tri.edge = [[],[],[]]; // TOP, LEFT, RIGHT
+
+    tri.edge[0] = getPointsBetween(tri.p0, tri.p1, 22); // left to right
+    tri.edge[1] = getPointsBetween(tri.p0, tri.p2, 22); // moving down to the bottom from left
+    tri.edge[2] = getPointsBetween(tri.p2, tri.p1, 22); // moving up to the right
+
+    // now find the diamond dimensions
+    const diamond = {
+        width: tri.edge[0][1].x - tri.edge[0][0].x,
+        height: tri.edge[1][2].y - tri.edge[0][1].y,
+    }
+
+    tri.rows = []; // 22 rows, from left to right - 0 has 21 cells, 1 has 20, etc
+
+    for (let row = 0; row < 22; row++) {
+        tri.rows[row] = [];
+
+        const xOffset = tri.edge[0][row].x;
+        const yOffset = tri.edge[0][row].y - diamond.height * 0.5;
+
+        for (let i = 0; i < (22-row); i++) {
+            const x = xOffset + diamond.width * 0.5 * i;
+            const y = yOffset + diamond.height * 0.5 * i;
+
+            const points = [];
+
+            const extra = 0.5;
+
+            if (i > 0) {
+                points.push({x: x + diamond.width * 0.5, y: y - extra}); // TOP
+            }
+
+            points.push({x: x + diamond.width + extra, y: y + diamond.height * 0.5}); // RIGHT
+            points.push({x: x + diamond.width * 0.5, y: y + diamond.height + extra}); // BOTTOM
+            points.push({x: x - extra, y: y + diamond.height * 0.5}); // LEFT
+
+            tri.rows[row].push(points);
+
+            // find the color of this gate
+            const color0 = rows[row].color;
+            const color1 = rows[row + i].color;
+            const mixed = mixHexColors(color0, color1);
+
+            // create and store the cell
+            const cell = {
+                points: points.map(p => {
+                    return {x: p.x, y: p.y + yOffsetGlobal}
+                }),
+                key: `${row}-${i}`,
+                color: mixed
+            };
+            cells[cell.key] = cell;
+        }
+    }
+}
+
+function getPointsBetween(p0, p1, count) {
+    const points = [];
+    const delta = {
+        x: p1.x - p0.x,
+        y: p1.y - p0.y
+    }
+
+    // TOP
+    for (let i = 0; i <= 22; i++) {
+        const percent = i / 22;
+        const point = {
+            x: p0.x + delta.x * percent,
+            y: p0.y + delta.y * percent,
+        }
+
+        points.push(point)
+    }
+
+    return points;
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 const atus = {
     '001': {color: 'fee74d', id: '001', linked: [
@@ -198,6 +346,11 @@ const rows = rowsRainbow;
 const images = {};
 
 async function loadThothImage(key) {
+
+    if (images.hasOwnProperty(key)) {
+        return images[key];
+    }
+
     const filepath = `./thoth-small/${key}.jpg`;
     return new Promise((resolve, reject) => {
         const newImg = new Image();
@@ -205,11 +358,13 @@ async function loadThothImage(key) {
             resolve(newImg);
         }
         newImg.src = filepath;
+
+        images[key] = newImg;
     })
 }
 
 async function loadAtus() {
-    console.log('loading atus');
+    //console.log('loading atus');
     for (let i = 0; i < rows.length; i++) {
         const atu = rows[i];
         const key = `atu${atu.id}`;
@@ -229,43 +384,53 @@ function getDiamondByPoint(x, y) {
     const pt = [x, y];
     for (const key of Object.keys(cells)) {
         const cell = cells[key];
-        if (isPointInPoly(cell.points, pt)) {
+        if (isPointInPoly(cell.polygon, pt)) {
             return cell;
         }
     }
 }
 
+
+
+
+
+
+async function draw(canvas) {
+
+    // get the canvas and init
+    const context = canvas.getContext('2d');
+    context.webkitImageSmoothingEnabled = true;
+
+    //let outerRadius = Math.min(width, height) / 2;
+
+    // clear the whole field
+    const width = canvas.width;
+    const height = canvas.height;
+    context.clearRect(0, 0, width, height);
+
+    // now the actual draw
+
+    // draw the text and circle
+    await drawTriangle(canvas);
+}
+
 async function drawTriangle(canvas) {
 
-    const margin = 20;
     const width = canvas.width;
     const height = canvas.height;
 
     const ctx = canvas.getContext('2d');
 
-    ctx.translate(0, -height*0.05);
+    // fill the background
+    //drawBackground(canvas, {back: '000'});
 
-    drawBackground(canvas, {back: '000'});
-
-    console.log('generating points');
-    const tri = allPointOfTheTriangle(width, height, margin);
-
-    // for mouse
-    cells = {};
-    for (let row = 0; row < rows.length; row++) {
-        for (let cell = 0; cell < tri.rows[row].length; cell++) {
-            const key = `${row}-${cell}`;
-            cells[key] = {
-                key,
-                pointOrig: tri.rows[row][cell],
-                points: tri.rows[row][cell].map(p => [p.x, p.y]),
-                selected: false
-            }
-        }
+    if (selectedKey !== null) {
+        const cellSelected = cells[selectedKey];
+        //drawBackground(canvas, {back: cellSelected.color});
+        document.body.style.backgroundColor = `#${cellSelected.color}`;
     }
 
-    // color the diamonds
-
+    // fill the diamonds
     function fillCell(d) {
         ctx.beginPath();
         ctx.moveTo(d[0].x, d[0].y);
@@ -275,58 +440,18 @@ async function drawTriangle(canvas) {
         ctx.closePath();
         ctx.fill();
     }
-
-
-    // fill the diamonds
-    console.log('filling diamonds');
-    for (let row = 0; row < rows.length; row++) {
-
-        for (let cell = 0; cell < tri.rows[row].length; cell++) {
-            const color0 = rows[row].color;
-            const color1 = rows[cell + row].color;
-            const mixed = mixHexColors(color0, color1);
-
-            ctx.fillStyle = `#${mixed}`;
-
-            fillCell(tri.rows[row][cell]);
-        }
+    //console.log('filling diamonds');
+    for (const cell of Object.values(cells)) {
+        ctx.fillStyle = `#${cell.color}`;
+        fillCell(cell.points);
     }
 
-    // draw the outlines
-    ctx.strokeStyle = '#000';
-    ctx.strokeStyle = "rgba(0,0,0,1)";
-    ctx.lineWidth = width / 1080;
-
-    // the outer triangle
-    ctx.beginPath();
-    ctx.moveTo(tri.p0.x, tri.p0.y);
-    ctx.lineTo(tri.p1.x, tri.p1.y);
-    ctx.lineTo(tri.p2.x, tri.p2.y);
-    ctx.closePath();
-    //ctx.stroke();
-
-    // function drawLine(p0, p1) {
-    //     ctx.beginPath();
-    //     ctx.moveTo(p0.x, p0.y);
-    //     ctx.lineTo(p1.x, p1.y);
-    //     ctx.stroke();
-    // }
-
-    // the inner lines
-    // for (let i = 1; i < 22; i++) {
-    //     const p0 = tri.edge[0][i];
-    //     const p1 = tri.edge[1][i];
-    //     const p2 = tri.edge[2][i];
-    //     drawLine(p0, p1);
-    //     drawLine(p0, p2);
-    // }
-
-
-    // then draw them
-    console.log('drawing atus');
+    // then draw the top row of atus
+    //console.log('drawing atus');
     for (let i = 0; i < rows.length; i++) {
         const atu = rows[i];
-        const cell = tri.rows[i][0];
+        const key = `${i}-0`;
+        const cell = cells[key].points;
         const xMin = Math.min(cell[0].x, cell[1].x, cell[2].x);
         const xMax = Math.max(cell[0].x, cell[1].x, cell[2].x);
         const yBottom = Math.min(cell[0].y, cell[1].y, cell[2].y);
@@ -339,7 +464,7 @@ async function drawTriangle(canvas) {
     }
 
     (() => {
-        console.log('filling diamonds');
+        //console.log('drawing atus in diamonds');
         for (let i = 0; i < rows.length; i++) {
             const atu = rows[i];
 
@@ -366,7 +491,8 @@ async function drawTriangle(canvas) {
                 }
 
                 // now the text:
-                const cell = tri.rows[cellRow][cellCol];
+                const cellKey = `${cellRow}-${cellCol}`;
+                const cell = cells[cellKey].points; //tri.rows[cellRow][cellCol];
 
                 const xMin = Math.min(cell[0].x, cell[1].x, cell[2].x, cell[3].x);
                 const xMax = Math.max(cell[0].x, cell[1].x, cell[2].x, cell[3].x);
@@ -407,13 +533,13 @@ async function drawTriangle(canvas) {
     })();
 
     // draw the section outlines
-    const p1 = tri.rows[0][2][2];
-    const p2 = tri.rows[2][0][0];
-    const p3 = tri.rows[2][19][1];
+    const p1 = cells['0-2'].points[2];
+    const p2 = cells['2-0'].points[0];
+    const p3 = cells['2-19'].points[1];
 
-    const p4 = tri.rows[0][9][2];
-    const p5 = tri.rows[9][0][0];
-    const p6 = tri.rows[10][11][2];
+    const p4 = cells['0-9'].points[2];
+    const p5 = cells['9-0'].points[0];
+    const p6 = cells['10-11'].points[2];
 
     ctx.beginPath()
     ctx.moveTo(p1.x, p1.y);
@@ -422,34 +548,32 @@ async function drawTriangle(canvas) {
     ctx.moveTo(p4.x, p4.y);
     ctx.lineTo(p5.x, p5.y);
     ctx.lineTo(p6.x, p6.y);
-    ctx.lineWidth = (height / 1080) * 6;
+    ctx.lineWidth = (height / 500);
     ctx.strokeStyle = '#FFF';
     ctx.stroke();
 
-    // draw the selected outline
-    if (selectedKey !== null) {
-
-        function outlineCell(d) {
-            ctx.beginPath();
-            ctx.moveTo(d[0].x, d[0].y);
-            for (let i = 1; i < d.length; i++) {
-                ctx.lineTo(d[i].x, d[i].y);
-            }
-            ctx.closePath();
-
-            ctx.lineWidth = (width/height) * 6;
-            ctx.strokeStyle = '#FFF';
-            ctx.stroke();
+    function outlineCell(d, widthMod) {
+        ctx.beginPath();
+        ctx.moveTo(d[0].x, d[0].y);
+        for (let i = 1; i < d.length; i++) {
+            ctx.lineTo(d[i].x, d[i].y);
         }
+        ctx.closePath();
 
-        const cellSelected = cells[selectedKey];
-        outlineCell(cellSelected.pointOrig);
+        ctx.lineWidth = (height / 1000) * widthMod;
+        ctx.strokeStyle = '#FFF';
+        ctx.stroke();
     }
 
-    ctx.restore();
-
-    //console.log('saving to disk');
-    //await exportCanvasToImage(canvas, 'triangle-cmyk-groups');
+    // draw the selected outline
+    if (selectedKey !== null) {
+        const cellSelected = cells[selectedKey];
+        outlineCell(cellSelected.points, 5);
+    }
+    if (mouseOverKey !== null) {
+        const cellSelected = cells[mouseOverKey];
+        outlineCell(cellSelected.points, 1);
+    }
 
 }
 
@@ -507,93 +631,7 @@ function linkedValueToThothKey(value) {
 
 
 
-function allPointOfTheTriangle(width, height, margin) {
 
-    const tri = {
-        center: {x: width / 2, y: height / 2},
-    };
-
-    // find the lowest point
-    tri.p2 = {x: width / 2, y: height - margin};
-
-    // find the other two points based on the radius implied by this point
-    const radius = tri.p2.y - tri.center.y;
-    // upper left
-    const angle0 = Math.PI * 0.5 + Math.PI * 2 * (1/3);
-    tri.p0 = {
-        x: Math.cos(angle0) * radius + tri.center.x,
-        y: Math.sin(angle0) * radius + tri.center.y
-    };
-    // upper right
-    const angle1 = Math.PI * 0.5 + Math.PI * 2 * (2/3);
-    tri.p1 = {
-        x: Math.cos(angle1) * radius + tri.center.x,
-        y: Math.sin(angle1) * radius + tri.center.y
-    };
-
-    tri.edge = [[],[],[]]; // TOP, LEFT, RIGHT
-
-    tri.edge[0] = getPointsBetween(tri.p0, tri.p1, 22); // left to right
-    tri.edge[1] = getPointsBetween(tri.p0, tri.p2, 22); // moving down to the bottom from left
-    tri.edge[2] = getPointsBetween(tri.p2, tri.p1, 22); // moving up to the right
-
-    // now find the diamond dimensions
-    const diamond = {
-        width: tri.edge[0][1].x - tri.edge[0][0].x,
-        height: tri.edge[1][2].y - tri.edge[0][1].y,
-    }
-
-    tri.rows = []; // 22 rows, from left to right - 0 has 21 cells, 1 has 20, etc
-
-    for (let row = 0; row < 22; row++) {
-        tri.rows[row] = [];
-
-        const xOffset = tri.edge[0][row].x;
-        const yOffset = tri.edge[0][row].y - diamond.height * 0.5;
-
-        for (let i = 0; i < (22-row); i++) {
-            const x = xOffset + diamond.width * 0.5 * i;
-            const y = yOffset + diamond.height * 0.5 * i;
-
-            const points = [];
-
-            const extra = 0.5;
-
-            if (i > 0) {
-                points.push({x: x + diamond.width * 0.5, y: y - extra}); // TOP
-            }
-
-            points.push({x: x + diamond.width + extra, y: y + diamond.height * 0.5}); // RIGHT
-            points.push({x: x + diamond.width * 0.5, y: y + diamond.height + extra}); // BOTTOM
-            points.push({x: x - extra, y: y + diamond.height * 0.5}); // LEFT
-
-            tri.rows[row].push(points);
-        }
-    }
-
-    return tri;
-}
-
-function getPointsBetween(p0, p1, count) {
-    const points = [];
-    const delta = {
-        x: p1.x - p0.x,
-        y: p1.y - p0.y
-    }
-
-    // TOP
-    for (let i = 0; i <= 22; i++) {
-        const percent = i / 22;
-        const point = {
-            x: p0.x + delta.x * percent,
-            y: p0.y + delta.y * percent,
-        }
-
-        points.push(point)
-    }
-
-    return points;
-}
 
 function drawBackground(canvas, color) {
     let ctx = canvas.getContext('2d');
