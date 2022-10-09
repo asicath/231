@@ -93,9 +93,20 @@ function onCellSelect(cell) {
     selectedKey = cell.key;
     drawFrame();
 
-    $('#right').html(cell.key)
+    $('#right').html(cell.key);
+    loadGateContext(cell.key);
 }
 
+function loadGateContext(key) {
+    var xhr= new XMLHttpRequest();
+    xhr.open('GET', `gates/${key}.html`, true);
+    xhr.onreadystatechange= function() {
+        if (this.readyState !== 4) return;
+        if (this.status !== 200) return; // or whatever error handling you want
+        document.getElementById('right').innerHTML = this.responseText;
+    };
+    xhr.send();
+}
 
 
 // *******************************************
