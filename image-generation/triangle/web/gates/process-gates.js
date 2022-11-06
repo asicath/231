@@ -1,43 +1,83 @@
 const fs = require('fs');
-const cards = require('./cards');
-
 const gates = require('./gates');
 
-gates.forEach(gate => {
-    const lines = [];
+main();
 
-    // title
+function main() {
+    gates.forEach(gate => {
+        const lines = [];
+
+        // title
+        processTitle(gate, lines);
+
+        // thoth data
+        processThoth(gate, lines);
+
+        processCircular1Wirth(gate, lines);
+
+        // write it out
+        lines.push('');
+        fs.writeFileSync(gate.htmlFile, lines.join('\n'));
+    });
+}
+
+function processTitle(gate, lines) {
     const titleData = fs.readFileSync(gate.titleFile).toString().replace(/\r/g, '').split('\n').filter(line => line.length > 0);
-    lines.push(`<h1>${titleData[0]}</h1>`);
-    lines.push(`<p>${titleData[1]}</p>`);
+    lines.push(`<h1 style="margin-bottom: 0;">${titleData[0]}</h1>`);
+    lines.push(`<p style="margin-top: 0;">${titleData[1]}</p>`);
+}
 
-    // thoth data
+function processThoth(gate, lines) {
     const thoth = fs.readFileSync(gate.thothFile).toString().replace(/\r/g, '').split('\n');
-    if (thoth.length > 1) {
+    if (thoth.length <= 1) return;
 
-        lines.push(`<h2>${thoth[0]}</h2>`);
-        lines.push(`<h3>${thoth[2]}</h3>`);
+    lines.push(`<h2 style="margin-bottom: 0;">${thoth[0]}</h2>`);
+    lines.push(`<h3 style="margin-top: 0;">${thoth[2]}</h3>`);
 
-        lines.push(`<div style="text-align: left;">`);
-        for (let i = 6; i < thoth.length; i++) {
-            let paragraph = '';
-            while (thoth[i].length > 0 && i < thoth.length) {
-                if (paragraph.length > 0) paragraph += ' ';
-                paragraph += thoth[i];
-                i++
-            }
-            lines.push(`<p>${paragraph}</p>`);
+    lines.push(`<div style="text-align: left;">`);
+    for (let i = 6; i < thoth.length; i++) {
+        let paragraph = '';
+        while (thoth[i].length > 0 && i < thoth.length) {
+            if (paragraph.length > 0) paragraph += ' ';
+            paragraph += thoth[i];
+            i++
         }
-        lines.push(`</div>`);
-
-        lines.push(`<img src="thoth-full/${thoth[4]}" style="height: 300px; text-align: center;" align="center">`);
-
+        lines.push(`<p>${paragraph}</p>`);
     }
+    lines.push(`</div>`);
 
-    // write it out
-    lines.push('');
-    fs.writeFileSync(gate.htmlFile, lines.join('\n'));
-});
+    lines.push(`<img src="thoth-full/${thoth[4]}" style="height: 300px; text-align: center;" align="center">`);
+}
+
+function processCircular1Wirth(gate, lines) {
+    if (!fs.existsSync(gate.circular1Wirth)) return;
+
+    const data = fs.readFileSync(gate.circular1Wirth).toString().replace(/\r/g, '').split('\n');
+    if (data.length <= 1) return;
+
+    lines.push(`<div>`);
+
+    lines.push(`<div style="margin-top: 1em;">circular-1</div>`);
+    lines.push(`<h2 style="margin-top: 0;">${data[0]}</h2>`);
+
+    lines.push(`<div style="display: inline-block; width: 49%;height:auto;vertical-align: top;">`);
+    lines.push(`<span style="font-style: italic">${data[2]}</span><br>`);
+    let i = 3;
+    while (data[i].length > 0) {
+        lines.push(`${data[i++]}<br>`);
+    }
+    i++;
+    lines.push(`</div>`);
+
+    lines.push(`<div style="display: inline-block; width: 49%;height:auto;vertical-align: top;">`);
+    lines.push(`<span style="font-style: italic">${data[i++]}</span><br>`);
+    while (data[i].length > 0) {
+        lines.push(`${data[i++]}<br>`);
+    }
+    lines.push(`</div>`);
+
+    lines.push(`</div>`);
+}
 
 
 /*
