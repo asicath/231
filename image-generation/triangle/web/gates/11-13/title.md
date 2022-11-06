@@ -1,0 +1,3 @@
+Lust + Death
+
+Leo + Scorpio
