@@ -93,13 +93,13 @@ function onCellSelect(cell) {
     selectedKey = cell.key;
     drawFrame();
 
-    $('#right').html(cell.key);
-    loadGateContext(cell.key);
+    $('#right').html(cell.clickKey);
+    loadGateContext(cell.clickKey);
 }
 
 function loadGateContext(key) {
     var xhr= new XMLHttpRequest();
-    xhr.open('GET', `gates/${key}.html`, true);
+    xhr.open('GET', `gates/${key}/index.html`, true);
     xhr.onreadystatechange= function() {
         if (this.readyState !== 4) return;
         if (this.status !== 200) return; // or whatever error handling you want
@@ -192,9 +192,12 @@ function allPointOfTheTriangle(width, height, margin) {
             tri.rows[row].push(points);
 
             // find the color of this gate
-            const color0 = rows[row].color;
-            const color1 = rows[row + i].color;
-            const mixed = mixHexColors(color0, color1);
+            const card0 = rows[row];
+            const card1 = rows[row + i];
+            const mixed = mixHexColors(card0.color, card1.color);
+
+            const numMin = Math.min(card0.number, card1.number);
+            const numMax = Math.max(card0.number, card1.number);
 
             // create and store the cell
             const cell = {
@@ -202,6 +205,7 @@ function allPointOfTheTriangle(width, height, margin) {
                     return {x: p.x, y: p.y + yOffsetGlobal}
                 }),
                 key: `${row}-${i}`,
+                clickKey: `${numMin}-${numMax}`,
                 color: mixed
             };
             cells[cell.key] = cell;
@@ -243,7 +247,7 @@ function getPointsBetween(p0, p1, count) {
 
 
 const atus = {
-    '001': {color: 'fee74d', id: '001', linked: [
+    '001': {number: "0", color: 'fee74d', id: '001', linked: [
             {id:'003', value:['2S','7S']},
             {id:'400', value:'3S'},
             {id:'020', value:['4S','8S']},
@@ -259,18 +263,18 @@ const atus = {
 
             {id:'040', value:['PC', 'QS']},
         ]},
-    '002': {color: 'FEDD00', id: '002'},
-    '003': {color: '0085ca', id: '003'},
-    '004': {color: '00A550', id: '004'},
-    '005': {color: 'ed2800', id: '005', linked: [{id:'080', value:'2W'}, {id:'200', value:'3W'}, {id:'004', value:'4W'}]},
-    '006': {color: 'FF4E00', id: '006', linked: [{id:'002', value:'5D'}, {id:'003', value:'6D'}, {id:'400', value:'7D'}]},
-    '007': {color: 'FF6D00', id: '007', linked: [{id:'020', value:'8S'}, {id:'080', value:'9S'}, {id:'200', value:'10S'}]},
-    '008': {color: 'ffb734', id: '008', linked: [{id:'004', value:'2C'}, {id:'002', value:'3C'}, {id:'003', value:'4C'}]},
-    '009': {color: 'E5D708', id: '009', linked: [{id:'400', value:'5W'}, {id:'020', value:'6W'}, {id:'080', value:'7W'}]},
-    '010': {color: '59B934', id: '010', linked: [{id:'200', value:'8D'}, {id:'004', value:'9D'}, {id:'002', value:'10D'}]},
-    '020': {color: '8C15C4', id: '020'},
-    '030': {color: '00A550', id: '030', linked: [{id:'003', value:'2S'}, {id:'400', value:'3S'}, {id:'020', value:'4S'}]},
-    '040': {color: '0246bc', id: '040', linked: [
+    '002': {number: "1", color: 'FEDD00', id: '002'},
+    '003': {number: "2", color: '0085ca', id: '003'},
+    '004': {number: "3", color: '00A550', id: '004'},
+    '005': {number: "4", color: 'ed2800', id: '005', linked: [{id:'080', value:'2W'}, {id:'200', value:'3W'}, {id:'004', value:'4W'}]},
+    '006': {number: "5", color: 'FF4E00', id: '006', linked: [{id:'002', value:'5D'}, {id:'003', value:'6D'}, {id:'400', value:'7D'}]},
+    '007': {number: "6", color: 'FF6D00', id: '007', linked: [{id:'020', value:'8S'}, {id:'080', value:'9S'}, {id:'200', value:'10S'}]},
+    '008': {number: "7", color: 'ffb734', id: '008', linked: [{id:'004', value:'2C'}, {id:'002', value:'3C'}, {id:'003', value:'4C'}]},
+    '009': {number: "11", color: 'E5D708', id: '009', linked: [{id:'400', value:'5W'}, {id:'020', value:'6W'}, {id:'080', value:'7W'}]},
+    '010': {number: "9", color: '59B934', id: '010', linked: [{id:'200', value:'8D'}, {id:'004', value:'9D'}, {id:'002', value:'10D'}]},
+    '020': {number: "10", color: '8C15C4', id: '020'},
+    '030': {number: "8", color: '00A550', id: '030', linked: [{id:'003', value:'2S'}, {id:'400', value:'3S'}, {id:'020', value:'4S'}]},
+    '040': {number: "12", color: '0246bc', id: '040', linked: [
             {id:'004', value:['2C','7C']},
             {id:'002', value:'3C'},
             {id:'003', value:'4C'},
@@ -284,14 +288,14 @@ const atus = {
             {id:'050', value:['5C', '6C', '7C']},
             {id:'100', value:['8C', '9C', '10C']}
         ]},
-    '050': {color: '00958d', id: '050', linked: [{id:'080', value:'5C'}, {id:'200', value:'6C'}, {id:'004', value:'7C'}]},
-    '060': {color: '0085ca', id: '060', linked: [{id:'002', value:'8W'}, {id:'003', value:'9W'}, {id:'400', value:'10W'}]},
-    '070': {color: '001489', id: '070', linked: [{id:'020', value:'2D'}, {id:'080', value:'3D'}, {id:'200', value:'4D'}]},
-    '080': {color: 'ed2800', id: '080'},
-    '090': {color: '5c00cc', id: '090', linked: [{id:'004', value:'5S'}, {id:'002', value:'6S'}, {id:'003', value:'7S'}]},
-    '100': {color: 'AE0E36', id: '100', linked: [{id:'400', value:'8C'}, {id:'020', value:'9C'}, {id:'080', value:'10C'}]},
-    '200': {color: 'FF6D00', id: '200'},
-    '300': {color: 'ff3300', id: '300', linked: [
+    '050': {number: "13", color: '00958d', id: '050', linked: [{id:'080', value:'5C'}, {id:'200', value:'6C'}, {id:'004', value:'7C'}]},
+    '060': {number: "14", color: '0085ca', id: '060', linked: [{id:'002', value:'8W'}, {id:'003', value:'9W'}, {id:'400', value:'10W'}]},
+    '070': {number: "15", color: '001489', id: '070', linked: [{id:'020', value:'2D'}, {id:'080', value:'3D'}, {id:'200', value:'4D'}]},
+    '080': {number: "16", color: 'ed2800', id: '080'},
+    '090': {number: "17", color: '5c00cc', id: '090', linked: [{id:'004', value:'5S'}, {id:'002', value:'6S'}, {id:'003', value:'7S'}]},
+    '100': {number: "18", color: 'AE0E36', id: '100', linked: [{id:'400', value:'8C'}, {id:'020', value:'9C'}, {id:'080', value:'10C'}]},
+    '200': {number: "19", color: 'FF6D00', id: '200'},
+    '300': {number: "20", color: 'ff3300', id: '300', linked: [
             // planets
             {id:'080', value:['2W', '7W']},
             {id:'200', value:'3W'},
@@ -310,7 +314,7 @@ const atus = {
             {id:'001', value:['KS', 'PW']},
             {id:'040', value:['KC', 'QW']}
         ]},
-    '400': {color: '001489', id: '400'}
+    '400': {number: "21", color: '001489', id: '400'}
 }
 
 const rowsGroups = [
