@@ -27,20 +27,37 @@
                 height: 100%;
                 margin: 0;
                 padding: 0;
+                overflow-y:hidden;
+                overflow-x:hidden;
             }
             body {
                 text-align: center;
                 background-color: #111111;
+                font-size: 18px;
             }
             #left {
                 height: 100%;
-                width: 66%;
+                width: 60%;
                 float: left;
             }
             #right {
                 height: 100%;
-                width: 33%;
+                width: 35%;
+                padding-right: 5%;
                 float: right;
+                overflow-y: scroll;
+            }
+            .text {
+                border-radius: 10px;
+                padding: 10px 10px 0px 10px;
+                border: black 2px solid;
+                background-color: white;
+            }
+            .smallText {
+                text-align: left;
+                font-size: 0.8em;
+                margin-left: 10px;
+                margin-bottom: 1px;
             }
         </style>
     </head>

@@ -31,7 +31,13 @@ function processThoth(gate, lines) {
     const thoth = fs.readFileSync(gate.thothFile).toString().replace(/\r/g, '').split('\n');
     if (thoth.length <= 1) return;
 
-    lines.push(`<h2 style="margin-bottom: 0;">${thoth[0]}</h2>`);
+    lines.push(`<img class="card" src="thoth-full/${thoth[4]}" style="height: 300px; text-align: center;" align="center">`);
+
+    lines.push(`<div class="smallText">Book of Thoth, Crowley</div>`);
+
+    lines.push(`<div class="text">`);
+
+    lines.push(`<h2 style="margin-bottom: 0;margin-top: 0">${thoth[0]}</h2>`);
     lines.push(`<h3 style="margin-top: 0;">${thoth[2]}</h3>`);
 
     lines.push(`<div style="text-align: left;">`);
@@ -46,7 +52,9 @@ function processThoth(gate, lines) {
     }
     lines.push(`</div>`);
 
-    lines.push(`<img src="thoth-full/${thoth[4]}" style="height: 300px; text-align: center;" align="center">`);
+    lines.push(`</div>`);
+
+
 }
 
 function processCircular1Wirth(gate, lines) {
@@ -55,26 +63,26 @@ function processCircular1Wirth(gate, lines) {
     const data = fs.readFileSync(gate.circular1Wirth).toString().replace(/\r/g, '').split('\n');
     if (data.length <= 1) return;
 
-    lines.push(`<div>`);
+    lines.push(`<div class="text">`);
 
-    lines.push(`<div style="margin-top: 1em;">circular-1</div>`);
+    lines.push(`<div style="margin-top: 0;">circular-1</div>`);
     lines.push(`<h2 style="margin-top: 0;">${data[0]}</h2>`);
 
     lines.push(`<div style="display: inline-block; width: 49%;height:auto;vertical-align: top;">`);
-    lines.push(`<span style="font-style: italic">${data[2]}</span><br>`);
+    lines.push(`<p><span style="font-style: italic">${data[2]}</span><br>`);
     let i = 3;
     while (data[i].length > 0) {
         lines.push(`${data[i++]}<br>`);
     }
     i++;
-    lines.push(`</div>`);
+    lines.push(`</p></div>`);
 
     lines.push(`<div style="display: inline-block; width: 49%;height:auto;vertical-align: top;">`);
-    lines.push(`<span style="font-style: italic">${data[i++]}</span><br>`);
+    lines.push(`<p><span style="font-style: italic">${data[i++]}</span><br>`);
     while (data[i].length > 0) {
         lines.push(`${data[i++]}<br>`);
     }
-    lines.push(`</div>`);
+    lines.push(`</p></div>`);
 
     lines.push(`</div>`);
 }

@@ -95,16 +95,22 @@ function onCellSelect(cell) {
 
     setUrlKey(cell.clickKey);
     $('#right').html(cell.clickKey);
-    loadGateContext(cell.clickKey);
+    loadGateContext(cell.clickKey, cell.textBackgroundColor, cell.borderColor);
 }
 
-function loadGateContext(key) {
+function loadGateContext(key, textBackgroundColor, borderColor) {
     var xhr= new XMLHttpRequest();
     xhr.open('GET', `gates/${key}/index.html`, true);
-    xhr.onreadystatechange= function() {
+    xhr.onreadystatechange = function() {
         if (this.readyState !== 4) return;
         if (this.status !== 200) return; // or whatever error handling you want
         document.getElementById('right').innerHTML = this.responseText;
+
+        $('.text').css('background-color', `#${textBackgroundColor}`);
+        $('.text').css('border-color', `#${borderColor}`);
+
+        $('.smallText').css('color', `#${borderColor}`);
+
     };
     xhr.send();
 }
@@ -196,6 +202,8 @@ function allPointOfTheTriangle(width, height, margin) {
             const card0 = rows[row];
             const card1 = rows[row + i];
             const mixed = mixHexColors(card0.color, card1.color);
+            const textBackgroundColor = mixHexColors(mixed, 'FFFFFF');
+            const borderColor = mixHexColors(mixed, '000000');
 
             const numMin = Math.min(card0.number, card1.number);
             const numMax = Math.max(card0.number, card1.number);
@@ -207,7 +215,9 @@ function allPointOfTheTriangle(width, height, margin) {
                 }),
                 key: `${row}-${i}`,
                 clickKey: `${numMin}-${numMax}`,
-                color: mixed
+                color: mixed,
+                textBackgroundColor,
+                borderColor
             };
             cells[cell.key] = cell;
         }
@@ -564,8 +574,8 @@ async function drawTriangle(canvas) {
     ctx.moveTo(p4.x, p4.y);
     ctx.lineTo(p5.x, p5.y);
     ctx.lineTo(p6.x, p6.y);
-    ctx.lineWidth = (height / 500);
-    ctx.strokeStyle = '#FFF';
+    ctx.lineWidth = (height / 1000);
+    ctx.strokeStyle = '#fff';
     ctx.stroke();
 
     function outlineCell(d, widthMod) {
