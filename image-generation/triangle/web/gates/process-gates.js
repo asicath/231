@@ -78,25 +78,3 @@ function processCircular1Wirth(gate, lines) {
 
     lines.push(`</div>`);
 }
-
-
-/*
-<div>
-    <div>circular-1</div>
-    <h2>Spiritual Illumination</h2>
-    <div style="display: inline-block; width: 49%;height:auto;">
-        <span style="font-style: italic">Sol</span><br>
-        Universal Light.<br>
-        The Eternal Word.<br>
-        Expansion, illumination which gives genius. Serenity, fine ares poetry, idealism.<br>
-    </div>
-    <div style="display: inline-block; width: 49%;height:auto;">
-        <span style="font-style: italic">The Emperor</span><br>
-        Inner Light<br>
-        The word made flesh.<br>
-        Concentration of thought and will. Energy calculation, deduction, positivism.<br>
-    </div>
-</div>
-
-
- */

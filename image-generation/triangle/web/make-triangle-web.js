@@ -93,6 +93,7 @@ function onCellSelect(cell) {
     selectedKey = cell.key;
     drawFrame();
 
+    setUrlKey(cell.clickKey);
     $('#right').html(cell.clickKey);
     loadGateContext(cell.clickKey);
 }
@@ -760,4 +761,13 @@ function mergeSingle(a, b, percent)
     let d = b - a;
     const value = Math.round(a + d * percent);
     return value;
+}
+
+function setUrlKey(key) {
+    if ('URLSearchParams' in window) {
+        const searchParams = new URLSearchParams(window.location.search)
+        searchParams.set("key", key);
+        const newRelativePathQuery = window.location.pathname + '?' + searchParams.toString();
+        history.pushState(null, '', newRelativePathQuery);
+    }
 }
