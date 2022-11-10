@@ -53,8 +53,6 @@ function processThoth(gate, lines) {
     lines.push(`</div>`);
 
     lines.push(`</div>`);
-
-
 }
 
 function processCircular1Wirth(gate, lines) {
@@ -62,10 +60,10 @@ function processCircular1Wirth(gate, lines) {
 
     const data = fs.readFileSync(gate.circular1Wirth).toString().replace(/\r/g, '').split('\n');
     if (data.length <= 1) return;
+    lines.push(`<div class="smallText">Oswald Wirth [circular-1]</div>`);
 
     lines.push(`<div class="text">`);
 
-    lines.push(`<div style="margin-top: 0;">circular-1</div>`);
     lines.push(`<h2 style="margin-top: 0;">${data[0]}</h2>`);
 
     lines.push(`<div style="display: inline-block; width: 49%;height:auto;vertical-align: top;">`);
