@@ -1,7 +1,7 @@
 const { createCanvas, loadImage } = require('canvas');
 const {paths, cards} = require('../data');
 const {applyMask, getColorField} = require('../mask');
-const {mixHexColors} = require('./color-mix');
+const {mixHexColors, halfBrightness} = require('./color-mix');
 
 async function exportCanvasToImage(canvas, name) {
     return new Promise((resolve, reject) => {
@@ -484,3 +484,4 @@ function drawBackground(canvas, color) {
     ctx.fillStyle = "#" + color.back;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 }
+
