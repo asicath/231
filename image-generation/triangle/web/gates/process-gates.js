@@ -4,7 +4,13 @@ const gates = require('./gates');
 main();
 
 function main() {
+    const meta = {};
+
     gates.forEach(gate => {
+
+        // init the meta
+        const m = meta[gate.key] = {extraCount:0};
+
         const lines = [];
 
         // title
@@ -13,12 +19,14 @@ function main() {
         // thoth data
         processThoth(gate, lines);
 
-        processCircular1Wirth(gate, lines);
+        processCircular1Wirth(gate, lines, m);
 
         // write it out
         lines.push('');
         fs.writeFileSync(gate.htmlFile, lines.join('\n'));
     });
+
+    fs.writeFileSync('./gate-data.json', JSON.stringify(meta, null, 2));
 }
 
 function processTitle(gate, lines) {
@@ -55,8 +63,11 @@ function processThoth(gate, lines) {
     lines.push(`</div>`);
 }
 
-function processCircular1Wirth(gate, lines) {
+function processCircular1Wirth(gate, lines, meta) {
     if (!fs.existsSync(gate.circular1Wirth)) return;
+
+    // store the meta
+    meta.extraCount++;
 
     const data = fs.readFileSync(gate.circular1Wirth).toString().replace(/\r/g, '').split('\n');
     if (data.length <= 1) return;

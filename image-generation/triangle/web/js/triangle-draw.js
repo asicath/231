@@ -1,6 +1,6 @@
 const {rowsRainbow} = require('./data');
 const {initTriangle} = require('./triangle-model');
-
+const gateData = require('../gates/gate-data.json');
 
 let cells = null;
 let selectedKey = null;
@@ -235,10 +235,40 @@ async function drawTriangle(canvas) {
         ctx.closePath();
         ctx.fill();
     }
+
+    // draw the pips to indicate extra content
+    function drawExtraCount(cell, count) {
+
+        // orient
+        const xCenter = cell.points[0].x;
+        const yCenter = cell.points[1].y;
+        const yMax = (yCenter - cell.points[0].y);
+
+        // 1st point
+        const x = xCenter;
+        const y = yCenter - yMax * 0.63;
+
+        ctx.beginPath();
+        ctx.arc(x, y, 2, 0, 2 * Math.PI);
+        ctx.closePath();
+
+        //ctx.fillStyle = '#fff';
+        //ctx.fill();
+
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = '#fff';
+        ctx.stroke();
+    }
+
     //console.log('filling diamonds');
     for (const cell of Object.values(cells)) {
         ctx.fillStyle = `#${cell.color}`;
         fillCell(cell.points);
+
+        const data = gateData[cell.clickKey];
+        if (data && data.extraCount > 0) {
+            drawExtraCount(cell, data.extraCount);
+        }
     }
 
     // then draw the top row of atus

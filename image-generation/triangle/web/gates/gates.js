@@ -7,8 +7,10 @@ for (let l = 0; l < cards.length; l++) {
         const lCard = cards[l];
         const rCard = cards[r];
 
+        const key = `${l}-${r}`;
+
         // make the directory
-        const dir = `./${l}-${r}`;
+        const dir = `./${key}`;
 
         const titleFile = `${dir}/title.md`;
         const thothFile = `${dir}/thoth.md`;
@@ -18,6 +20,8 @@ for (let l = 0; l < cards.length; l++) {
 
         // make the gate
         const gate = {
+            key,
+
             lCard,
             rCard,
             dir,
