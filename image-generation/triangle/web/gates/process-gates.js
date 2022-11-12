@@ -21,6 +21,8 @@ function main() {
 
         processCircular1Wirth(gate, lines, m);
 
+        processRotaCrowley(gate, lines, m);
+
         // write it out
         lines.push('');
         fs.writeFileSync(gate.htmlFile, lines.join('\n'));
@@ -92,6 +94,29 @@ function processCircular1Wirth(gate, lines, meta) {
         lines.push(`${data[i++]}<br>`);
     }
     lines.push(`</p></div>`);
+
+    lines.push(`</div>`);
+}
+
+function processRotaCrowley(gate, lines, meta) {
+    if (!fs.existsSync(gate.rotaCrowley)) return;
+
+    // store the meta
+    meta.extraCount++;
+
+    const data = fs.readFileSync(gate.rotaCrowley).toString().replace(/\r/g, '').split('\n');
+    if (data.length <= 1) return;
+    lines.push(`<div class="smallText">Note by H. Fra. P. on the R.O.T.A. by the Qabalah of the Nine Chambers</div>`);
+
+    lines.push(`<div class="text">`);
+
+    lines.push(`<h2 style="margin-top: 0; margin-bottom: 0;">${data[0]}</h2>`);
+
+    lines.push(`<div style="display: inline-block; width: 49%;height:auto;vertical-align: top;">`);
+    lines.push(`<p><span style="font-size: 2em;">${data[2]}</span><br>${data[3]}</p></div>`);
+
+    lines.push(`<div style="display: inline-block; width: 49%;height:auto;vertical-align: top;">`);
+    lines.push(`<p><span style="font-size: 2em;">${data[5]}</span><br>${data[6]}</p></div>`);
 
     lines.push(`</div>`);
 }
