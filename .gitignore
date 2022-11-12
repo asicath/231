@@ -3,3 +3,7 @@ node_modules/
 image-generation/output/
 click-track/output/
 package-lock.json
+
+image-generation/triangle/web/main.js
+
+image-generation/triangle/web/main.js.LICENSE.txt
