@@ -77,8 +77,13 @@ function setupMouseEvent(canvas) {
         const y = e.clientY - rect.top;
 
         const gate = getDiamondByPoint(x, y);
-        if (gate && gate.key !== selectedKey) {
-            onCellSelect(gate);
+        if (gate) {
+            if (gate.key === selectedKey) {
+                onCellSelect(null);
+            }
+            else {
+                onCellSelect(gate);
+            }
         }
 
     };
@@ -102,12 +107,20 @@ function setupMouseEvent(canvas) {
 }
 
 function onCellSelect(cell) {
-    selectedKey = cell.key;
+
+    selectedKey = cell ? cell.key : null;
     drawFrame();
 
-    setUrlKey(cell.clickKey);
-    $('#right').html(cell.clickKey);
-    loadGateContext(cell.clickKey, cell.textBackgroundColor, cell.borderColor);
+    if (selectedKey === null) {
+        setUrlKey('');
+        $('#right').html('');
+    }
+    else {
+        setUrlKey(cell.clickKey);
+        $('#right').html(cell.clickKey);
+        loadGateContext(cell.clickKey, cell.textBackgroundColor, cell.borderColor);
+    }
+
 }
 
 function setUrlKey(key) {
@@ -253,6 +266,9 @@ async function drawTriangle(canvas) {
         if (cellSelected.clickKey.indexOf('-') !== -1) {
             highCells = cellSelected.clickKey.split('-');
         }
+    }
+    else {
+        document.body.style.backgroundColor = `#000`;
     }
 
     if (cellMouseOver !== null) {
