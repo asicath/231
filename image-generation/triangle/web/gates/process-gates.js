@@ -118,5 +118,11 @@ function processRotaCrowley(gate, lines, meta) {
     lines.push(`<div style="display: inline-block; width: 49%;height:auto;vertical-align: top;">`);
     lines.push(`<p><span style="font-size: 2em;">${data[5]}</span><br>${data[6]}</p></div>`);
 
+    if (data.length >= 10 && data[8].length > 0 && data[9].length > 0) {
+        lines.push(`<div style="display: inline-block; width: 100%;height:auto;vertical-align: top;">`);
+        lines.push(`<p style="margin-bottom: 0; font-style: italic">Other member of triad:</p><p style="margin-top: 0"><span style="font-size: 2em;">${data[8]}</span><br>${data[9]}</p></div>`);
+    }
+
+
     lines.push(`</div>`);
 }
