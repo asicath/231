@@ -83,12 +83,16 @@ function allPointOfTheTriangle(width, height, margin, rows) {
             points.push({x: x - extra, y: y + diamond.height * 0.5}); // LEFT
 
             let pointsHigh = null;
+            let pointsMed = null;
 
             // individual atus, add a tab on top
             if (i === 0) {
                 // copy the normal points until now
                 pointsHigh = [];
                 pointsHigh.push(...points);
+
+                pointsMed = [];
+                pointsMed.push(...points);
 
                 // make the tab points
                 points.push({x: x - extra, y: y - diamond.height * 0.5}); // LEFT top
@@ -97,6 +101,10 @@ function allPointOfTheTriangle(width, height, margin, rows) {
                 // a little higher for high
                 pointsHigh.push({x: x - extra, y: y - diamond.height * 0.75}); // LEFT top
                 pointsHigh.push({x: x + diamond.width + extra, y: y - diamond.height * 0.75}); // RIGHT top
+
+                // a little higher for high
+                pointsMed.push({x: x - extra, y: y - diamond.height * 0.6}); // LEFT top
+                pointsMed.push({x: x + diamond.width + extra, y: y - diamond.height * 0.6}); // RIGHT top
             }
 
             tri.rows[row].push(points);
@@ -117,6 +125,9 @@ function allPointOfTheTriangle(width, height, margin, rows) {
                     return {x: p.x, y: p.y + yOffsetGlobal}
                 }),
                 pointsHigh: pointsHigh ? pointsHigh.map(p => {
+                    return {x: p.x, y: p.y + yOffsetGlobal}
+                }) : null,
+                pointsMed: pointsMed ? pointsMed.map(p => {
                     return {x: p.x, y: p.y + yOffsetGlobal}
                 }) : null,
                 key: `${row}-${i}`,

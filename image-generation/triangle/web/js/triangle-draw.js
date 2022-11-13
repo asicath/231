@@ -243,18 +243,23 @@ async function drawTriangle(canvas) {
 
     const cellSelected = selectedKey !== null ? cells[selectedKey] : null;
     const cellMouseOver = mouseOverKey !== null ? cells[mouseOverKey] : null;
-
-    // draw the selected outline
-    if (cellSelected !== null) {
-        outlineCell(cellSelected.points, 5);
-    }
-    if (cellMouseOver !== null) {
-        outlineCell(cellMouseOver.points, 1);
-    }
+    let highCells = [], medCells = [];
 
     if (cellSelected !== null) {
         //drawBackground(canvas, {back: cellSelected.color});
         document.body.style.backgroundColor = `#${cellSelected.color}`;
+
+        // determine which should be high
+        if (cellSelected.clickKey.indexOf('-') !== -1) {
+            highCells = cellSelected.clickKey.split('-');
+        }
+    }
+
+    if (cellMouseOver !== null) {
+        // determine which should be high
+        if (cellMouseOver.clickKey.indexOf('-') !== -1) {
+            medCells = cellMouseOver.clickKey.split('-');
+        }
     }
 
     // fill the diamonds
@@ -292,11 +297,21 @@ async function drawTriangle(canvas) {
         ctx.stroke();
     }
 
-    //console.log('filling diamonds');
+    // CELL BACKGROUNDS, plus extra content indicator
     for (const cell of Object.values(cells)) {
+        // background
         ctx.fillStyle = `#${cell.color}`;
-        fillCell(cell.points);
+        if (highCells.indexOf(cell.clickKey) !== -1) {
+            fillCell(cell.pointsHigh);
+        }
+        if (medCells.indexOf(cell.clickKey) !== -1) {
+            fillCell(cell.pointsMed);
+        }
+        else {
+            fillCell(cell.points);
+        }
 
+        // extra content indicator
         const data = gateData[cell.clickKey];
         if (data && data.extraCount > 0) {
             drawExtraCount(cell, data.extraCount);
