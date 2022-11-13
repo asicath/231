@@ -73,6 +73,7 @@ function allPointOfTheTriangle(width, height, margin, rows) {
 
             const extra = 0.5;
 
+            // diamonds start with a top point
             if (i > 0) {
                 points.push({x: x + diamond.width * 0.5, y: y - extra}); // TOP
             }
@@ -80,6 +81,12 @@ function allPointOfTheTriangle(width, height, margin, rows) {
             points.push({x: x + diamond.width + extra, y: y + diamond.height * 0.5}); // RIGHT
             points.push({x: x + diamond.width * 0.5, y: y + diamond.height + extra}); // BOTTOM
             points.push({x: x - extra, y: y + diamond.height * 0.5}); // LEFT
+
+            // individual atus, add a tab on top
+            if (i === 0) {
+                points.push({x: x - extra, y: y - diamond.height * 0.5}); // LEFT top
+                points.push({x: x + diamond.width + extra, y: y - diamond.height * 0.5}); // RIGHT top
+            }
 
             tri.rows[row].push(points);
 
