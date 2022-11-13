@@ -106,7 +106,7 @@ function allPointOfTheTriangle(width, height, margin, rows) {
                     return {x: p.x, y: p.y + yOffsetGlobal}
                 }),
                 key: `${row}-${i}`,
-                clickKey: `${numMin}-${numMax}`,
+                clickKey: numMin === numMax ? `${numMin}` : `${numMin}-${numMax}`,
                 color: mixed,
                 textBackgroundColor,
                 borderColor
