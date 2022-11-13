@@ -160,11 +160,33 @@ async function loadThothImage(key) {
 
 async function loadAtus() {
     //console.log('loading atus');
+    const waiting = [];
+
+    // atus
     for (let i = 0; i < rows.length; i++) {
         const atu = rows[i];
         const key = `atu${atu.id}`;
-        atu.image = await loadThothImage(key);
+
+        const p = loadThothImage(key).then(image => {atu.image = image;})
+        waiting.push(p);
     }
+
+    // small cards
+    ['w', 'c', 's', 'd'].forEach(suit => {
+        for (let i = 1; i <= 10; i++) {
+            const num = `${i < 10 ? '0' : ''}${i}`;
+            const key = `${suit}${num}`;
+            const p = loadThothImage(key);
+            waiting.push(p);
+        }
+        ['knight', 'queen', 'prince', 'princess'].forEach(role => {
+            const key = `${suit}-${role}`;
+            const p = loadThothImage(key);
+            waiting.push(p);
+        });
+    });
+
+    await Promise.all(waiting);
 }
 
 function isPointInPoly(poly, pt){
