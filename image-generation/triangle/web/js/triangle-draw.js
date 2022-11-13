@@ -241,8 +241,18 @@ async function drawTriangle(canvas) {
     // fill the background
     //drawBackground(canvas, {back: '000'});
 
-    if (selectedKey !== null) {
-        const cellSelected = cells[selectedKey];
+    const cellSelected = selectedKey !== null ? cells[selectedKey] : null;
+    const cellMouseOver = mouseOverKey !== null ? cells[mouseOverKey] : null;
+
+    // draw the selected outline
+    if (cellSelected !== null) {
+        outlineCell(cellSelected.points, 5);
+    }
+    if (cellMouseOver !== null) {
+        outlineCell(cellMouseOver.points, 1);
+    }
+
+    if (cellSelected !== null) {
         //drawBackground(canvas, {back: cellSelected.color});
         document.body.style.backgroundColor = `#${cellSelected.color}`;
     }
@@ -413,13 +423,11 @@ async function drawTriangle(canvas) {
     }
 
     // draw the selected outline
-    if (selectedKey !== null) {
-        const cellSelected = cells[selectedKey];
+    if (cellSelected !== null) {
         outlineCell(cellSelected.points, 5);
     }
-    if (mouseOverKey !== null) {
-        const cellSelected = cells[mouseOverKey];
-        outlineCell(cellSelected.points, 1);
+    if (cellMouseOver !== null) {
+        outlineCell(cellMouseOver.points, 1);
     }
 
 }
