@@ -5,7 +5,9 @@
   "main": "jquery-1.9.1.min.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "npx webpack --config webpack.config.js --mode development"
+    "build": "npm run build-data && npm run build-web",
+    "build-web": "npx webpack --config webpack.config.js --mode development",
+    "build-data": "cd gates && node process-gates.js"
   },
   "author": "",
   "license": "ISC",
