@@ -23,6 +23,8 @@ function main() {
 
         processRotaCrowley(gate, lines, m);
 
+        processTavCrowley(gate, lines, m);
+
         // write it out
         lines.push('');
         fs.writeFileSync(gate.htmlFile, lines.join('\n'));
@@ -107,6 +109,35 @@ function processRotaCrowley(gate, lines, meta) {
     const data = fs.readFileSync(gate.rotaCrowley).toString().replace(/\r/g, '').split('\n');
     if (data.length <= 1) return;
     lines.push(`<div class="smallText">Note by H. Fra. P. on the R.O.T.A. by the Qabalah of the Nine Chambers</div>`);
+
+    lines.push(`<div class="text">`);
+
+    lines.push(`<h2 style="margin-top: 0; margin-bottom: 0;">${data[0]}</h2>`);
+
+    lines.push(`<div style="display: inline-block; width: 49%;height:auto;vertical-align: top;">`);
+    lines.push(`<p><span style="font-size: 2em;">${data[2]}</span><br>${data[3]}</p></div>`);
+
+    lines.push(`<div style="display: inline-block; width: 49%;height:auto;vertical-align: top;">`);
+    lines.push(`<p><span style="font-size: 2em;">${data[5]}</span><br>${data[6]}</p></div>`);
+
+    if (data.length >= 10 && data[8].length > 0 && data[9].length > 0) {
+        lines.push(`<div style="display: inline-block; width: 100%;height:auto;vertical-align: top;">`);
+        lines.push(`<p style="margin-bottom: 0; font-style: italic">Other member of triad:</p><p style="margin-top: 0"><span style="font-size: 2em;">${data[8]}</span><br>${data[9]}</p></div>`);
+    }
+
+
+    lines.push(`</div>`);
+}
+
+function processTavCrowley(gate, lines, meta) {
+    if (!fs.existsSync(gate.tavCrowley)) return;
+
+    // store the meta
+    meta.extraCount++;
+
+    const data = fs.readFileSync(gate.tavCrowley).toString().replace(/\r/g, '').split('\n');
+    if (data.length <= 1) return;
+    lines.push(`<div class="smallText">LIBER [KABBALÆ TRIVM LITERARUM] ת SVB FIGVRÂ CD</div>`);
 
     lines.push(`<div class="text">`);
 
