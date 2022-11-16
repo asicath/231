@@ -17,6 +17,7 @@ for (let l = 0; l < cards.length; l++) {
         const circular1Wirth = `${dir}/circular-1-wirth.md`;
         const rotaCrowley = `${dir}/rota.md`;
         const tavCrowley = `${dir}/tav.md`;
+        const vitalCrowley = `${dir}/vital.md`;
 
         const htmlFile = `${dir}/index.html`;
 
@@ -33,6 +34,7 @@ for (let l = 0; l < cards.length; l++) {
             circular1Wirth,
             rotaCrowley,
             tavCrowley,
+            vitalCrowley,
 
             htmlFile
         };

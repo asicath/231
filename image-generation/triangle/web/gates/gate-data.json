@@ -1,6 +1,6 @@
 {
   "0-1": {
-    "extraCount": 1
+    "extraCount": 2
   },
   "0-2": {
     "extraCount": 0
@@ -24,7 +24,7 @@
     "extraCount": 0
   },
   "0-9": {
-    "extraCount": 1
+    "extraCount": 2
   },
   "0-10": {
     "extraCount": 0
@@ -84,7 +84,7 @@
     "extraCount": 0
   },
   "1-9": {
-    "extraCount": 0
+    "extraCount": 1
   },
   "1-10": {
     "extraCount": 1
@@ -123,7 +123,7 @@
     "extraCount": 0
   },
   "2-3": {
-    "extraCount": 0
+    "extraCount": 1
   },
   "2-4": {
     "extraCount": 0
@@ -165,7 +165,7 @@
     "extraCount": 1
   },
   "2-17": {
-    "extraCount": 0
+    "extraCount": 1
   },
   "2-18": {
     "extraCount": 0
@@ -219,7 +219,7 @@
     "extraCount": 0
   },
   "3-17": {
-    "extraCount": 1
+    "extraCount": 2
   },
   "3-18": {
     "extraCount": 0
@@ -234,7 +234,7 @@
     "extraCount": 1
   },
   "4-5": {
-    "extraCount": 0
+    "extraCount": 1
   },
   "4-6": {
     "extraCount": 0
@@ -249,7 +249,7 @@
     "extraCount": 0
   },
   "4-10": {
-    "extraCount": 0
+    "extraCount": 1
   },
   "4-11": {
     "extraCount": 0
@@ -297,7 +297,7 @@
     "extraCount": 0
   },
   "5-10": {
-    "extraCount": 0
+    "extraCount": 1
   },
   "5-11": {
     "extraCount": 0
@@ -360,7 +360,7 @@
     "extraCount": 1
   },
   "6-16": {
-    "extraCount": 0
+    "extraCount": 1
   },
   "6-17": {
     "extraCount": 1
@@ -369,7 +369,7 @@
     "extraCount": 0
   },
   "6-19": {
-    "extraCount": 0
+    "extraCount": 1
   },
   "6-20": {
     "extraCount": 1
@@ -378,7 +378,7 @@
     "extraCount": 0
   },
   "7-8": {
-    "extraCount": 0
+    "extraCount": 1
   },
   "7-9": {
     "extraCount": 0
@@ -396,7 +396,7 @@
     "extraCount": 0
   },
   "7-14": {
-    "extraCount": 1
+    "extraCount": 2
   },
   "7-15": {
     "extraCount": 0
@@ -435,7 +435,7 @@
     "extraCount": 0
   },
   "8-14": {
-    "extraCount": 0
+    "extraCount": 1
   },
   "8-15": {
     "extraCount": 1
@@ -528,10 +528,10 @@
     "extraCount": 0
   },
   "11-12": {
-    "extraCount": 1
+    "extraCount": 2
   },
   "11-13": {
-    "extraCount": 0
+    "extraCount": 1
   },
   "11-14": {
     "extraCount": 0
@@ -558,7 +558,7 @@
     "extraCount": 0
   },
   "12-13": {
-    "extraCount": 0
+    "extraCount": 1
   },
   "12-14": {
     "extraCount": 0
@@ -636,13 +636,13 @@
     "extraCount": 0
   },
   "15-18": {
-    "extraCount": 0
+    "extraCount": 1
   },
   "15-19": {
     "extraCount": 0
   },
   "15-20": {
-    "extraCount": 0
+    "extraCount": 1
   },
   "15-21": {
     "extraCount": 0
@@ -654,7 +654,7 @@
     "extraCount": 0
   },
   "16-19": {
-    "extraCount": 0
+    "extraCount": 1
   },
   "16-20": {
     "extraCount": 0
@@ -678,7 +678,7 @@
     "extraCount": 0
   },
   "18-20": {
-    "extraCount": 0
+    "extraCount": 1
   },
   "18-21": {
     "extraCount": 0
