@@ -27,6 +27,8 @@ function main() {
 
         processVitalCrowley(gate, lines, m);
 
+        processTriple1Wirth(gate, lines, m);
+
         // write it out
         lines.push('');
         fs.writeFileSync(gate.htmlFile, lines.join('\n'));
@@ -78,6 +80,39 @@ function processCircular1Wirth(gate, lines, meta) {
     const data = fs.readFileSync(gate.circular1Wirth).toString().replace(/\r/g, '').split('\n');
     if (data.length <= 1) return;
     lines.push(`<div class="smallText">Oswald Wirth [circular-1]</div>`);
+
+    lines.push(`<div class="text">`);
+
+    lines.push(`<h2 style="margin-top: 0;">${data[0]}</h2>`);
+
+    lines.push(`<div style="display: inline-block; width: 49%;height:auto;vertical-align: top;">`);
+    lines.push(`<p><span style="font-style: italic">${data[2]}</span><br>`);
+    let i = 3;
+    while (data[i].length > 0) {
+        lines.push(`${data[i++]}<br>`);
+    }
+    i++;
+    lines.push(`</p></div>`);
+
+    lines.push(`<div style="display: inline-block; width: 49%;height:auto;vertical-align: top;">`);
+    lines.push(`<p><span style="font-style: italic">${data[i++]}</span><br>`);
+    while (data[i].length > 0) {
+        lines.push(`${data[i++]}<br>`);
+    }
+    lines.push(`</p></div>`);
+
+    lines.push(`</div>`);
+}
+
+function processTriple1Wirth(gate, lines, meta) {
+    if (!fs.existsSync(gate.triple1Wirth)) return;
+
+    // store the meta
+    meta.extraCount++;
+
+    const data = fs.readFileSync(gate.triple1Wirth).toString().replace(/\r/g, '').split('\n');
+    if (data.length <= 1) return;
+    lines.push(`<div class="smallText">The Triple Ternaries, Oswald Wirth</div>`);
 
     lines.push(`<div class="text">`);
 

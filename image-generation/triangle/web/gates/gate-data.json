@@ -87,7 +87,7 @@
     "extraCount": 1
   },
   "1-10": {
-    "extraCount": 1
+    "extraCount": 2
   },
   "1-11": {
     "extraCount": 1
@@ -147,7 +147,7 @@
     "extraCount": 0
   },
   "2-11": {
-    "extraCount": 0
+    "extraCount": 1
   },
   "2-12": {
     "extraCount": 0
@@ -204,7 +204,7 @@
     "extraCount": 0
   },
   "3-12": {
-    "extraCount": 1
+    "extraCount": 2
   },
   "3-13": {
     "extraCount": 0
@@ -258,7 +258,7 @@
     "extraCount": 0
   },
   "4-13": {
-    "extraCount": 1
+    "extraCount": 2
   },
   "4-14": {
     "extraCount": 0
@@ -309,7 +309,7 @@
     "extraCount": 0
   },
   "5-14": {
-    "extraCount": 1
+    "extraCount": 2
   },
   "5-15": {
     "extraCount": 0
@@ -357,7 +357,7 @@
     "extraCount": 0
   },
   "6-15": {
-    "extraCount": 1
+    "extraCount": 2
   },
   "6-16": {
     "extraCount": 1
@@ -402,7 +402,7 @@
     "extraCount": 0
   },
   "7-16": {
-    "extraCount": 2
+    "extraCount": 3
   },
   "7-17": {
     "extraCount": 0
@@ -444,7 +444,7 @@
     "extraCount": 0
   },
   "8-17": {
-    "extraCount": 0
+    "extraCount": 1
   },
   "8-18": {
     "extraCount": 1
@@ -483,7 +483,7 @@
     "extraCount": 0
   },
   "9-18": {
-    "extraCount": 1
+    "extraCount": 2
   },
   "9-19": {
     "extraCount": 0
@@ -684,12 +684,12 @@
     "extraCount": 0
   },
   "19-20": {
-    "extraCount": 0
+    "extraCount": 1
   },
   "19-21": {
-    "extraCount": 0
+    "extraCount": 1
   },
   "20-21": {
-    "extraCount": 0
+    "extraCount": 1
   }
 }
