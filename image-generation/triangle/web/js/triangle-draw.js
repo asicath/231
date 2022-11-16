@@ -117,7 +117,7 @@ function onCellSelect(cell) {
     }
     else {
         setUrlKey(cell.clickKey);
-        $('#right').html(cell.clickKey);
+        $('#right').html(`<div>${cell.clickKey}</div>`);
         loadGateContext(cell.clickKey, cell.textBackgroundColor, cell.borderColor);
     }
 
@@ -138,7 +138,7 @@ function loadGateContext(key, textBackgroundColor, borderColor) {
     xhr.onreadystatechange = function() {
         if (this.readyState !== 4) return;
         if (this.status !== 200) return; // or whatever error handling you want
-        document.getElementById('right').innerHTML = this.responseText;
+        document.getElementById('right').innerHTML = `<div class="rightInner">${this.responseText}</div>`;
 
         $('.text').css('background-color', `#${textBackgroundColor}`);
         $('.text').css('border-color', `#${borderColor}`);
