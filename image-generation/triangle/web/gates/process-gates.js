@@ -72,152 +72,127 @@ function processThoth(gate, lines) {
 }
 
 function processCircular1Wirth(gate, lines, meta) {
-    if (!fs.existsSync(gate.circular1Wirth)) return;
-
-    // store the meta
-    meta.extraCount++;
-
-    const data = fs.readFileSync(gate.circular1Wirth).toString().replace(/\r/g, '').split('\n');
-    if (data.length <= 1) return;
-    lines.push(`<div class="smallText">Oswald Wirth [circular-1]</div>`);
-
-    lines.push(`<div class="text">`);
-
-    lines.push(`<h2 style="margin-top: 0;">${data[0]}</h2>`);
-
-    lines.push(`<div style="display: inline-block; width: 49%;height:auto;vertical-align: top;">`);
-    lines.push(`<p><span style="font-style: italic">${data[2]}</span><br>`);
-    let i = 3;
-    while (data[i].length > 0) {
-        lines.push(`${data[i++]}<br>`);
-    }
-    i++;
-    lines.push(`</p></div>`);
-
-    lines.push(`<div style="display: inline-block; width: 49%;height:auto;vertical-align: top;">`);
-    lines.push(`<p><span style="font-style: italic">${data[i++]}</span><br>`);
-    while (data[i].length > 0) {
-        lines.push(`${data[i++]}<br>`);
-    }
-    lines.push(`</p></div>`);
-
-    lines.push(`</div>`);
+    const file = gate.circular1Wirth;
+    const source = 'Oswald Wirth [circular-1]';
+    processFileSplit({gate, lines, meta, file, source, titleStyle: 'font-style: italic'});
 }
 
 function processTriple1Wirth(gate, lines, meta) {
-    if (!fs.existsSync(gate.triple1Wirth)) return;
-
-    // store the meta
-    meta.extraCount++;
-
-    const data = fs.readFileSync(gate.triple1Wirth).toString().replace(/\r/g, '').split('\n');
-    if (data.length <= 1) return;
-    lines.push(`<div class="smallText">The Triple Ternaries, Oswald Wirth</div>`);
-
-    lines.push(`<div class="text">`);
-
-    lines.push(`<h2 style="margin-top: 0;">${data[0]}</h2>`);
-
-    lines.push(`<div style="display: inline-block; width: 49%;height:auto;vertical-align: top;">`);
-    lines.push(`<p><span style="font-style: italic">${data[2]}</span><br>`);
-    let i = 3;
-    while (data[i].length > 0) {
-        lines.push(`${data[i++]}<br>`);
-    }
-    i++;
-    lines.push(`</p></div>`);
-
-    lines.push(`<div style="display: inline-block; width: 49%;height:auto;vertical-align: top;">`);
-    lines.push(`<p><span style="font-style: italic">${data[i++]}</span><br>`);
-    while (data[i].length > 0) {
-        lines.push(`${data[i++]}<br>`);
-    }
-    lines.push(`</p></div>`);
-
-    lines.push(`</div>`);
+    const file = gate.triple1Wirth;
+    const source = 'The Triple Ternaries, Oswald Wirth';
+    processFileSplit({gate, lines, meta, file, source, titleStyle: 'font-style: italic'});
 }
 
 function processRotaCrowley(gate, lines, meta) {
-    if (!fs.existsSync(gate.rotaCrowley)) return;
-
-    // store the meta
-    meta.extraCount++;
-
-    const data = fs.readFileSync(gate.rotaCrowley).toString().replace(/\r/g, '').split('\n');
-    if (data.length <= 1) return;
-    lines.push(`<div class="smallText">Note by H. Fra. P. on the R.O.T.A. by the Qabalah of the Nine Chambers</div>`);
-
-    lines.push(`<div class="text">`);
-
-    lines.push(`<h2 style="margin-top: 0; margin-bottom: 0;">${data[0]}</h2>`);
-
-    lines.push(`<div style="display: inline-block; width: 49%;height:auto;vertical-align: top;">`);
-    lines.push(`<p><span style="font-size: 2em;">${data[2]}</span><br>${data[3]}</p></div>`);
-
-    lines.push(`<div style="display: inline-block; width: 49%;height:auto;vertical-align: top;">`);
-    lines.push(`<p><span style="font-size: 2em;">${data[5]}</span><br>${data[6]}</p></div>`);
-
-    if (data.length >= 10 && data[8].length > 0 && data[9].length > 0) {
-        lines.push(`<div style="display: inline-block; width: 100%;height:auto;vertical-align: top;">`);
-        lines.push(`<p style="margin-bottom: 0; font-style: italic">Other member of triad:</p><p style="margin-top: 0"><span style="font-size: 2em;">${data[8]}</span><br>${data[9]}</p></div>`);
-    }
-
-
-    lines.push(`</div>`);
+    const file = gate.rotaCrowley;
+    const source = 'Note by H. Fra. P. on the R.O.T.A. by the Qabalah of the Nine Chambers';
+    processFileSplit({gate, lines, meta, file, source, titleStyle: 'font-size: 2em;'});
 }
 
 function processTavCrowley(gate, lines, meta) {
-    if (!fs.existsSync(gate.tavCrowley)) return;
-
-    // store the meta
-    meta.extraCount++;
-
-    const data = fs.readFileSync(gate.tavCrowley).toString().replace(/\r/g, '').split('\n');
-    if (data.length <= 1) return;
-    lines.push(`<div class="smallText">LIBER [KABBALÆ TRIVM LITERARUM] ת SVB FIGVRÂ CD</div>`);
-
-    lines.push(`<div class="text">`);
-
-    lines.push(`<h2 style="margin-top: 0; margin-bottom: 0;">${data[0]}</h2>`);
-
-    lines.push(`<div style="display: inline-block; width: 49%;height:auto;vertical-align: top;">`);
-    lines.push(`<p><span style="font-size: 2em;">${data[2]}</span><br>${data[3]}</p></div>`);
-
-    lines.push(`<div style="display: inline-block; width: 49%;height:auto;vertical-align: top;">`);
-    lines.push(`<p><span style="font-size: 2em;">${data[5]}</span><br>${data[6]}</p></div>`);
-
-    if (data.length >= 10 && data[8].length > 0 && data[9].length > 0) {
-        lines.push(`<div style="display: inline-block; width: 100%;height:auto;vertical-align: top;">`);
-        lines.push(`<p style="margin-bottom: 0; font-style: italic">Other member of triad:</p><p style="margin-top: 0"><span style="font-size: 2em;">${data[8]}</span><br>${data[9]}</p></div>`);
-    }
-
-
-    lines.push(`</div>`);
+    const file = gate.tavCrowley;
+    const source = 'LIBER [KABBALÆ TRIVM LITERARUM] ת SVB FIGVRÂ CD';
+    processFileSplit({gate, lines, meta, file, source, titleStyle: 'font-size: 2em;'});
 }
 
 function processVitalCrowley(gate, lines, meta) {
-    if (!fs.existsSync(gate.vitalCrowley)) return;
+    const file = gate.vitalCrowley;
+    const source = 'The Vital Triads, The Book of Thoth, Aleister Crowley';
+    processFileSplit({gate, lines, meta, file, source, titleStyle: 'font-size: 2em;'});
+}
+
+function loadFile(file) {
+    if (!fs.existsSync(file)) return null;
+
+    const data = fs.readFileSync(file).toString().replace(/\r/g, '').split('\n');
+    if (data.length <= 1) return null;
+
+    try {
+
+        // parse the data
+        const title = data[0];
+        // left
+        const leftTitle = data[2];
+        const leftLines = [];
+        let i = 3;
+        while (data[i] && data[i].length > 0) {
+            leftLines.push(data[i++]);
+        }
+        i++;
+        // right
+        const rightTitle = data[i++];
+        const rightLines = [];
+        while (data[i] && data[i].length > 0) {
+            rightLines.push(data[i++]);
+        }
+        i++;
+        // center
+        let centerTitle = null, centerLines = null;
+        if (data[i] && data[i].length > 0) {
+            centerTitle = data[i++];
+            centerLines = [];
+            while (data[i].length > 0) {
+                centerLines.push(data[i++]);
+            }
+            i++;
+        }
+
+        return {
+            title,
+            leftTitle,
+            leftLines,
+            rightTitle,
+            rightLines,
+            centerTitle,
+            centerLines
+        };
+    }
+    catch (err) {
+        console.error(`error loading ${file}`)
+        throw err;
+    }
+
+
+}
+
+function processFileSplit({gate, lines, meta, file, source, titleStyle = ''}) {
+
+    const data = loadFile(file);
+    if (data === null) return;
 
     // store the meta
     meta.extraCount++;
 
-    const data = fs.readFileSync(gate.vitalCrowley).toString().replace(/\r/g, '').split('\n');
-    if (data.length <= 1) return;
-    lines.push(`<div class="smallText">The Vital Triads, The Book of Thoth, Aleister Crowley</div>`);
+    lines.push(`<div class="smallText">${source}</div>`);
 
     lines.push(`<div class="text">`);
+    lines.push(`<h2 style="margin-top: 0; margin-bottom: 0;">${data.title}</h2>`);
 
-    lines.push(`<h2 style="margin-top: 0; margin-bottom: 0;">${data[0]}</h2>`);
-
+    // LEFT
     lines.push(`<div style="display: inline-block; width: 49%;height:auto;vertical-align: top;">`);
-    lines.push(`<p><span style="font-size: 2em;">${data[2]}</span><br>${data[3]}</p></div>`);
+    lines.push(`<p><span style="${titleStyle}">${data.leftTitle}</span><br>`);
+    data.leftLines.forEach(line => {
+        lines.push(`${line}<br>`);
+    });
+    lines.push(`</p></div>`);
 
+    // RIGHT
     lines.push(`<div style="display: inline-block; width: 49%;height:auto;vertical-align: top;">`);
-    lines.push(`<p><span style="font-size: 2em;">${data[5]}</span><br>${data[6]}</p></div>`);
+    lines.push(`<p><span style="${titleStyle}">${data.rightTitle}</span><br>`);
+    data.rightLines.forEach(line => {
+        lines.push(`${line}<br>`);
+    });
+    lines.push(`</p></div>`);
 
-    if (data.length >= 10 && data[8].length > 0 && data[9].length > 0) {
+    // CENTER
+    if (data.centerTitle) {
         lines.push(`<div style="display: inline-block; width: 100%;height:auto;vertical-align: top;">`);
-        lines.push(`<p style="margin-bottom: 0; font-style: italic">Other member of triad:</p><p style="margin-top: 0"><span style="font-size: 2em;">${data[8]}</span><br>${data[9]}</p></div>`);
+        lines.push(`<p style="margin-bottom: 0; font-style: italic">Other member of triad:</p>`);
+        lines.push(`<p style="margin-top: 0"><span style="${titleStyle}">${data.centerTitle}</span><br>`);
+        data.centerLines.forEach(line => {
+            lines.push(`${line}<br>`);
+        });
+        lines.push(`</p></div>`);
     }
 
     lines.push(`</div>`);
