@@ -73,7 +73,7 @@ function processThoth(gate, lines) {
 
 function processCircular1Wirth(gate, lines, meta) {
     const file = gate.circular1Wirth;
-    const source = 'Oswald Wirth [circular-1]';
+    const source = 'The Eleven Couples, Oswald Wirth';
     processFileSplit({gate, lines, meta, file, source, titleStyle: 'font-style: italic'});
 }
 
