@@ -44,7 +44,7 @@ function getSizeHeader(dataLength, bytesPerValue = 2) {
 
     //const soundData = generateSoundData();
     //dataSubChunkStruct.get('data').set(data);
-    dataSizeSubChunkStruct.get('size').set(dataLength*2); // 2 bytes per value
+    dataSizeSubChunkStruct.get('size').set(dataLength * bytesPerValue);
 
     const fileStruct = C.Struct('waveFileSize')
         .field('dataSubChunk', dataSizeSubChunkStruct);
@@ -71,7 +71,7 @@ function addBytesToSizeValue(filename, byteCount) {
     const fd = fs.openSync(filename, "r+");
     const buf = Buffer.alloc(8);
     const bytesRead = fs.readSync(fd, buf, 0, 4, MAINHEADER_LENGTH);
-    const currentSize = B.s32LE.run(buf).result;
+    const currentSize = (B.s32LE.run(buf).result) / 2;
 
     // then construct a new header
     const sizeHeader2 = getSizeHeader(currentSize + byteCount);
