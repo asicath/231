@@ -1,6 +1,31 @@
 const fs = require('fs');
 const gates = require('./gates');
 
+const atuMap = {
+    '00': '001',
+    '01': '002',
+    '02': '003',
+    '03': '004',
+    '04': '005',
+    '05': '006',
+    '06': '007',
+    '07': '008',
+    '08': '030', // swap
+    '09': '010',
+    '10': '020',
+    '11': '009', // swap
+    '12': '040',
+    '13': '050',
+    '14': '060',
+    '15': '070',
+    '16': '080',
+    '17': '090',
+    '18': '100',
+    '19': '200',
+    '20': '300',
+    '21': '400',
+};
+
 main();
 
 function main() {
@@ -18,6 +43,10 @@ function main() {
 
         // thoth data
         processThoth(gate, lines);
+
+        //showAtus(gate, lines);
+
+        processSigilsCompareCrowley(gate, lines, m);
 
         processCircular1Wirth(gate, lines, m);
 
@@ -43,15 +72,31 @@ function processTitle(gate, lines) {
     lines.push(`<p style="margin-top: 0;">${titleData[1]}</p>`);
 }
 
+function showAtus(gate, lines) {
+    const atuLeft = atuMap[gate.lCard.number];
+    const atuRight = atuMap[gate.rCard.number];
+    lines.push(`<div style="display: inline-block; width: 49%;height:auto;vertical-align: top; text-align: center;">`);
+    lines.push(`<img class="card" src="thoth-full/atu${atuLeft}.jpg" style="height: 150px; text-align: center;" align="center">`);
+    lines.push('</div>');
+    lines.push(`<div style="display: inline-block; width: 49%;height:auto;vertical-align: top; text-align: center;">`);
+    lines.push(`<img class="card" src="thoth-full/atu${atuRight}.jpg" style="height: 150px; text-align: center;" align="center">`);
+    lines.push('</div>');
+}
+
 function processThoth(gate, lines) {
     const thoth = fs.readFileSync(gate.thothFile).toString().replace(/\r/g, '').split('\n');
-    if (thoth.length <= 1) return;
+
+    // no small card, just show the two trumps
+    if (thoth.length <= 1) {
+        showAtus(gate, lines);
+        return;
+    }
 
     lines.push(`<img class="card" src="thoth-full/${thoth[4]}" style="height: 300px; text-align: center;" align="center">`);
 
     lines.push(`<div class="smallText">Book of Thoth, Crowley</div>`);
 
-    lines.push(`<div class="text">`);
+    lines.push(`<div class="text" style="margin-bottom: 1em;">`);
 
     lines.push(`<h2 style="margin-bottom: 0;margin-top: 0">${thoth[0]}</h2>`);
     lines.push(`<h3 style="margin-top: 0;">${thoth[2]}</h3>`);
@@ -69,6 +114,8 @@ function processThoth(gate, lines) {
     lines.push(`</div>`);
 
     lines.push(`</div>`);
+
+    showAtus(gate, lines);
 }
 
 function processCircular1Wirth(gate, lines, meta) {
@@ -99,6 +146,12 @@ function processVitalCrowley(gate, lines, meta) {
     const file = gate.vitalCrowley;
     const source = 'The Vital Triads, The Book of Thoth, Aleister Crowley';
     processFileSplit({gate, lines, meta, file, source, titleStyle: 'font-size: 2em;'});
+}
+
+function processSigilsCompareCrowley(gate, lines, meta) {
+    const file = gate.sigilsCrowley;
+    const source = 'Suggested Sigil Comparisons, LIBER CCXXXI, Aleister Crowley';
+    processSigilCompare({gate, lines, meta, file, source});
 }
 
 function loadFile(file) {
@@ -196,4 +249,28 @@ function processFileSplit({gate, lines, meta, file, source, titleStyle = ''}) {
     }
 
     lines.push(`</div>`);
+}
+
+function processSigilCompare({gate, lines, meta, file, source}) {
+
+    const data = loadFile(file);
+    if (data === null) return;
+
+    // store the meta
+    meta.extraCount++;
+
+    lines.push(`<div class="smallText">${source}</div>`);
+
+    lines.push(`<div class="text">`);
+    //lines.push(`<h2 style="margin-top: 0; margin-bottom: 0;">${data.title}</h2>`);
+
+    // LEFT
+    lines.push(`<div style="display: inline-block; width: 49%;height:auto;vertical-align: top;">`);
+    lines.push(`<img style="width: 100%;" src="sigils/${gate.lCard.number}.png" /></div>`);
+
+    // RIGHT
+    lines.push(`<div style="display: inline-block; width: 49%;height:auto;vertical-align: top;">`);
+    lines.push(`<img style="width: 100%;" src="sigils/${gate.rCard.number}.png" /></div>`);
+
+    lines.push('</div>');
 }

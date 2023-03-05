@@ -20,6 +20,35 @@ function drawFrame() {
 
 main();
 
+function getUrlVars()
+{
+    var vars = [], hash;
+    var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+    for(var i = 0; i < hashes.length; i++)
+    {
+        hash = hashes[i].split('=');
+        vars.push(hash[0]);
+        vars[hash[0]] = hash[1];
+    }
+    return vars;
+}
+
+function loadKeyFromQS() {
+    const qs = getUrlVars();
+    if (qs.key) {
+        for (const key of Object.keys(cells)) {
+            const cell = cells[key];
+            if (cell.clickKey === qs.key) {
+                console.log(`loading ${qs.key}`);
+                onCellSelect(cell);
+                return;
+            }
+        }
+        console.log(`no corrseponding gate to ${qs.key}`);
+    }
+    console.log('no key found in QS')
+}
+
 function main() {
     WebFont.load({
         google: {
@@ -27,6 +56,7 @@ function main() {
         },
         active: function () {
             $(document).ready(function () {
+
                 const canvas = $('#seal');
 
                 // setup canvas and events
@@ -42,6 +72,7 @@ function main() {
                 loadAtus()
                     .then(() => {
                         drawFrame();
+                        loadKeyFromQS();
                     });
             });
         }
