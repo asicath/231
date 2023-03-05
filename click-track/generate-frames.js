@@ -35,7 +35,7 @@ function drawBackground(canvas, color) {
 (async () => {
 
     const timing = process.argv[2] || 'short3';
-    const path = process.argv[3] || 'tzaddi';
+    const path = process.argv[3] || 'tav';
 
     const program = new Program(words[path], times[timing]);
     // load the image

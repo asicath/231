@@ -404,7 +404,9 @@ const words = {
     'tav':{
         background: '#001489',
         imgSrc: '400.png',
-        minDuration: 1000 * 4,
+        minDuration: 1000 * 3, // most people probably max out at 4
+        includeClicks: true,
+        clicksPerMeasure: 12,
         customTimes: {
             long: {
                 initialDuration: 1000 * 12
@@ -412,16 +414,24 @@ const words = {
         },
         parts: [
             // Thath'th'thithعthuth-thiⲝ
-            {text:'Tha', count:1.5, audio:'low'},
-            {text:'th', count:1.5, audio:''},
 
-            //{text:'th', count:0.8, audio:''},
+/*
+            // 12 beats
+            {text:'Thath', count:4, audio:'low'},
             {text:"'th'", count:2, audio:'high'},
             {text:'thi', count:1, audio:'low'},
             {text:'thع', count:1, audio:'low'},
             {text:'thuth', count:2, audio:'low'},
-
             {text:'thiⲝ', count:2, audio:'high'}
+*/
+
+            // 16 beats
+            {text:'Thath', count:6, audio:'low'},
+            {text:"'th'", count:2, audio:'high'},
+            {text:'thi', count:1, audio:'low'},
+            {text:'thع', count:1, audio:'low'},
+            {text:'thuth', count:2, audio:'low'},
+            {text:'thiⲝ', count:4, audio:'high'}
         ]
     }
 

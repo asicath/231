@@ -31,25 +31,32 @@ let toneHighConfig = {
         sustainPercent: 0.5
     }
 };
+
+const clickMod = 0.5;
 let toneClick = {
     //synthClick.triggerAttackRelease("C2", 0.001);
     note: notes['C1'],
     envelope: {
-        attack: 0.002,
-        decay: 0.005,
-        sustain: 0.01,
-        release: 0.005,
+        attack: 0.002 * clickMod,
+        decay: 0.005 * clickMod,
+        sustain: 0.01 * clickMod,
+        release: 0.005 * clickMod,
     }
 };
 
-const tones = {
-    //low: generateTone(toneLowConfig),
-    low: readWavAsPercent(path.join(__dirname, '/boom1.wav')),
-    high: readWavAsPercent(path.join(__dirname, '/bop1.wav')),
-    //high: generateTone(toneHighConfig),
-    //high: [0],
+let tones = null; // set to which ever set we are using
+
+const tonesClick = {
+    low: generateTone(toneLowConfig),
+    high: generateTone(toneHighConfig),
     click: generateTone(toneClick, 0.2)
 };
+
+const tonesRealistic = {
+    low: readWavAsPercent(path.join(__dirname, '/boom1.wav')),
+    high: readWavAsPercent(path.join(__dirname, '/bop1.wav')),
+    click: []
+}
 
 function readWavAsPercent(filename, amp = 0.5) {
     const values = readWavFile(filename);
@@ -64,23 +71,22 @@ function readWavAsPercent(filename, amp = 0.5) {
 }
 
 (async () => {
-    const timing = 'long';
-    const path = 'kaph';
+    const timing = 'short3';
+    const path = 'tav';
+    const toneSet = 'realistic';
 
+    // create the file path
     const filepath = `./output/${path}`;
     const filename = `${filepath}/${path}-${timing}.wav`;
-
-    //var dir = __dirname + '/upload';
     if (!fs.existsSync(filepath)) {
         fs.mkdirSync(filepath);
     }
 
     const word = words[path];
-    const time = times[timing];// minDuration
-    const totalParts = word.parts.reduce((total, value) => {
-        return total + value.count;
-    }, 0);
+    const time = times[timing]; // minDuration
+    tones = toneSet === 'realistic' ? tonesRealistic : tonesClick;
 
+    // override the min duration
     word.minDuration = 4000;
 
     // create an empty wav
@@ -100,7 +106,7 @@ function readWavAsPercent(filename, amp = 0.5) {
         const buffer = createSilence({sampleRate, duration: measure.duration + measureBuffer});
 
         addTones(measure, buffer);
-        //addClicks(measure, buffer);
+        addClicks(measure, buffer);
 
         // trim to just the current measure
         const samplesInMeasure = measure.duration * 48;

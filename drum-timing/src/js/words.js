@@ -399,9 +399,7 @@ const words = {
         parts: [
             // Thath'th'thithعthuth-thiⲝ
             {text:'Tha', count:1.5, audio:'low'},
-            {text:'th', count:1.5, audio:''},
-
-            //{text:'th', count:0.8, audio:''},
+            {text:'th', count:2.5, audio:''},
             {text:"'th'", count:2, audio:'high'},
             {text:'thi', count:1, audio:'low'},
             {text:'thع', count:1, audio:'low'},
