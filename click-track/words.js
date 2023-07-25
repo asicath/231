@@ -368,24 +368,22 @@ const words = {
     'resh': {
         //`Ra-a-gi o selah lad na i ma wa-iⲝ`
         background: '#FF6D00',
-        imgSrc: '200.png',
+        imgSrc: '200-color.png',
         minDuration: 1000*4,
         parts: [
-            {text:'Ra', count:1.95, audio:'high'},
-            {text:'a', count:3.64, audio: 'high'},
-            {text:'gi', count:1.90, audio: 'high'},
-            {text:'os', count:5.19, audio: 'high'},
+            {text:'Ra', count:2, audio:'high'},
+            {text:'a', count:3.59, audio: 'high'},
+            {text:'gi', count:2, audio: 'high'},
+            {text:'os', count:5.09, audio: 'high'},
+            {text:'el', count:5.66, audio:'low'},
+            {text:'ah', count:5.66, audio: 'low'},
 
-            {text:'el', count:5.32, audio:'low'},
-            {text:'ah', count:5.71, audio: 'low'},
-
-            {text:'lad', count:3.42, audio:'high'},
+            {text:'lad', count:3.17, audio:'high'},
             {text:'na', count:2.16, audio: 'high'},
             {text:'i', count:5.24, audio: 'low'},
-
-            {text:'ma', count:3.07, audio:'high'},
-            {text:'wa', count:2.29, audio: 'high'},
-            {text:'iⲝ', count:8.09, audio: 'low'}
+            {text:'ma', count:3.17, audio:'high'},
+            {text:'wa', count:2.16, audio: 'high'},
+            {text:'iⲝ', count:8.10, audio: 'low'}
         ]
     },
     'shin': {

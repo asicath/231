@@ -174,12 +174,17 @@ let maxSize = {};
 
 function drawNameCircle(canvas, ctx, parts) {
 
+    const measurePercent = state.timer.linePercent;
+
     // calc center
-    let center = {x: canvas.width / 2, y: canvas.height / 2};
+    const center = {x: canvas.width / 2, y: canvas.height / 2};
 
     // calc radius
-    let radius = {
-        max: canvas.height / 2
+    const radius = {
+        max: canvas.height / 2,
+        text: '#FEDD00',
+        fore: '#FFA500',
+        back: '#FF6D00'
     };
 
     // find the top and bottom of text draw area
@@ -188,57 +193,74 @@ function drawNameCircle(canvas, ctx, parts) {
     let innerCircleWidth = 6;
     radius.innerCircle = radius.textBottom - innerCircleWidth;
 
+    fillCircle({ctx, center, radius});
+
     // draw the image
-    (() => {
-        ctx.save();
-        ctx.translate(center.x, center.y);
+    drawSigil({ctx, center, radius});
 
-        // max size should be innerCircle / 2
-        //let imgRadius = state.img.height / 2;
-        let imgRadius = Math.sqrt(Math.pow(state.img.width, 2) + Math.pow(state.img.height, 2)) / 2;
+    // draw the pointer
+    drawMovingPointer({ctx, center, radius, measurePercent});
 
-        let imgScale = (radius.textBottom) / imgRadius;
-        imgScale *= 0.5;
-        let scaledWidth = state.img.width*imgScale;
-        let scaledHeight = state.img.height*imgScale;
+    // draw the letters
+    drawWordParts({ctx, center, radius, parts});
 
-        ctx.drawImage(state.img,
-            0,0,state.img.width,state.img.height,
-            -scaledWidth / 2, -scaledHeight / 2, scaledWidth, scaledHeight);
-        ctx.restore();
-    })();
+    // draw the circles
+    drawCircles({ctx, center, radius});
 
-    // draw the line
-    (() => {
-        ctx.save();
-        ctx.translate(center.x, center.y);
+    // draw the info around the circle
+    drawHelperInfo({ctx, center, radius, canvas});
+}
 
-        let max = radius.textBottom;
-        let angle = Math.PI * 2 * state.timer.linePercent -Math.PI/2;
-        let x0 = Math.cos(angle) * max * 0.5;
-        let y0 = Math.sin(angle) * max * 0.5;
-        let x1 = Math.cos(angle) * max;
-        let y1 = Math.sin(angle) * max;
+function drawSigil({center, radius, ctx}) {
+    ctx.save();
+    ctx.translate(center.x, center.y);
 
-        ctx.strokeStyle = 'rgba(0,0,0,1)';
-        ctx.lineWidth = 3;
-        ctx.beginPath();
-        ctx.moveTo(x0, y0);
-        ctx.lineTo(x1, y1);
-        ctx.stroke();
+    // max size should be innerCircle / 2
+    //let imgRadius = state.img.height / 2;
+    let imgRadius = Math.sqrt(Math.pow(state.img.width, 2) + Math.pow(state.img.height, 2)) / 2;
 
+    let imgScale = (radius.textBottom) / imgRadius;
+    imgScale *= 0.75;
+    let scaledWidth = state.img.width*imgScale;
+    let scaledHeight = state.img.height*imgScale;
 
-        ctx.restore();
-    })();
+    ctx.drawImage(state.img,
+        0,0,state.img.width,state.img.height,
+        -scaledWidth / 2, -scaledHeight / 2, scaledWidth, scaledHeight);
+    ctx.restore();
+}
 
+function drawMovingPointer({center, radius, ctx, measurePercent}) {
+    ctx.save();
+    ctx.translate(center.x, center.y);
+
+    let max = radius.textBottom;
+    let angle = Math.PI * 2 * measurePercent - Math.PI/2;
+    let x0 = Math.cos(angle) * max * 0.75;
+    let y0 = Math.sin(angle) * max * 0.75;
+    let x1 = Math.cos(angle) * max;
+    let y1 = Math.sin(angle) * max;
+
+    ctx.strokeStyle = radius.text;
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(x0, y0);
+    ctx.lineTo(x1, y1);
+    ctx.stroke();
+
+    ctx.restore();
+}
+
+function drawWordParts({center, radius, ctx, parts}) {
+
+    ctx.fillStyle = radius.text;
+    ctx.strokeStyle = radius.text;
 
     // draw the parts
     let anglePerCount = (Math.PI * 2) / state.partCount;
     let angle = 0;
 
     // find the draw position of all letters
-
-
     for (let i = 0; i < state.config.parts.length; i++) {
 
         ctx.save();
@@ -254,7 +276,7 @@ function drawNameCircle(canvas, ctx, parts) {
             let letter = text[i];
 
             // generate the letter image
-            let trimmed = getTrimmedLetter(letter);
+            let trimmed = getTrimmedLetter(letter, radius.text);
 
             // draw the pre generated trimmed letter image
             let x = 0;
@@ -265,7 +287,7 @@ function drawNameCircle(canvas, ctx, parts) {
 
             // little line as a tick
             if (i === 0) {
-                ctx.strokeStyle = 'rgba(0,0,0,1)';
+                ctx.strokeStyle = radius.fore;
                 ctx.lineWidth = 2;
                 ctx.beginPath();
                 ctx.moveTo(0, -radius.textBottom*0.9);
@@ -282,29 +304,59 @@ function drawNameCircle(canvas, ctx, parts) {
 
         ctx.restore();
     }
+}
 
-    // draw the circles
+function fillCircle({center, radius, ctx}) {
     ctx.save();
     ctx.translate(center.x, center.y);
 
-    // inner circle
+    // outer circle lines
+    ctx.beginPath();
+    ctx.arc(0, 0, radius.textTop + 8, 0, 2 * Math.PI, false);
+    ctx.lineWidth = 4;
+
+    ctx.fillStyle = radius.back;
+    ctx.fill();
+
+    ctx.restore();
+}
+
+function drawCircles({center, radius, ctx}) {
+    ctx.save();
+    ctx.translate(center.x, center.y);
+
+    // outer circle lines
+    ctx.beginPath();
+    ctx.arc(0, 0, radius.textTop + 8, 0, 2 * Math.PI, false);
+    ctx.lineWidth = 4;
+    ctx.strokeStyle = radius.fore;
+    ctx.stroke();
+
     ctx.beginPath();
     ctx.arc(0, 0, radius.textTop, 0, 2 * Math.PI, false);
-    ctx.lineWidth = 2;
-    ctx.strokeStyle = '#000';
+    ctx.lineWidth = 4;
+    ctx.strokeStyle = radius.fore;
     ctx.stroke();
 
+    // inner circle line
     ctx.beginPath();
     ctx.arc(0, 0, radius.textBottom, 0, 2 * Math.PI, false);
-    ctx.lineWidth = 2;
-    ctx.strokeStyle = '#000';
+    ctx.lineWidth = 4;
+    ctx.strokeStyle = radius.fore;
     ctx.stroke();
 
+    ctx.restore();
+}
+
+function drawHelperInfo({center, radius, ctx, canvas}) {
+    ctx.save();
+    ctx.translate(center.x, center.y);
+
+    ctx.fillStyle = radius.text;
+    ctx.strokeStyle = radius.text;
 
     (() => {
-
-
-        drawTimeLine(canvas, ctx, -1 * (radius.textTop-10), radius.textTop - 160, 100, 100);
+        drawTimeLine(ctx, -1 * (radius.textTop-10), radius.textTop - 160, 100, 100);
 
         // remaining time
         let fontSize = 50;
@@ -321,15 +373,6 @@ function drawNameCircle(canvas, ctx, parts) {
             let countDownText = `${Math.ceil(state.timer.countDown/1000)}`;
             ctx.textAlign = 'left';
             ctx.fillText(countDownText, radius.textTop, -radius.textTop + fontSize);
-        }
-
-        // dont draw if over
-        if (typeof state.timer.timeRemaining === 'undefined') {
-
-            //this.totalTime
-            //this.initialDuration
-
-            //return;
         }
 
         let timeRemaining = state.timer.timeRemaining || state.timer.totalTime;
@@ -351,25 +394,12 @@ function drawNameCircle(canvas, ctx, parts) {
         if (lineDurationText.indexOf(".") === -1) lineDurationText = lineDurationText + ".0";
         ctx.textAlign = 'left';
         ctx.fillText(lineDurationText, -radius.textTop, radius.textTop);
-
-
     })();
-
 
     ctx.restore();
 }
 
-function getMaxSize(key, value) {
-    if (key in maxSize) {
-        maxSize[key] = Math.max(value, maxSize[key]);
-    }
-    else {
-        maxSize[key] = 0;
-    }
-    return maxSize[key];
-}
-
-function drawTimeLine(canvas, ctx, x, y, width, height) {
+function drawTimeLine(ctx, x, y, width, height) {
 
     //generate x/y points
 
@@ -400,14 +430,20 @@ function drawTimeLine(canvas, ctx, x, y, width, height) {
     ctx.beginPath();
     ctx.arc(xI, yI, 4, 0, Math.PI*2);
     ctx.fill();
+}
 
-
-
-
+function getMaxSize(key, value) {
+    if (key in maxSize) {
+        maxSize[key] = Math.max(value, maxSize[key]);
+    }
+    else {
+        maxSize[key] = 0;
+    }
+    return maxSize[key];
 }
 
 
-function getTrimmedLetter(letter) {
+function getTrimmedLetter(letter, color) {
     // find preferred font size/name
     let fontSize = 40;
     let fontName = 'Times New Roman';
@@ -431,12 +467,12 @@ function getTrimmedLetter(letter) {
     }
 
     // generate the letter image
-    return getMinimumSizeImage(letter, fontName, fontSize);
+    return getMinimumSizeImage(letter, fontName, fontSize, color);
 }
 
 let minImageCache = {};
 
-function getMinimumSizeImage(text, fontName, fontSize) {
+function getMinimumSizeImage(text, fontName, fontSize, color= "#000000") {
 
     let key = `${fontName}_${text}_${fontSize}`;
     if (key in minImageCache) {
@@ -468,7 +504,7 @@ function getMinimumSizeImage(text, fontName, fontSize) {
     };
 
     // draw the text
-    ctx.fillStyle = "#000000";
+    ctx.fillStyle = color;
     ctx.fillText(text, value.xDraw, value.yDraw);
 
     // export to file

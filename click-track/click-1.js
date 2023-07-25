@@ -71,8 +71,8 @@ function readWavAsPercent(filename, amp = 0.5) {
 }
 
 (async () => {
-    const timing = 'short3';
-    const path = 'tav';
+    const timing = 'long';
+    const path = 'resh';
     const toneSet = 'realistic';
 
     // create the file path

@@ -34,8 +34,8 @@ function drawBackground(canvas, color) {
 
 (async () => {
 
-    const timing = process.argv[2] || 'short3';
-    const path = process.argv[3] || 'tav';
+    const timing = process.argv[2] || 'long';
+    const path = process.argv[3] || 'resh';
 
     const program = new Program(words[path], times[timing]);
     // load the image
@@ -65,6 +65,9 @@ function drawBackground(canvas, color) {
 
         frameIndex++;
         time += frameTime;
+
+        // to draw only one frame
+        //break;
     }
 
 })();
@@ -81,11 +84,15 @@ function drawNameCircle(canvas, ctx, program, time) {
     const measurePercent = (time - measure.start) / measure.duration;
 
     // calc center
-    let center = {x: canvas.width / 2, y: canvas.height / 2};
+    const center = {x: canvas.width / 2, y: canvas.height / 2};
 
     // calc radius
-    let radius = {
-        max: canvas.height / 2
+    const radius = {
+        max: canvas.height / 2,
+        text: '#FEDD00',
+        fore: '#FFA500',
+        back: '#FF6D00',
+        sigilRatio: 0.75
     };
 
     // find the top and bottom of text draw area
@@ -94,48 +101,67 @@ function drawNameCircle(canvas, ctx, program, time) {
     let innerCircleWidth = 6;
     radius.innerCircle = radius.textBottom - innerCircleWidth;
 
+    fillCircle({ctx, center, radius, program});
+
     // draw the image
-    (() => {
-        ctx.save();
-        ctx.translate(center.x, center.y);
+    drawSigil({ctx, center, radius, program});
 
-        // max size should be innerCircle / 2
-        //let imgRadius = state.img.height / 2;
-        let imgRadius = Math.sqrt(Math.pow(program.img.width, 2) + Math.pow(program.img.height, 2)) / 2;
+    // draw the pointer
+    drawMovingPointer({ctx, center, radius, measurePercent, program});
 
-        let imgScale = (radius.textBottom) / imgRadius;
-        imgScale *= 0.5;
-        let scaledWidth = program.img.width*imgScale;
-        let scaledHeight = program.img.height*imgScale;
+    // draw the letters
+    drawWordParts({ctx, center, radius, parts: program.config.parts, program});
 
-        ctx.drawImage(program.img,
-            0,0,program.img.width,program.img.height,
-            -scaledWidth / 2, -scaledHeight / 2, scaledWidth, scaledHeight);
-        ctx.restore();
-    })();
+    // draw the circles
+    drawCircles({ctx, center, radius, program});
 
-    // draw the line
-    (() => {
-        ctx.save();
-        ctx.translate(center.x, center.y);
+    // draw the info around the circle
+    drawHelperInfo({ctx, center, radius, canvas, program, time, measure});
+}
+function drawSigil({center, radius, ctx, program}) {
+    ctx.save();
+    ctx.translate(center.x, center.y);
 
-        let max = radius.textBottom;
-        let angle = Math.PI * 2 * measurePercent - Math.PI/2;
-        let x0 = Math.cos(angle) * max * 0.5;
-        let y0 = Math.sin(angle) * max * 0.5;
-        let x1 = Math.cos(angle) * max;
-        let y1 = Math.sin(angle) * max;
+    // max size should be innerCircle / 2
+    //let imgRadius = program.img.height / 2;
+    let imgRadius = Math.sqrt(Math.pow(program.img.width, 2) + Math.pow(program.img.height, 2)) / 2;
 
-        ctx.strokeStyle = 'rgba(0,0,0,1)';
-        ctx.lineWidth = 3;
-        ctx.beginPath();
-        ctx.moveTo(x0, y0);
-        ctx.lineTo(x1, y1);
-        ctx.stroke();
+    let imgScale = (radius.textBottom) / imgRadius;
+    imgScale *= radius.sigilRatio;
+    let scaledWidth = program.img.width*imgScale;
+    let scaledHeight = program.img.height*imgScale;
 
-        ctx.restore();
-    })();
+    ctx.drawImage(program.img,
+        0,0,program.img.width,program.img.height,
+        -scaledWidth / 2, -scaledHeight / 2, scaledWidth, scaledHeight);
+    ctx.restore();
+}
 
+function drawMovingPointer({center, radius, ctx, measurePercent, program}) {
+    ctx.save();
+    ctx.translate(center.x, center.y);
+
+    let max = radius.textBottom;
+    let angle = Math.PI * 2 * measurePercent - Math.PI/2;
+    let x0 = Math.cos(angle) * max * radius.sigilRatio;
+    let y0 = Math.sin(angle) * max * radius.sigilRatio;
+    let x1 = Math.cos(angle) * max;
+    let y1 = Math.sin(angle) * max;
+
+    ctx.strokeStyle = radius.text;
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(x0, y0);
+    ctx.lineTo(x1, y1);
+    ctx.stroke();
+
+    ctx.restore();
+}
+
+function drawWordParts({center, radius, ctx, parts, program}) {
+
+    ctx.fillStyle = radius.text;
+    ctx.strokeStyle = radius.text;
 
     // draw the parts
     let anglePerCount = (Math.PI * 2) / program.partCount;
@@ -149,7 +175,7 @@ function drawNameCircle(canvas, ctx, program, time) {
 
         ctx.rotate(angle);
 
-        let part = program.config.parts[i];
+        let part = parts[i];
 
         let text = part.text;
 
@@ -157,7 +183,7 @@ function drawNameCircle(canvas, ctx, program, time) {
             let letter = text[i];
 
             // generate the letter image
-            let trimmed = getTrimmedLetter(letter);
+            let trimmed = getTrimmedLetter(letter, radius.text);
 
             // draw the pre generated trimmed letter image
             let x = 0;
@@ -168,7 +194,7 @@ function drawNameCircle(canvas, ctx, program, time) {
 
             // little line as a tick
             if (i === 0) {
-                ctx.strokeStyle = 'rgba(0,0,0,1)';
+                ctx.strokeStyle = radius.fore;
                 ctx.lineWidth = 2;
                 ctx.beginPath();
                 ctx.moveTo(0, -radius.textBottom*0.9);
@@ -185,29 +211,59 @@ function drawNameCircle(canvas, ctx, program, time) {
 
         ctx.restore();
     }
+}
 
-
-    // *** draw the circles
+function fillCircle({center, radius, ctx, program}) {
     ctx.save();
     ctx.translate(center.x, center.y);
 
-    // inner circle
+    // outer circle lines
+    ctx.beginPath();
+    ctx.arc(0, 0, radius.textTop + 8, 0, 2 * Math.PI, false);
+    ctx.lineWidth = 4;
+
+    ctx.fillStyle = radius.back;
+    ctx.fill();
+
+    ctx.restore();
+}
+
+function drawCircles({center, radius, ctx, program}) {
+    ctx.save();
+    ctx.translate(center.x, center.y);
+
+    // outer circle lines
+    ctx.beginPath();
+    ctx.arc(0, 0, radius.textTop + 8, 0, 2 * Math.PI, false);
+    ctx.lineWidth = 4;
+    ctx.strokeStyle = radius.fore;
+    ctx.stroke();
+
     ctx.beginPath();
     ctx.arc(0, 0, radius.textTop, 0, 2 * Math.PI, false);
-    ctx.lineWidth = 2;
-    ctx.strokeStyle = '#000';
+    ctx.lineWidth = 4;
+    ctx.strokeStyle = radius.fore;
     ctx.stroke();
 
+    // inner circle line
     ctx.beginPath();
     ctx.arc(0, 0, radius.textBottom, 0, 2 * Math.PI, false);
-    ctx.lineWidth = 2;
-    ctx.strokeStyle = '#000';
+    ctx.lineWidth = 4;
+    ctx.strokeStyle = radius.fore;
     ctx.stroke();
 
+    ctx.restore();
+}
+
+function drawHelperInfo({center, radius, ctx, canvas, program, time, measure}) {
+    ctx.save();
+    ctx.translate(center.x, center.y);
+
+    ctx.fillStyle = radius.text;
+    ctx.strokeStyle = radius.text;
 
     (() => {
-
-        drawTimeLine(canvas, ctx, -1 * (radius.textTop-10), radius.textTop - 160, 100, 100, program, time);
+        drawTimeLine(ctx, -1 * (radius.textTop-10), radius.textTop - 160, 100, 100, program, time);
 
         // remaining time
         let fontSize = 50;
@@ -242,7 +298,6 @@ function drawNameCircle(canvas, ctx, program, time) {
 
         let remainingText = `${timeRemainingNeg}${minutes}:${seconds}`;
         ctx.textAlign = 'right';
-        ctx.fillStyle = '#000';
         ctx.fillText(remainingText, radius.textTop, radius.textTop);
 
         // time per rotation
@@ -253,15 +308,13 @@ function drawNameCircle(canvas, ctx, program, time) {
         if (lineDurationText.indexOf(".") === -1) lineDurationText = lineDurationText + ".0";
         ctx.textAlign = 'left';
         ctx.fillText(lineDurationText, -radius.textTop, radius.textTop);
-
     })();
 
     ctx.restore();
 }
 
-function drawTimeLine(canvas, ctx, x, y, width, height, program, time) {
+function drawTimeLine(ctx, x, y, width, height, program, time) {
 
-    const programPercent = time / program.config.totalTime;
     //generate x/y points
 
     //EasingFunctions
@@ -283,6 +336,7 @@ function drawTimeLine(canvas, ctx, x, y, width, height, program, time) {
     ctx.stroke();
 
     //draw the current state
+    const programPercent = time / program.config.totalTime;
     let p = Math.max(programPercent, 0);
     let index = Math.floor(p * pointCount);
     let xI = points[index].x * width + x;
@@ -290,11 +344,10 @@ function drawTimeLine(canvas, ctx, x, y, width, height, program, time) {
 
     ctx.beginPath();
     ctx.arc(xI, yI, 4, 0, Math.PI*2);
-    ctx.fillStyle = '#000';
     ctx.fill();
 }
 
-function getTrimmedLetter(letter) {
+function getTrimmedLetter(letter, color) {
     // find preferred font size/name
     let fontSize = 40;
     let fontName = 'Times New Roman';
@@ -318,12 +371,10 @@ function getTrimmedLetter(letter) {
     }
 
     // generate the letter image
-    return getMinimumSizeImage(letter, fontName, fontSize);
+    return getMinimumSizeImage(letter, fontName, fontSize, color);
 }
 
-
-
-function getMinimumSizeImage(text, fontName, fontSize) {
+function getMinimumSizeImage(text, fontName, fontSize, color= "#000000") {
 
     let key = `${fontName}_${text}_${fontSize}`;
     if (key in minImageCache) {
@@ -355,7 +406,7 @@ function getMinimumSizeImage(text, fontName, fontSize) {
     };
 
     // draw the text
-    ctx.fillStyle = "#000000";
+    ctx.fillStyle = color;
     ctx.fillText(text, value.xDraw, value.yDraw);
 
     // export to file
