@@ -7,5 +7,5 @@ Hypnotic sciences of hidden things.
 
 The World
 Ecstasy, clairvoyance.
-THe unknown revealing itself to the soul.
+The unknown revealing itself to the soul.
 Integral sciences of the absolute.

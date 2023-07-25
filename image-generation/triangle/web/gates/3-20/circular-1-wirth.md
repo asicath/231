@@ -1,8 +1,7 @@
 Assimilation of what is outside oneself
 
 The Empress
-Observation, comprehension.
-Conception, study.
+Observation, comprehension, conception, study.
 Wisdom, reason behind the generating of ideas.
 
 Judgement
