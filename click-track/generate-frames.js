@@ -26,15 +26,57 @@ async function exportCanvasToJpg({canvas, name = null, filename = null}) {
     });
 }
 
-function drawBackground(canvas, color) {
+function drawBackground({canvas, color, center, radius}) {
     let ctx = canvas.getContext('2d');
-    ctx.fillStyle = color;
+    ctx.fillStyle = radius.background.color;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // rays!
+    if (radius.background.rayed) {
+        ctx.save();
+        ctx.translate(center.x, center.y);
+        const angleOffset = (Math.PI / 24) * 3;
+
+        const rayAngle = (Math.PI * 2 / 24);
+        const margin = rayAngle * 0.02;
+
+        for (let i = 0; i < 12; i++) {
+            // outer circle lines
+            const angle0 = angleOffset + margin + rayAngle * i*2;
+            const angle1 = angleOffset - margin + rayAngle * (i*2+1);
+            let x0 = Math.cos(angle0) * 4000;
+            let y0 = Math.sin(angle0) * 4000;
+            let x1 = Math.cos(angle1) * 4000;
+            let y1 = Math.sin(angle1) * 4000;
+
+            ctx.beginPath();
+            ctx.moveTo(0,0);
+            ctx.lineTo(x0, y0);
+            ctx.lineTo(x1, y1);
+            ctx.closePath();
+            ctx.fillStyle = radius.background.rayed;
+            ctx.fill();
+        }
+
+    }
+    ctx.restore();
+}
+
+function fadeFill({ctx, canvas, color, center, radius, time, program}) {
+
+    let percent = 1 - Math.max(0, Math.min(1, time / program.config.totalTime));
+
+    percent = program.config.easingFunction(percent);
+
+    let hex = Math.floor(255 * percent).toString(16);
+    if (hex.length === 1) hex = "0" + hex;
+    ctx.fillStyle = radius.background.colorInitial + hex;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 }
 
 (async () => {
 
-    const timing = process.argv[2] || 'long';
+    const timing = process.argv[2] || 'short3';
     const path = process.argv[3] || 'resh';
 
     const program = new Program(words[path], times[timing]);
@@ -51,14 +93,15 @@ function drawBackground(canvas, color) {
     // start behind
     time = -program.measures[0].duration;
 
+    //time = 1000 * 60 * 10.9;
+
     let frameIndex = 0;
     const frameTime = 1000 / 60;
-    while (time < program.config.totalTime) {
+    while (time < program.config.totalTime * 1.05) {
 
         let frameKey = frameIndex.toString();
         while (frameKey.length < 9) {frameKey = "0" + frameKey;}
 
-        drawBackground(canvas, program.config.background);
         drawNameCircle(canvas, ctx, program, Math.floor(time));
         const filename = `./output/${path}/${timing}/${timing}-${frameKey}.jpg`;
         await exportCanvasToJpg({canvas, filename});
@@ -66,7 +109,6 @@ function drawBackground(canvas, color) {
         frameIndex++;
         time += frameTime;
 
-        // to draw only one frame
         //break;
     }
 
@@ -76,9 +118,22 @@ function drawBackground(canvas, color) {
 function drawNameCircle(canvas, ctx, program, time) {
 
     // determine the measure
-    const measure = time < 0 ? program.measures[0] : program.measures.find(measure => {
-        return measure.start <= time && measure.start + measure.duration > time;
-    });
+    let measure, remainingCount;
+    if (time < 0) {
+        measure = program.measures[0];
+        remainingCount = program.measures.length;
+    }
+    else {
+        measure = program.measures.find(measure => {
+            return measure.start <= time && measure.start + measure.duration > time;
+        });
+        if (!measure) {
+            measure = program.measures[program.measures.length - 1];
+            remainingCount = 0;
+        } else {
+            remainingCount = program.measures.length - program.measures.indexOf(measure);
+        }
+    }
 
     // determine how far through the current measure we are
     const measurePercent = (time - measure.start) / measure.duration;
@@ -92,7 +147,13 @@ function drawNameCircle(canvas, ctx, program, time) {
         text: '#FEDD00',
         fore: '#FFA500',
         back: '#FF6D00',
-        sigilRatio: 0.75
+        sigilRatio: 0.75,
+
+        background: {
+            color: '#ffb734',
+            rayed: '#EF3340',
+            colorInitial: '#FF6D00'
+        }
     };
 
     // find the top and bottom of text draw area
@@ -100,6 +161,10 @@ function drawNameCircle(canvas, ctx, program, time) {
     radius.textBottom = radius.max * 0.7; // allow for the text plus margins
     let innerCircleWidth = 6;
     radius.innerCircle = radius.textBottom - innerCircleWidth;
+
+    drawBackground({canvas, color: program.config.background, center, radius});
+
+    fadeFill({ctx, canvas, color: program.config.background, center, radius, program, time})
 
     fillCircle({ctx, center, radius, program});
 
@@ -116,7 +181,7 @@ function drawNameCircle(canvas, ctx, program, time) {
     drawCircles({ctx, center, radius, program});
 
     // draw the info around the circle
-    drawHelperInfo({ctx, center, radius, canvas, program, time, measure});
+    drawHelperInfo({ctx, center, radius, canvas, program, time, measure, remainingCount});
 }
 function drawSigil({center, radius, ctx, program}) {
     ctx.save();
@@ -255,7 +320,7 @@ function drawCircles({center, radius, ctx, program}) {
     ctx.restore();
 }
 
-function drawHelperInfo({center, radius, ctx, canvas, program, time, measure}) {
+function drawHelperInfo({center, radius, ctx, canvas, program, time, measure, remainingCount}) {
     ctx.save();
     ctx.translate(center.x, center.y);
 
@@ -283,8 +348,10 @@ function drawHelperInfo({center, radius, ctx, canvas, program, time, measure}) {
             ctx.fillText(countDownText, radius.textTop, -radius.textTop + fontSize * 1.8);
         }
 
+        // upper left - count remaining
         ctx.font = `${fontSize}pt "${fontName}"`;
         let measuresRemaining = (program.measures.length - measure.index).toString();
+        measuresRemaining = remainingCount;
         ctx.textAlign = 'left';
         ctx.fillText(measuresRemaining, -radius.textTop, -radius.textTop + fontSize * 1.8);
 
@@ -337,8 +404,8 @@ function drawTimeLine(ctx, x, y, width, height, program, time) {
 
     //draw the current state
     const programPercent = time / program.config.totalTime;
-    let p = Math.max(programPercent, 0);
-    let index = Math.floor(p * pointCount);
+    let p = Math.min(1, Math.max(programPercent, 0));
+    let index = Math.min(Math.floor(p * pointCount), points.length - 1);
     let xI = points[index].x * width + x;
     let yI = points[index].y * height + y;
 
