@@ -691,7 +691,7 @@ exports.paths = JSON.parse(`{
       {
         "name": "Emerald, flecked gold",
         "back": "00A550",
-        "flecked": "FEDD00"
+        "flecked": "e0ae0a"
       }
     ]
   },
@@ -1136,7 +1136,7 @@ exports.paths = JSON.parse(`{
       {
         "name": "Scarlet, flecked gold",
         "back": "ED2800",
-        "flecked": "FEDD00"
+        "flecked": "e0ae0a"
       },
       {
         "name": "Vermilion, flecked crimson and emerald",
