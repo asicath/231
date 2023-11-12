@@ -2,7 +2,7 @@
 const words = {
 
     'aleph': {
-        background: '#fee74d',
+        back: '#fee74d',
         imgSrc: '001.png',
         minDuration: 1000*3.0,
         parts: [
@@ -20,7 +20,7 @@ const words = {
         ]
     },
     'beth':{
-        background: '#FEDD00',
+        back: '#FEDD00',
         imgSrc: '002.png',
         minDuration: 1000 * 2.5,
         parts: [
@@ -37,7 +37,7 @@ const words = {
         ]
     },
     'gimel':{
-        background: '#0085ca',
+        back: '#0085ca',
         imgSrc: '003.png',
         minDuration: 1000 * 2,
         parts: [
@@ -52,7 +52,7 @@ const words = {
         ]
     },
 /*    'gimel':{
-        background: '#0085ca',
+        back: '#0085ca',
         imgSrc: '003.png',
         minDuration: 1000 * 2,
         parts: [
@@ -67,7 +67,7 @@ const words = {
         ]
     },*/
     'daleth': {
-        background: '#00A550',
+        back: '#00A550',
         imgSrc: '004.png',
         minDuration: 1000 * 1.5,
         parts: [
@@ -79,7 +79,7 @@ const words = {
         ]
     },
     'heh':{
-        background: '#ed2800',
+        back: '#ed2800',
         imgSrc: '005.png',
         minDuration: 1000 * 2,
         parts: [
@@ -93,7 +93,7 @@ const words = {
         ]
     },
     'vav':{
-        background: '#FF4E00',
+        back: '#FF4E00',
         imgSrc: '006.png',
         minDuration: 1000 * 1.5,
         parts: [
@@ -105,7 +105,7 @@ const words = {
         ]
     },
     'zain':{
-        background: '#FF6D00',
+        back: '#FF6D00',
         imgSrc: '007.png',
         minDuration: 1000 * 2,
         parts: [
@@ -119,7 +119,7 @@ const words = {
         ]
     },
     'cheth':{
-        background: '#ffb734',
+        back: '#ffb734',
         imgSrc: '008.png',
         minDuration: 1000 * 3.5,
         includeClicks: true,
@@ -142,7 +142,7 @@ const words = {
         ]
     },
     'teth':{
-        background: '#E5D708',
+        back: '#E5D708',
         imgSrc: '009.png',
         minDuration: 1000 * 2.5,
         includeClicks: true,
@@ -161,7 +161,7 @@ const words = {
     },
 
     'yod':{
-        background: '#59B934',
+        back: '#59B934',
         imgSrc: '010.png',
         minDuration: 1000 * 3,
         parts: [
@@ -179,7 +179,7 @@ const words = {
         ]
     },
     'kaph': {
-        background: '#8C15C4',
+        back: '#8C15C4',
         imgSrc: '020.png',
         minDuration: 1000*1.7,
         parts: [
@@ -192,8 +192,10 @@ const words = {
         ]
     },
     'lamed':{
-        background: '#00A550',
-        imgSrc: '030.png',
+        text: '#0085ca',
+        fore: '#008077',
+        back: '#00A550',
+        imgSrc: '030-color.png',
         minDuration: 1000 * 2,
         clicksPerMeasure: 16,
         parts: [
@@ -201,14 +203,15 @@ const words = {
             {text:'Lu', count:3, audio:'low'},
             {text:'sa', count:1, audio:'high'},
             {text:'na', count:2, audio:'high'},
-            {text:'her', count:2},
+            {text:'her', count:2, audio:'tick'},
             {text:'an', count:3, audio:'low'},
             {text:'dra', count:1, audio:'high'},
-            {text:'ton', count:4, audio:'high'}
+            {text:'ton', count:2, audio:'high'},
+            {text:'_', count:2},
         ]
     },
     'mem': {
-        background: '#0246bc',
+        back: '#0246bc',
         imgSrc: '040.png',
         minDuration: 1000*1,
         customTimes: {
@@ -226,7 +229,7 @@ const words = {
         ]
     },
     'nun':{
-        background: '#00958d',
+        back: '#00958d',
         imgSrc: '050.png',
         minDuration: 1000 * 3.7,
         clicksPerMeasure: 30,
@@ -249,7 +252,7 @@ const words = {
         ]
     },
     'samekh':{
-        background: '#0085ca',
+        back: '#0085ca',
         imgSrc: '060.png',
         minDuration: 1000 * 3,
         clicksPerMeasure: 14,
@@ -267,7 +270,7 @@ const words = {
         ]
     },
     'ayin':{
-        background: '#001489',
+        back: '#001489',
         imgSrc: '070.png',
         minDuration: 1000 * 4,
         clicksPerMeasure: 16,
@@ -289,7 +292,7 @@ const words = {
         ]
     },
     'pe': {
-        background: '#ed2800',
+        back: '#ed2800',
         imgSrc: '080.png',
         minDuration: 1000*2.5,
         customTimes: {
@@ -315,7 +318,7 @@ const words = {
         ]
     },
     'tzaddi':{
-        background: '#5c00cc',
+        back: '#5c00cc',
         imgSrc: '090.png',
         minDuration: 1000 * 2.4,
         clicksPerMeasure: 6,
@@ -332,7 +335,7 @@ const words = {
         ]
     },
     'qoph':{
-        background: '#AE0E36',
+        back: '#AE0E36',
         imgSrc: '100.png',
         minDuration: 1000 * 2,
         clicksPerMeasure: 12,
@@ -353,7 +356,9 @@ const words = {
     },
     'resh': {
         //`Ra-a-gi o selah lad na i ma wa-iⲝ`
-        background: '#FF6D00',
+        text: '#FEDD00',
+        fore: '#FFA500',
+        back: '#FF6D00',
         imgSrc: '200-color.png',
         minDuration: 1000*4,
         parts: [
@@ -404,7 +409,7 @@ const words = {
         ]
     },
     'shin': {
-        background: '#ff3300',
+        back: '#ff3300',
         imgSrc: '300.png',
         //minDuration: 1000 * 1.5,
         minDuration: 1000 * 2.5,
@@ -417,7 +422,7 @@ const words = {
         ]
     },
     'tav':{
-        background: '#001489',
+        back: '#001489',
         imgSrc: '400.png',
         minDuration: 1000 * 4,
         customTimes: {

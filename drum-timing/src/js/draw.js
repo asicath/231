@@ -75,7 +75,7 @@ function init(wordConfig, timeConfig) {
 
     const synthClick = new Tone.Synth(synthConfigClick).toDestination();
 
-    $('body').css('background-color', state.config.background);
+    $('body').css('background-color', state.config.back);
 
     // get the total count
     state.partCount = state.config.parts.reduce((total, part) => {
@@ -166,13 +166,13 @@ function draw(id) {
     // now the actual draw
 
     // draw the text and circle
-    drawNameCircle(canvas, context, state.config.parts);
+    drawNameCircle(canvas, context, state.config.parts, state.config);
 }
 
 
 let maxSize = {};
 
-function drawNameCircle(canvas, ctx, parts) {
+function drawNameCircle(canvas, ctx, parts, config) {
 
     const measurePercent = state.timer.linePercent;
 
@@ -182,9 +182,9 @@ function drawNameCircle(canvas, ctx, parts) {
     // calc radius
     const radius = {
         max: canvas.height / 2,
-        text: '#FEDD00',
-        fore: '#FFA500',
-        back: '#FF6D00'
+        text: config.text,
+        fore: config.fore,
+        back: config.back
     };
 
     // find the top and bottom of text draw area

@@ -63,28 +63,6 @@ function drawFleck(ctx, color, xCenter, yCenter, ratio) {
     ctx.closePath();
     ctx.fillStyle = `#${color}`;
     ctx.fill();
-
-    /*    ctx.strokeStyle = `#000`;
-        ctx.strokeWidth = 1;
-        ctx.stroke();
-
-
-
-        for (let i = 0; i < points.length; i++) {
-            ctx.beginPath();
-            ctx.moveTo(xCenter, yCenter);
-            const point = points[i];
-
-            const x = Math.cos(point.angle + angleOffset) * point.radius + xCenter;
-            const y = Math.sin(point.angle + angleOffset) * point.radius + yCenter;
-
-            ctx.lineTo(x, y);
-
-            if (point.isMain) ctx.strokeStyle = `rgba(0,0,0,0.5)`;
-            else ctx.strokeStyle = `rgba(0,0,0,0.25)`;
-
-            ctx.stroke();
-        }*/
 }
 
 function drawFleckCircle(ctx, color, xCenter, yCenter, ratio) {

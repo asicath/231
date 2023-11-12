@@ -2,12 +2,40 @@ const { createCanvas, loadImage } = require('canvas');
 const times = require('./times');
 const words = require('./words');
 const Program = require('./Program');
+const fs = require("fs");
+const EasingFunctions = require('./easing');
 
 let minImageCache = {};
+function clearLetterCache() {
+    minImageCache = {};
+}
+
+const randomCache = [];
+let randomIndex = 0;
+let backgroundCanvas = null;
+
+function resetBackgroundCanvas() {
+    backgroundCanvas = null;
+}
+
+function getRandom() {
+
+    if (randomIndex >= randomCache.length) {
+        const value = Math.random();
+        randomCache.push(value);
+        randomIndex += 1;
+        return value;
+    }
+    //if (randomIndex % 100000 === 0) console.log(randomIndex);
+    return randomCache[randomIndex++];
+}
+
+function resetRandomIndex() {
+    randomIndex = 0;
+}
 
 async function exportCanvasToJpg({canvas, name = null, filename = null}) {
     return new Promise((resolve, reject) => {
-        const fs = require('fs');
 
         if (filename === null) {
             filename = `${__dirname}/output/${name}.jpg`;
@@ -17,16 +45,18 @@ async function exportCanvasToJpg({canvas, name = null, filename = null}) {
             quality: 1,
             chromaSubsampling: false, progressive: false
         });
+
         const out = fs.createWriteStream(filename);
         stream.pipe(out);
+
         out.on('finish', () => {
-            console.log(`${filename} was created.`);
             resolve();
         });
     });
 }
 
 function drawBackground({canvas, color, center, radius}) {
+
     let ctx = canvas.getContext('2d');
     ctx.fillStyle = radius.background.color;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -57,8 +87,13 @@ function drawBackground({canvas, color, center, radius}) {
             ctx.fillStyle = radius.background.rayed;
             ctx.fill();
         }
-
     }
+
+    // flecked
+    if (radius.background.flecked) {
+        fleckIt(canvas, ctx, radius.background.flecked);
+    }
+
     ctx.restore();
 }
 
@@ -75,9 +110,28 @@ function fadeFill({ctx, canvas, color, center, radius, time, program}) {
 }
 
 (async () => {
+    //await generatePreviews();
+    //await generateForPath('mem');
+    //await generateForPath('shin');
+})();
 
-    const timing = process.argv[2] || 'short3';
-    const path = process.argv[3] || 'resh';
+async function generateForPath(path) {
+    await execute({timing: 'short2', path});
+    await execute({timing: 'short3', path});
+    await execute({timing: 'long', path});
+}
+
+async function generatePreviews() {
+    const paths = Object.keys(words);
+    for (const path of paths) {
+        await execute({timing: 'short2', path, startTime: 0, outputIndex: 0});
+        await execute({timing: 'short2', path, startTime: 1000 * 60 * 60, outputIndex: 1});
+    }
+}
+
+async function execute({path, timing, startTime = null, outputIndex = null, skipFrames = 0}) {
+    resetBackgroundCanvas();
+    clearLetterCache();
 
     const program = new Program(words[path], times[timing]);
     // load the image
@@ -93,26 +147,45 @@ function fadeFill({ctx, canvas, color, center, radius, time, program}) {
     // start behind
     time = -program.measures[0].duration;
 
-    //time = 1000 * 60 * 10.9;
+    // make sure the directories exist
+    const filepathParent = `./output/${path}`;
+    if (!fs.existsSync(filepathParent)) {
+        fs.mkdirSync(filepathParent);
+    }
+    const filepath = `./output/${path}/${timing}`;
+    if (!fs.existsSync(filepath)) {
+        fs.mkdirSync(filepath);
+    }
 
-    let frameIndex = 0;
+    let frameIndex = outputIndex || 0;
     const frameTime = 1000 / 60;
     while (time < program.config.totalTime * 1.05) {
+        resetRandomIndex();
 
-        let frameKey = frameIndex.toString();
-        while (frameKey.length < 9) {frameKey = "0" + frameKey;}
+        if (startTime !== null) time = startTime;
 
-        drawNameCircle(canvas, ctx, program, Math.floor(time));
-        const filename = `./output/${path}/${timing}/${timing}-${frameKey}.jpg`;
-        await exportCanvasToJpg({canvas, filename});
+        if (skipFrames > 0) {
+            skipFrames--;
+        }
+        // actually generate the frame
+        else {
+            let frameKey = frameIndex.toString();
+            while (frameKey.length < 9) {frameKey = "0" + frameKey;}
+
+            drawNameCircle(canvas, ctx, program, Math.floor(time));
+            const filename = `${filepath}/${timing}-${frameKey}.jpg`;
+            await exportCanvasToJpg({canvas, filename});
+            console.log(`${filename} was created.`);
+        }
 
         frameIndex++;
         time += frameTime;
 
-        //break;
+        // startTime is for debugging, only one frame required
+        if (startTime !== null) break;
     }
 
-})();
+}
 
 
 function drawNameCircle(canvas, ctx, program, time) {
@@ -144,15 +217,17 @@ function drawNameCircle(canvas, ctx, program, time) {
     // calc radius
     const radius = {
         max: canvas.height / 2,
-        text: '#FEDD00',
-        fore: '#FFA500',
-        back: '#FF6D00',
+        text: program.config.text,
+        fore: program.config.fore,
+        back: program.config.back, // the back of circle
+
         sigilRatio: 0.75,
 
         background: {
-            color: '#ffb734',
-            rayed: '#EF3340',
-            colorInitial: '#FF6D00'
+            colorInitial: program.config.back,
+            color: program.config.backEnd,
+            rayed: program.config.backEndRayed,
+            flecked: program.config.backFlecked
         }
     };
 
@@ -162,7 +237,12 @@ function drawNameCircle(canvas, ctx, program, time) {
     let innerCircleWidth = 6;
     radius.innerCircle = radius.textBottom - innerCircleWidth;
 
-    drawBackground({canvas, color: program.config.background, center, radius});
+    if (backgroundCanvas === null) {
+        console.log('generate background')
+        backgroundCanvas = createCanvas(canvas.width, canvas.height);
+        drawBackground({canvas: backgroundCanvas, color: program.config.background, center, radius});
+    }
+    ctx.drawImage(backgroundCanvas, 0, 0);
 
     fadeFill({ctx, canvas, color: program.config.background, center, radius, program, time})
 
@@ -225,9 +305,6 @@ function drawMovingPointer({center, radius, ctx, measurePercent, program}) {
 
 function drawWordParts({center, radius, ctx, parts, program}) {
 
-    ctx.fillStyle = radius.text;
-    ctx.strokeStyle = radius.text;
-
     // draw the parts
     let anglePerCount = (Math.PI * 2) / program.partCount;
     let angle = 0;
@@ -245,10 +322,10 @@ function drawWordParts({center, radius, ctx, parts, program}) {
         let text = part.text;
 
         for (let i = 0; i < text.length; i++) {
-            let letter = text[i];
+            const letter = text[i];
 
             // generate the letter image
-            let trimmed = getTrimmedLetter(letter, radius.text);
+            const trimmed = getTrimmedLetter(letter, radius.text);
 
             // draw the pre generated trimmed letter image
             let x = 0;
@@ -415,6 +492,7 @@ function drawTimeLine(ctx, x, y, width, height, program, time) {
 }
 
 function getTrimmedLetter(letter, color) {
+
     // find preferred font size/name
     let fontSize = 40;
     let fontName = 'Times New Roman';
@@ -526,4 +604,139 @@ function getMinimumSizeImage(text, fontName, fontSize, color= "#000000") {
     minImageCache[key] = value;
 
     return value;
+}
+
+function fleckIt(canvas, ctx, color) {
+
+    let colorArray = Array.isArray(color) ? color : [color];
+    let colorIndex = 0;
+
+    let radius = 1;
+    let angle = 0;
+    let maxRadius = Math.max(canvas.width, canvas.height);
+    let center = {x:canvas.width/2, y: canvas.height/2};
+
+    let ratio = canvas.height / 1200;
+
+    let idealDistance = 15 * ratio;
+    let radiusIncrPerRevolution = 12 * ratio;
+
+    //let idealDistance = 60 * ratio;
+    //let radiusIncrPerRevolution = 48 * ratio;
+
+    let maxTimes = 1000000;
+
+    while (radius < maxRadius && maxTimes > 0) {
+        // find point
+        let x = Math.cos(angle) * radius + center.x;
+        let y = Math.sin(angle) * radius + center.y;
+
+        // add some random
+        const randomSwing = 100;
+        x += (maxRadius / (randomSwing * 2)) - getRandom() * maxRadius / randomSwing;
+        y += (maxRadius / (randomSwing * 2)) - getRandom() * maxRadius / randomSwing;
+
+        // draw at point
+        drawFleck(ctx, colorArray[colorIndex++ % colorArray.length], x, y, ratio);
+
+
+        let d = idealDistance;
+        let percent = -1;
+
+        while (d > 0) {
+            // determine circumference
+            let c = Math.PI * 2 * radius;
+
+            if (d > c) {
+                let percent = 0.01;
+                radius += radiusIncrPerRevolution * percent;
+                angle += Math.PI * 2 * percent;
+
+                c = Math.PI * 2 * radius * percent;
+
+                d -= c;
+
+                // angle stays the same
+            }
+            else {
+
+                percent = d / c;
+                angle += Math.PI * 2 * percent;
+                angle = angle % (Math.PI * 2);
+                radius += radiusIncrPerRevolution * percent;
+
+                d = 0; //exit
+            }
+        }
+
+        //console.log(maxTimes + " radius:" + radius + " percent:" + percent + " circum:" + c);
+
+        maxTimes--;
+    }
+
+}
+
+function drawFleck(ctx, color, xCenter, yCenter, ratio) {
+
+    const radiusMax = (getRandom() * 2 + 3) * ratio;
+    const radiusMin = radiusMax * getRandom() * 0.2 + 0.3;
+
+    const angleOffset = getRandom() * Math.PI * 2;
+
+    const pointCount = 2;
+    const subPointCount = 25;
+
+    // create the points
+    const mainPoints = [];
+    for (let i = 0; i < pointCount; i++) {
+        const radius = radiusMin + (radiusMax - radiusMin) * getRandom();
+
+        const angle = ((Math.PI * 2) / pointCount) * i;
+        const point = {
+            angle,
+            radius,
+            isMain: true
+        };
+        mainPoints.push(point);
+    }
+
+    // now the subpoints
+    const points = [];
+    for (let i = 0; i < mainPoints.length; i++) {
+        const p0 = mainPoints[i];
+        const p1 = mainPoints[(i+1) % mainPoints.length];
+        points.push(p0);
+
+        // now the inbetween
+        for (let j = 0; j < subPointCount; j++) {
+            const percentBase = (j + 1) / (subPointCount + 1);
+            const percent = EasingFunctions.easeInOutCubic(percentBase);
+
+            const extraAngle = p0.angle > p1.angle ? Math.PI * 2 : 0;
+            const angle = p0.angle + ((p1.angle + extraAngle) - p0.angle) * percentBase;
+            const radius = p0.radius + (p1.radius - p0.radius) * percent;
+
+            const point = {
+                angle,
+                radius,
+                isMain: false
+            };
+            points.push(point);
+        }
+    }
+
+    // now draw them
+    ctx.beginPath();
+    for (let i = 0; i < points.length; i++) {
+        const point = points[i];
+
+        const x = Math.cos(point.angle + angleOffset) * point.radius + xCenter;
+        const y = Math.sin(point.angle + angleOffset) * point.radius + yCenter;
+
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+    }
+    ctx.closePath();
+    ctx.fillStyle = color;
+    ctx.fill();
 }

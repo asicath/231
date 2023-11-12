@@ -55,6 +55,7 @@ const tonesClick = {
 const tonesRealistic = {
     low: readWavAsPercent(path.join(__dirname, '/boom1.wav')),
     high: readWavAsPercent(path.join(__dirname, '/bop1.wav')),
+    chime: readWavAsPercent(path.join(__dirname, '/shake2_10.wav')),
     click: []
 }
 
@@ -71,9 +72,16 @@ function readWavAsPercent(filename, amp = 0.5) {
 }
 
 (async () => {
-    const timing = 'long';
-    const path = 'resh';
+    const path = 'nun';
     const toneSet = 'realistic';
+
+    await execute({timing: 'long', path, toneSet});
+    await execute({timing: 'short3', path, toneSet});
+    await execute({timing: 'short2', path, toneSet});
+
+})();
+
+async function execute({timing, path, toneSet}) {
 
     // create the file path
     const filepath = `./output/${path}`;
@@ -87,7 +95,7 @@ function readWavAsPercent(filename, amp = 0.5) {
     tones = toneSet === 'realistic' ? tonesRealistic : tonesClick;
 
     // override the min duration
-    word.minDuration = 4000;
+    //word.minDuration = 4000;
 
     // create an empty wav
     writeWav([], filename, sampleRate);
@@ -118,8 +126,7 @@ function readWavAsPercent(filename, amp = 0.5) {
         // write it out
         appendWav(data, filename, sampleRate);
     }
-
-})();
+}
 
 function logMeasure(measure) {
     let measureIndex = measure.index.toString();

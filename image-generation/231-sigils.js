@@ -65,16 +65,20 @@ let spiritNames = {
             .filter(dirent => dirent.isDirectory())
             .map(dirent => dirent.name);
 
-    let root = `C:\\git\\arcanorum\\Assets\\231\\textures`;
+    const rootInput = `Z:\\git\\arcanorum\\Assets\\arcanorum\\00_sigils\\sigils\\textures`;
+    const rootOutput = 'Z:\\git\\231\\image-generation\\name-circles';
 
-    let folders = getDirectories(root).filter(name => name.match(/^[qm]\d\d$/));
+    let folders = getDirectories(rootInput).filter(name => name.match(/^[qm]\d\d$/));
     folders.forEach(name => {
-        let path = `${root}\\${name}\\`;
-        let text = spiritNames[name];
-        main(path + "color.png", path + "color_text.png", text);
+        if (name === 'm32' || name === 'q32') return;
+        const text = spiritNames[name];
+        try {
+            main(`${rootInput}\\${name}\\color.png`, `${rootOutput}\\${name}.png`, text);
+        }
+        catch (err) {
+            console.error(err);
+        }
     });
-
-
 
 })();
 
@@ -128,7 +132,7 @@ async function drawNameCircle(canvas, text) {
         let letter = text[i];
 
         // find preferred font size/name
-        let fontSize = 80;
+        let fontSize = 70; // orig 80
         let fontName = 'Times New Roman';
         if (letter === 'ⲝ') {
             //fontName = 'Noto Sans Coptic';
@@ -294,6 +298,7 @@ function exportCanvasToImage(canvas, filename) {
         const fs = require('fs');
         const out = fs.createWriteStream(filename);
         const stream = canvas.createPNGStream();
+
         stream.pipe(out);
         out.on('finish', () => {
             console.log(`${filename} was created.`);

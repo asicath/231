@@ -3,8 +3,13 @@ const EasingFunctions = require('./easing');
 const words = {
 
     'aleph': {
-        background: '#fee74d',
-        imgSrc: '001.png',
+        text: '#8ABAD3',
+        fore: '#00958D',
+        back: '#fee74d',
+        backEnd: '#00A550',
+        backFlecked: '#D4AF37',
+
+        imgSrc: '001-color.png',
         minDuration: 1000*3.0,
         parts: [
             {text:'A', count: 1, countx: 4.10, audio: 'high'},
@@ -21,8 +26,13 @@ const words = {
         ]
     },
     'beth':{
-        background: '#FEDD00',
-        imgSrc: '002.png',
+        text: '#BB29BB',
+        fore: '#bfbfbf',
+        back: '#FEDD00',
+        backEnd: '#001489',
+        backEndRayed: '#5c00cc',
+
+        imgSrc: '002-color.png',
         minDuration: 1000 * 2.5,
         parts: [
             // Beعθaoooabitom
@@ -38,8 +48,14 @@ const words = {
         ]
     },
     'gimel':{
-        background: '#0085ca',
-        imgSrc: '003.png',
+
+        back: '#0085ca', // KING
+        text: '#e8e8e8', // QUEEN
+        fore: '#A5C5D9', // EMPEROR
+        backEnd: '#e8e8e8', // EMPRESS
+        backEndRayed: '#8ABAD3',
+
+        imgSrc: '003-color.png',
         minDuration: 1000 * 2,
         parts: [
             // Gitωnosapφωllois
@@ -53,8 +69,8 @@ const words = {
         ]
     },
     /*    'gimel':{
-            background: '#0085ca',
-            imgSrc: '003.png',
+            back: '#0085ca',
+            imgSrc: '003-color.png',
             minDuration: 1000 * 2,
             parts: [
                 // Gitωnosapφωllois
@@ -68,8 +84,13 @@ const words = {
             ]
         },*/
     'daleth': {
-        background: '#00A550',
-        imgSrc: '004.png',
+        back: '#00A550', // KING
+        text: '#8ABAD3', // QUEEN
+        fore: '#b2d135', // EMPEROR
+        backEnd: '#C51959', // EMPRESS
+        backEndRayed: '#B2E79F',
+
+        imgSrc: '004-color.png',
         minDuration: 1000 * 1.5,
         parts: [
             {text:'dηn', count:2, audio:'high'},
@@ -80,8 +101,12 @@ const words = {
         ]
     },
     'heh':{
-        background: '#ed2800',
-        imgSrc: '005.png',
+        back: '#ed2800', // KING
+        text: '#f5ac1c', // QUEEN
+        fore: '#EF3340', // EMPEROR
+        backEnd: '#ff0011', // EMPRESS
+
+        imgSrc: '005-color3.png',
         minDuration: 1000 * 2,
         parts: [
             // Hoo-oorω-iⲝ
@@ -94,8 +119,12 @@ const words = {
         ]
     },
     'vav':{
-        background: '#FF4E00',
-        imgSrc: '006.png',
+        back: '#FF4E00', // KING
+        text: '#000d59', // QUEEN
+        fore: '#C7B63C', // EMPEROR
+        backEnd: '#5c3312', // EMPRESS
+
+        imgSrc: '006-color.png',
         minDuration: 1000 * 1.5,
         parts: [
             // Vuaretza
@@ -106,8 +135,12 @@ const words = {
         ]
     },
     'zain':{
-        background: '#FF6D00',
-        imgSrc: '007.png',
+        back: '#FF6D00', // KING
+        text: '#cca3b1', // QUEEN
+        fore: '#e8af36', // EMPEROR
+        backEnd: '#907172', // EMPRESS
+
+        imgSrc: '007-color.png',
         minDuration: 1000 * 2,
         parts: [
             // Zooωasar
@@ -120,8 +153,12 @@ const words = {
         ]
     },
     'cheth':{
-        background: '#ffb734',
-        imgSrc: '008.png',
+        back: '#ffb734', // KING
+        text: '#800f13', // QUEEN
+        fore: '#d60d0a', // EMPEROR
+        backEnd: '#322F12', // EMPRESS
+
+        imgSrc: '008-color.png',
         minDuration: 1000 * 3.5,
         includeClicks: true,
         parts: [
@@ -143,8 +180,12 @@ const words = {
         ]
     },
     'teth':{
-        background: '#E5D708',
-        imgSrc: '009.png',
+        back: '#E5D708', // KING
+        text: '#550055', // QUEEN
+        fore: '#bfbfbf', // EMPEROR
+        backEnd: '#ff9934', // EMPRESS
+
+        imgSrc: '009-color.png',
         minDuration: 1000 * 2.5,
         includeClicks: true,
         clicksPerMeasure: 12,
@@ -162,8 +203,12 @@ const words = {
     },
 
     'yod':{
-        background: '#59B934',
-        imgSrc: '010.png',
+        back: '#59B934', // KING
+        text: '#9faeaa', // QUEEN
+        fore: '#558c70', // EMPEROR
+        backEnd: '#981733', // EMPRESS
+
+        imgSrc: '010-color.png',
         minDuration: 1000 * 3,
         parts: [
             // Iehuvahaⲝanعθatan
@@ -180,8 +225,13 @@ const words = {
         ]
     },
     'kaph': {
-        background: '#8C15C4',
-        imgSrc: '020.png',
+        back: '#8C15C4', // KING
+        text: '#0085ca', // QUEEN
+        fore: '#990099', // EMPEROR
+        backEnd: '#00a8ff', // EMPRESS
+        backEndRayed: '#fedd00',
+
+        imgSrc: '020-color.png',
         minDuration: 1000*1.7,
         parts: [
             {text:'Ke', count: 6.33, audio: 'low'},
@@ -193,24 +243,33 @@ const words = {
         ]
     },
     'lamed':{
-        background: '#00A550',
-        imgSrc: '030.png',
-        minDuration: 1000 * 2,
+        text: '#0085ca',
+        fore: '#008077',
+        back: '#00A550',
+        backEnd: '#a4e88b',
+
+        imgSrc: '030-color.png',
+        minDuration: 1000 * 2.5,
         clicksPerMeasure: 16,
         parts: [
             // Lusana her andraton
             {text:'Lu', count:3, audio:'low'},
             {text:'sa', count:1, audio:'high'},
             {text:'na', count:2, audio:'high'},
-            {text:'her', count:2},
+            {text:'her', count:2, audio: 'chime'},
             {text:'an', count:3, audio:'low'},
             {text:'dra', count:1, audio:'high'},
             {text:'ton', count:4, audio:'high'}
         ]
     },
     'mem': {
-        background: '#0246bc',
-        imgSrc: '040.png',
+        back: '#0246bc', // KING
+        text: '#149C88', // QUEEN
+        fore: '#426300', // EMPEROR
+        backEnd: '#ffffff', // EMPRESS
+        backFlecked: '#BB29BB',
+
+        imgSrc: '040-color.png',
         minDuration: 1000*1,
         customTimes: {
             short3: {
@@ -227,8 +286,12 @@ const words = {
         ]
     },
     'nun':{
-        background: '#00958d',
-        imgSrc: '050.png',
+        text: '#664b2d',
+        fore: '#211307',
+        back: '#00958d',
+        backEnd: '#0c1225',
+
+        imgSrc: '050-color.png',
         minDuration: 1000 * 3.7,
         clicksPerMeasure: 30,
         parts: [
@@ -250,8 +313,12 @@ const words = {
         ]
     },
     'samekh':{
-        background: '#0085ca',
-        imgSrc: '060.png',
+        back: '#0085ca', // KING
+        text: '#FEDD00', // QUEEN
+        fore: '#00A550', // EMPEROR
+        backEnd: '#003a80', // EMPRESS
+
+        imgSrc: '060-color.png',
         minDuration: 1000 * 3,
         clicksPerMeasure: 14,
         parts: [
@@ -268,8 +335,12 @@ const words = {
         ]
     },
     'ayin':{
-        background: '#001489',
-        imgSrc: '070.png',
+        back: '#001489', // KING
+        text: '#000000', // QUEEN
+        fore: '#000a44', // EMPEROR
+        backEnd: '#16161d', // EMPRESS
+
+        imgSrc: '070-color.png',
         minDuration: 1000 * 4,
         clicksPerMeasure: 16,
         parts: [
@@ -290,8 +361,13 @@ const words = {
         ]
     },
     'pe': {
-        background: '#ed2800',
-        imgSrc: '080.png',
+        back: '#ed2800', // KING
+        text: '#b32009', // QUEEN
+        fore: '#EF3340', // EMPEROR
+        backEnd: '#ff0000', // EMPRESS
+        backEndRayed: '#00A550',
+
+        imgSrc: '080-color3.png',
         //minDuration: 1000*2.5,
         minDuration: 1000*4,
         customTimes: {
@@ -329,8 +405,12 @@ const words = {
         ]
     },
     'tzaddi':{
-        background: '#5c00cc',
-        imgSrc: '090.png',
+        back: '#5c00cc', // KING
+        text: '#8ABAD3', // QUEEN
+        fore: '#ad78bd', // EMPEROR
+        backEnd: '#ffe8ff', // EMPRESS
+
+        imgSrc: '090-color.png',
         minDuration: 1000 * 2.4,
         clicksPerMeasure: 6,
         parts: [
@@ -346,8 +426,12 @@ const words = {
         ]
     },
     'qoph':{
-        background: '#AE0E36',
-        imgSrc: '100.png',
+        back: '#AE0E36', // KING
+        text: '#F0DC82', // QUEEN
+        fore: '#C08A80', // EMPEROR
+        backEnd: '#76826a', // EMPRESS
+
+        imgSrc: '100-color.png',
         minDuration: 1000 * 2.3,
         clicksPerMeasure: 12,
         parts: [
@@ -367,7 +451,12 @@ const words = {
     },
     'resh': {
         //`Ra-a-gi o selah lad na i ma wa-iⲝ`
-        background: '#FF6D00',
+        text: '#FEDD00',
+        fore: '#FFA500',
+        back: '#FF6D00',
+        backEnd: '#ffb734',
+        backEndRayed: '#EF3340',
+
         imgSrc: '200-color.png',
         minDuration: 1000*4,
         parts: [
@@ -387,8 +476,13 @@ const words = {
         ]
     },
     'shin': {
-        background: '#ff3300',
-        imgSrc: '300.png',
+        back: '#ff3300', // KING
+        text: '#D9381E', // QUEEN
+        fore: '#ed2800', // EMPEROR
+        backEnd: '#D9381E', // EMPRESS
+        backFlecked: ['#AE0E36', '#00A550'],
+
+        imgSrc: '300-color.png',
         //minDuration: 1000 * 1.5,
         minDuration: 1000 * 2.5,
         parts: [
@@ -400,8 +494,13 @@ const words = {
         ]
     },
     'tav':{
-        background: '#001489',
-        imgSrc: '400.png',
+        back: '#001489', // KING
+        text: '#000000', // QUEEN
+        fore: '#000a44', // EMPEROR
+        backEnd: '#000000', // EMPRESS
+        backEndRayed: '#0085ca',
+
+        imgSrc: '400-color.png',
         minDuration: 1000 * 3, // most people probably max out at 4
         includeClicks: true,
         clicksPerMeasure: 12,

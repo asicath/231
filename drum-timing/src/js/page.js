@@ -103,7 +103,7 @@ function initPageJs() {
             if (i % 3 === 2) {
                 suffix = `</div>`;
             }
-            return `${prefix}<div class="spiritLink" style="background-color: ${words[key].background};"><a href="index.htm?spirit=${key}">${key}</a></div>${suffix}`
+            return `${prefix}<div class="spiritLink" style="background-color: ${words[key].back};"><a href="index.htm?spirit=${key}">${key}</a></div>${suffix}`
         });
         lines.push('</div>');
 

@@ -1,10 +1,19 @@
 
+const defaultConfig = {
+    text: '#000000',
+    fore: '#222222',
+    back: '#eeeeee',
+    backEnd: '#ffffff',
+    backEndRayed: undefined,
+    backFlecked: undefined
+};
+
 class Program {
 
     constructor(wordConfig, timeConfig) {
 
         // create the conbined config
-        this.config = Object.assign({}, timeConfig, wordConfig);
+        this.config = Object.assign({}, defaultConfig, timeConfig, wordConfig);
 
         // total parts
         this.partCount = this.config.parts.reduce((total, part) => {
