@@ -1,5 +1,14 @@
 const EasingFunctions = require('./easing');
+const {alphaColor} = require('./color-help');
 
+/**
+ * Draws an individual fleck
+ * @param ctx
+ * @param color
+ * @param xCenter
+ * @param yCenter
+ * @param ratio
+ */
 function drawFleck(ctx, color, xCenter, yCenter, ratio) {
 
     const radiusMax = (Math.random() * 2 + 3) * ratio;
@@ -62,6 +71,7 @@ function drawFleck(ctx, color, xCenter, yCenter, ratio) {
     }
     ctx.closePath();
     ctx.fillStyle = `#${color}`;
+    //ctx.fillStyle = alphaColor(color, 0.75); // "#" + color;
     ctx.fill();
 }
 

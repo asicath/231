@@ -2,7 +2,10 @@ const { createCanvas, loadImage } = require('canvas');
 const {paths, cards} = require('./data');
 
 const fleckIt = require('./effects/flecks');
-
+const rayIt = require('./effects/rays');
+const drawGradient = require('./effects/gradient');
+const quarterIt = require('./effects/quarter');
+const {exportCanvasToImage} = require('./export');
 
 const pipPlacement = {
     1: {
@@ -81,7 +84,7 @@ async function drawCards() {
         //if (!key.match(/^[2345]_/)) continue;
         //if (!key.match(/t\d\d/)) continue;
         //if (!key.match(/^0_s02/)) continue;
-        //if (!key.match(/t21/)) continue;
+        if (!key.match(/t01/)) continue;
         //if (!key.match(/_[wc]10/)) continue;
 
         let pipImage = null;
@@ -187,29 +190,6 @@ function combineHalf(src, dest) {
     destCtx.drawImage(src, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
 }
 
-function exportCanvasToImage(canvas, name) {
-    return new Promise((resolve, reject) => {
-        const fs = require('fs');
-        const filename = `${__dirname}/output/${name}.jpg`;
-        const out = fs.createWriteStream(filename);
-        //const stream = canvas.createPNGStream();
-        const stream  = canvas.createJPEGStream({
-            quality: 1,
-            chromaSubsampling: false, progressive: false
-        });
-
-
-        stream.pipe(out);
-        out.on('finish', () => {
-            console.log(`${filename} was created.`);
-            resolve();
-        });
-    });
-}
-
-
-
-
 function drawPips(canvas, card, pipImage) {
     let ctx = canvas.getContext('2d');
 
@@ -264,135 +244,3 @@ function drawBackground(canvas, color) {
     ctx.fillStyle = "#" + color.back;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 }
-
-function drawGradient(canvas, color, roundCorners) {
-    let ctx = canvas.getContext('2d');
-
-    ctx.fillStyle = "#" + color.gradient[0];
-    ctx.fillRect(0, 0, canvas.width, canvas.height / 2);
-
-    ctx.fillStyle = "#" + color.gradient[1];
-    ctx.fillRect(0, canvas.height / 2, canvas.width, canvas.height / 2);
-
-    // now the middle
-    let x = canvas.width / 2;
-    let p = 0.05;
-    //let gradient = ctx.createLinearGradient(x, canvas.height * p, x, canvas.height * (1-p-p));
-    let gradient = ctx.createRadialGradient(canvas.width / 2, canvas.width / 2, 1, canvas.width / 2, canvas.width / 2, canvas.width);
-
-    gradient.addColorStop(0, "#" + color.gradient[0]);
-    gradient.addColorStop(1, "#" + color.gradient[1]);
-
-    ctx.fillStyle = gradient;
-    //ctx.fillRect(0, canvas.height * (p), canvas.width, canvas.height * (1-p-p));
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-}
-
-function rayIt(canvas, color) {
-    let ctx = canvas.getContext('2d');
-    let center = {x:canvas.width/2, y: canvas.height/2};
-    let rayCount = 18;
-    let arcLength = ((Math.PI * 2) / rayCount) * (1/3);
-    let radius = Math.max(canvas.width, canvas.height);
-    ctx.beginPath();
-    ctx.moveTo(center.x, center.y);
-    for (let j = 0; j < rayCount; j++) {
-        let a0 = ((Math.PI * 2) / rayCount) * j - arcLength / 2;
-        let a1 = a0 + arcLength;
-
-        let x0 = Math.cos(a0) * radius + center.x;
-        let y0 = Math.sin(a0) * radius + center.y;
-        let x1 = Math.cos(a1) * radius + center.x;
-        let y1 = Math.sin(a1) * radius + center.y;
-
-        ctx.lineTo(x0, y0);
-        ctx.lineTo(x1, y1);
-        ctx.lineTo(center.x, center.y);
-    }
-    ctx.closePath();
-
-    ctx.fillStyle = "#" + color.rayed;
-    ctx.fill();
-}
-
-function quarterIt(canvas, color) {
-    let ctx = canvas.getContext('2d');
-    let center = {x:canvas.width/2, y: canvas.height/2};
-
-    let w = canvas.width;
-    let h = canvas.height;
-
-    //top
-    ctx.beginPath();
-    ctx.moveTo(center.x, center.y);
-    ctx.lineTo(0, 0);
-    ctx.lineTo(w, 0);
-    ctx.closePath();
-    ctx.fillStyle = "#" + color.quartered[0];
-    ctx.fill();
-
-    ctx.beginPath();
-    ctx.moveTo(center.x, center.y);
-    ctx.lineTo(w, 0);
-    ctx.lineTo(w, h);
-    ctx.closePath();
-    ctx.fillStyle = "#" + color.quartered[1];
-    ctx.fill();
-
-    ctx.beginPath();
-    ctx.moveTo(center.x, center.y);
-    ctx.lineTo(0, 0);
-    ctx.lineTo(0, h);
-    ctx.closePath();
-    ctx.fillStyle = "#" + color.quartered[2];
-    ctx.fill();
-
-    ctx.beginPath();
-    ctx.moveTo(center.x, center.y);
-    ctx.lineTo(0, h);
-    ctx.lineTo(w, h);
-    ctx.closePath();
-    ctx.fillStyle = "#" + color.quartered[3];
-    ctx.fill();
-
-}
-
-function alphaColor(color, alpha) {
-    let r = parseInt(color.substr(0, 2), 16);
-    let g = parseInt(color.substr(2, 2), 16);
-    let b = parseInt(color.substr(4, 2), 16);
-    return "rgba(" + r + ", " + g + ", " + b + ", " + alpha.toString() + ")";
-}
-
-
-
-// square circles
-function drawCircles(canvas, color, layerSize) {
-    let subLayerSize = (layerSize/2) / color.circles.length;
-    let ctx = canvas.getContext('2d');
-    for (let i = 0; i < color.circles.length; i++) {
-        ctx.fillStyle = "#" + color.circles[i];
-        ctx.fillRect(subLayerSize * i, subLayerSize * i, canvas.width - subLayerSize * i * 2, canvas.height - subLayerSize * i * 2);
-    }
-
-}
-
-function drawCirclesOld(canvas, color, layerSize) {
-
-    let center = {x:canvas.width/2, y: canvas.height/2};
-    let maxRadius = Math.max(center.x, center.y);
-    let radiusIncr = maxRadius / color.circles.length;
-
-    let ctx = canvas.getContext('2d');
-    for (let i = 0; i < color.circles.length; i++) {
-
-        let radius = radiusIncr * (color.circles.length - i);
-
-        ctx.beginPath();
-        ctx.arc(center.x, center.y, radius, 0, 2 * Math.PI, false);
-        ctx.fillStyle = "#" + color.circles[i];
-        ctx.fill();
-    }
-
-}
-
