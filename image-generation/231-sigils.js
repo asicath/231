@@ -3,97 +3,97 @@ const { readdirSync } = require('fs');
 
 let debugMarks = false;
 
-let spiritNames = {
-    
-    m11:`Aعu-iao-uعa`,
-    m12:`Beعθaoooabitom`,
-    m13:`Gitωnosapφωllois`,
-    m14:`Dηnaⲝartarωθ`,
-    m15:`Hoo-oorω-iⲝ`,
-    m16:`Vuaretza`,
-    m17:`Zooωasar`,
-    m18:`Chiva-abrahadabra-cadaxviii`,
-    m19:`θalعⲝer-ā-dekerval`,
-    m20:`Iehuvahaⲝanعθatan`,
-    m21:`Kerugunaviel`,
-    m22:`Lusanaherandraton`,
-    m23:`Malai`,
-    m24:`Nadimraphoroiozعθalai`,
-    m25:`Salaθlala-amrodnaθعiⲝ`,
-    m26:`Oaoaaaoooع-iⲝ`,
-    m27:`Puraθmetai-apηmetai`,
-    m28:`XanθaⲝeranⲈϘ-iⲝ`,
-    m29:`QaniΔnayx-ipamai`,
-    m30:`Ra-a-gioselahladnaimawa-iⲝ`,
-    m31:`Shabnax-odobor`,
-    m32:`Thath’thʻthithعthuth-thiⲝ`,
+const spirits = {
 
-    q11:`Amprodias`,
-    q12:`Baratchial`,
-    q13:`Gargophias`,
-    q14:`Dagadiel`,
-    q15:`Hemethterith`,
-    q16:`Uriens`,
-    q17:`Zamradiel`,
-    q18:`Characith`,
-    q19:`Temphioth`,
-    q20:`Yamatu`,
-    q21:`Kurgasiax`,
-    q22:`Lafcursiax`,
-    q23:`Malkunofat`,
-    q24:`Niantiel`,
-    q25:`Saksaksalim`,
-    q26:`A’ano’nin`,
-    q27:`Parfaxitas`,
-    q28:`Tzuflifu`,
-    q29:`Qulielfi`,
-    q30:`Raflifu`,
-    q31:`Shalicu`,
-    q32:`Thantifaxath`,
-    
+    m001: {name: `Aعu-iao-uعa`, offset: {x: 0, y: 0}},
+    m002: {name: `Beعθaoooabitom`, offset: {x: 0, y: 0}},
+    m003: {name: `Gitωnosapφωllois`, offset: {x: 0, y: 40}},
+    m004: {name: `Dηnaⲝartarωθ`, offset: {x: 0, y: 50}},
+    m005: {name: `Hoo-oorω-iⲝ`, offset: {x: 0, y: 0}},
+    m006: {name: `Vuaretza`, offset: {x: 0, y: 0}},
+    m007: {name: `Zooωasar`, offset: {x: 0, y: -20}},
+    m008: {name: `Chiva-abrahadabra-cadaxviii`, offset: {x: 0, y: 0}},
+    m009: {name: `θalعⲝer-ā-dekerval`, offset: {x: 0, y: -60}},
+    m010: {name: `Iehuvahaⲝanعθatan`, offset: {x: 0, y: 50}},
+    m020: {name: `Kerugunaviel`, offset: {x: 0, y: -30}},
+    m030: {name: `Lusanaherandraton`, offset: {x: 0, y: 50}},
+    m040: {name: `Malai`, offset: {x: 0, y: 50}},
+    m050: {name: `Nadimraphoroiozعθalai`, offset: {x: 0, y: -20}},
+    m060: {name: `Salaθlala-amrodnaθعiⲝ`, offset: {x: 0, y: -50}},
+    m070: {name: `Oaoaaaoooع-iⲝ`, offset: {x: 0, y: 0}},
+    m080: {name: `Puraθmetai-apηmetai`, offset: {x: 0, y: 0}},
+    m090: {name: `XanθaⲝeranⲈϘ-iⲝ`, offset: {x: 0, y: 0}},
+    m100: {name: `QaniΔnayx-ipamai`, offset: {x: 0, y: 0}},
+    m200: {name: `Ra-a-gioselahladnaimawa-iⲝ`, offset: {x: 0, y: 0}},
+    m300: {name: `Shabnax-odobor`, offset: {x: 0, y: 0}},
+    m400: {name: `Thath’thʻthithعthuth-thiⲝ`, offset: {x: 100, y: 0}, scale: 0.35},
+
+    q001: {name: `Amprodias`, offset: {x: -40, y: -30}},
+    q002: {name: `Baratchial`, offset: {x: 20, y: 60}},
+    q003: {name: `Gargophias`, offset: {x: 0, y: 60}},
+    q004: {name: `Dagadiel`, offset: {x: 0, y: 0}},
+    q005: {name: `Hemethterith`, offset: {x: 0, y: 50}},
+    q006: {name: `Uriens`, offset: {x: 10, y: 30}},
+    q007: {name: `Zamradiel`, offset: {x: 0, y: 10}},
+    q008: {name: `Characith`, offset: {x: 50, y: 0}},
+    q009: {name: `Temphioth`, offset: {x: 0, y: 0}},
+    q010: {name: `Yamatu`, offset: {x: 0, y: 0}},
+    q020: {name: `Kurgasiax`, offset: {x: 0, y: 20}},
+    q030: {name: `Lafcursiax`, offset: {x: 0, y: 0}},
+    q040: {name: `Malkunofat`, offset: {x: 0, y: 30}},
+    q050: {name: `Niantiel`, offset: {x: -30, y: 90}},
+    q060: {name: `Saksaksalim`, offset: {x: 0, y: 20}},
+    q070: {name: `A’ano’nin`, offset: {x: 120, y: 60}},
+    q080: {name: `Parfaxitas`, offset: {x: 0, y: 0}},
+    q090: {name: `Tzuflifu`, offset: {x: 0, y: 30}},
+    q100: {name: `Qulielfi`, offset: {x: 10, y: 170}},
+    q200: {name: `Raflifu`, offset: {x: 20, y: 40}},
+    q300: {name: `Shalicu`, offset: {x: 20, y: 50}},
+    q400: {name: `Thantifaxath`, offset: {x: 0, y: 20}, scale: 0.35},
 };
-
 
 (async () => {
     //await loadImages();
     //await main();
-
-    // const filename = `${__dirname}/231/${name}.png`;
 
     const getDirectories = source =>
         readdirSync(source, { withFileTypes: true })
             .filter(dirent => dirent.isDirectory())
             .map(dirent => dirent.name);
 
-    const rootInput = `Z:\\git\\arcanorum\\Assets\\arcanorum\\00_sigils\\sigils\\textures`;
-    const rootOutput = 'Z:\\git\\231\\image-generation\\name-circles';
-
-    let folders = getDirectories(rootInput).filter(name => name.match(/^[qm]\d\d$/));
-    folders.forEach(name => {
-        if (name === 'm32' || name === 'q32') return;
-        const text = spiritNames[name];
-        try {
-            main(`${rootInput}\\${name}\\color.png`, `${rootOutput}\\${name}.png`, text);
-        }
-        catch (err) {
-            console.error(err);
-        }
-    });
+    for (const key of Object.keys(spirits).filter(key => key.indexOf('q') === 0)) {
+        await main(key);
+    }
 
 })();
 
-async function main(input, output, text) {
+async function main(key) {
+    const rootInput = `Z:\\git\\231\\image-generation`;
+    const rootOutput = 'Z:\\git\\231\\image-generation\\output\\name-circles';
 
-    let canvas = createCanvas(1024, 1024);
-    let ctx = canvas.getContext('2d');
+    const spirit = spirits[key];
+
+    const input = `${rootInput}\\sigils\\${key}.png`;
+    const output = `${rootOutput}\\${key}.png`;
+    const text = spirit.name;
+
+    const canvas = createCanvas(1024, 1024);
+    const ctx = canvas.getContext('2d');
 
     // start with white bg
     ctx.fillStyle = "#ffffff";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     // add the sigil
-    let image = await loadImage(input);
-    ctx.drawImage(image, 0, 0, image.width, image.height);
+    const image = await loadImage(input);
+
+    const baseScale = key.indexOf('q') === 0 ? 0.34 : 0.5; // Q is larger than M/D
+    const ratio = baseScale * (spirit.scale || 1);
+    const marginX = Math.floor((canvas.width - image.width * ratio) / 2);
+    const marginY = Math.floor((canvas.height - image.height * ratio) / 2);
+    const offsetX = spirit.offset.x * ratio;
+    const offsetY = spirit.offset.y * ratio;
+    ctx.drawImage(image, marginX + offsetX, marginY + offsetY, canvas.width - marginX * 2, canvas.height - marginY * 2);
 
     // draw the text and circle
     await drawNameCircle(canvas, text);

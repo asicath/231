@@ -415,14 +415,15 @@ const words = {
         clicksPerMeasure: 6,
         parts: [
             // XanθaⲝeranⲈϘ-iⲝ
-            {text:'Xanth', count:3, audio:'low'},
+            {text:'Xan', count:2, audio:'low'},
+            {text:'th', count:1},
             {text:'a', count:2, audio:'high'},
             {text:'ⲝer', count:1, audio:'high'},
-            {text:'an', count:2, audio:'high'},
-            {text:'|', count:1},
+            {text:'an', count:3, audio:'high'},
+            //{text:'|', count:1},
             {text:'ⲈϘ', count:3, audio:'low'},
             {text:'i', count:2, audio:'low'},
-            {text:'ⲝ', count:4}
+            {text:'ⲝ', count:4, audio:'chime'}
         ]
     },
     'qoph':{

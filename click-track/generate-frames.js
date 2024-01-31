@@ -112,7 +112,7 @@ function fadeFill({ctx, canvas, color, center, radius, time, program}) {
 (async () => {
     //await generatePreviews();
     //await generateForPath('mem');
-    //await generateForPath('shin');
+    await generateForPath('tzaddi');
 })();
 
 async function generateForPath(path) {

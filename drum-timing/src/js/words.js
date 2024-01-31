@@ -321,14 +321,15 @@ const words = {
         back: '#5c00cc',
         imgSrc: '090.png',
         minDuration: 1000 * 2.4,
-        clicksPerMeasure: 6,
+        clicksPerMeasure: 18,
         parts: [
             // XanθaⲝeranⲈϘ-iⲝ
-            {text:'Xanth', count:3, audio:'low'},
+            {text:'Xan', count:2, audio:'low'},
+            {text:'th', count:1},
             {text:'a', count:2, audio:'high'},
             {text:'ⲝer', count:1, audio:'high'},
-            {text:'an', count:2, audio:'high'},
-            {text:'|', count:1},
+            {text:'an', count:3, audio:'high'},
+            //{text:'|', count:1},
             {text:'ⲈϘ', count:3, audio:'low'},
             {text:'i', count:2, audio:'low'},
             {text:'ⲝ', count:4}

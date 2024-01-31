@@ -72,7 +72,7 @@ function readWavAsPercent(filename, amp = 0.5) {
 }
 
 (async () => {
-    const path = 'nun';
+    const path = 'tzaddi';
     const toneSet = 'realistic';
 
     await execute({timing: 'long', path, toneSet});
