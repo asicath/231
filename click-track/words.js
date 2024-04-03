@@ -478,14 +478,14 @@ const words = {
     },
     'shin': {
         back: '#ff3300', // KING
-        text: '#D9381E', // QUEEN
-        fore: '#ed2800', // EMPEROR
+        text: '#bf220a', // QUEEN
+        fore: '#d92400', // EMPEROR
         backEnd: '#D9381E', // EMPRESS
         backFlecked: ['#AE0E36', '#00A550'],
 
         imgSrc: '300-color.png',
         //minDuration: 1000 * 1.5,
-        minDuration: 1000 * 2.5,
+        minDuration: 1000 * 1.8,
         parts: [
             {text:'shab', count:2, audio:'high'},
             {text:'nax', count:2, audio:'high'},
