@@ -125,7 +125,7 @@ const words = {
         backEnd: '#5c3312', // EMPRESS
 
         imgSrc: '006-color.png',
-        minDuration: 1000 * 1.5,
+        minDuration: 1000 * 1.2,
         parts: [
             // Vuaretza
             {text:'Vu', count:6, audio:'low'},
@@ -136,15 +136,15 @@ const words = {
     },
     'zain':{
         back: '#FF6D00', // KING
-        text: '#cca3b1', // QUEEN
+        text: '#c6a1cf', // QUEEN
         fore: '#e8af36', // EMPEROR
-        backEnd: '#907172', // EMPRESS
+        backEnd: '#b38f95', // EMPRESS
 
         imgSrc: '007-color.png',
         minDuration: 1000 * 2,
         parts: [
             // Zooωasar
-            {text:'Z', count:1},
+            {text:'Z', count:1, audio: 'chime'},
             {text:'o', count:3, audio:'high'},
             {text:'o', count:3, audio:'high'},
             {text:'ω', count:4, audio:'low'},
@@ -186,7 +186,7 @@ const words = {
         backEnd: '#ff9934', // EMPRESS
 
         imgSrc: '009-color.png',
-        minDuration: 1000 * 2.5,
+        minDuration: 1000 * 2.2,
         includeClicks: true,
         clicksPerMeasure: 12,
         parts: [
@@ -197,8 +197,7 @@ const words = {
 
             {text:'de', count:5, audio:'high'},
             {text:'ker', count:3, audio:'low'},
-            {text:'val', count:5, audio:'low'},
-            {text:'|', count:11}
+            {text:'val', count:16, audio:'low'}
         ]
     },
 
