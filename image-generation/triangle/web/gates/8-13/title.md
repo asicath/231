@@ -1,3 +1,0 @@
-Adjustment + Death
-
-Libra + Scorpio

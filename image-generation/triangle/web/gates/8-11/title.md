@@ -1,3 +1,0 @@
-Adjustment + Lust
-
-Libra + Leo

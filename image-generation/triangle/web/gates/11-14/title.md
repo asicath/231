@@ -1,3 +1,0 @@
-Lust + Art
-
-Leo + Sagittarius

@@ -1,3 +1,0 @@
-Death + Art
-
-Scorpio + Sagittarius

@@ -1,3 +1,0 @@
-Adjustment + Art
-
-Libra + Sagittarius
