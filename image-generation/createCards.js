@@ -84,7 +84,7 @@ async function drawCards() {
         //if (!key.match(/^[2345]_/)) continue;
         //if (!key.match(/t\d\d/)) continue;
         //if (!key.match(/^0_s02/)) continue;
-        if (!key.match(/t01/)) continue;
+        if (!key.match(/t\d\d/)) continue;
         //if (!key.match(/_[wc]10/)) continue;
 
         let pipImage = null;

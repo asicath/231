@@ -17,8 +17,8 @@ async function drawCards() {
         let card = cards[key];
         card.key = key;
 
-        //if (!key.match(/^[2345]_/)) continue;
-        //if (!key.match(/t\d\d/)) continue;
+        //if (key !== '1_t10') continue;
+        if (!key.match(/t\d\d/)) continue;
         //if (!key.match(/^0_s02/)) continue;
         //if (!key.match(/t00/)) continue;
         //if (!key.match(/_[wc]10/)) continue;
@@ -31,8 +31,8 @@ async function drawCard(card) {
 
     const layerCount = 4;
     //let outerSize = 2400;
-    const outerSize = 7400;
-    const width = 7400;
+    const outerSize = 1500;
+    const width = 4000;
 
     const ratio = outerSize / 1200;
     const layerSize = 150 * ratio;

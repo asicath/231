@@ -955,7 +955,7 @@ exports.paths = JSON.parse(`{
       },
       {
         "name": "Deep olive-green",
-        "back": "5B6300"
+        "back": "426300"
       },
       {
         "name": "White, flecked purple, like mother-of-pearl",
