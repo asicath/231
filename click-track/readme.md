@@ -1,7 +1,7 @@
-Run click-1.js to generate a wav file
+Run generate-wav.js to generate a wav file
 
 Run generate-frames.js to generate the mantra animation frames
 
-combine the frames with /output/build-{path}.cmd
+Compile the frames to mp4 with /output/{path}/build.cmd
 
-You may need to create some folders
+Then combine the .mp4 and .wav in a video editing program, I use adobe premiere.

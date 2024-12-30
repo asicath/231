@@ -3,6 +3,7 @@ const EasingFunctions = require('./easing');
 const words = {
 
     'aleph': {
+        key: '001',
         text: '#8ABAD3',
         fore: '#00958D',
         back: '#fee74d',
@@ -26,6 +27,7 @@ const words = {
         ]
     },
     'beth':{
+        key: '002',
         text: '#BB29BB',
         fore: '#bfbfbf',
         back: '#FEDD00',
@@ -36,19 +38,19 @@ const words = {
         minDuration: 1000 * 2.5,
         parts: [
             // Beعθaoooabitom
-            {text:'Be', count:3.55, audio:'high'},
-            {text:'ع', count:5.89, audio:'low'},
-            {text:'θa', count:3.70, audio:'high'},
-            {text:'o', count:9.93, audio:'low'},
-            {text:'o', count:5.97, audio:'low'},
-            {text:'o', count:3.53, audio:'low'},
-            {text:'a', count:5.72, audio:'high'},
-            {text:'bi', count:3.46, audio:'high'},
-            {text:'tom', count:6.26, audio:'low'}
+            {text:'Be', count:4, audio:'high'},
+            {text:'ع', count:6, audio:'low'},
+            {text:'θa', count:4, audio:'high'},
+            {text:'o', count:10, audio:'low'},
+            {text:'o', count:6, audio:'low'},
+            {text:'o', count:4, audio:'low'},
+            {text:'a', count:6, audio:'high'},
+            {text:'bi', count:4, audio:'high'},
+            {text:'tom', count:6, audio:'low'}
         ]
     },
     'gimel':{
-
+        key: '003',
         back: '#0085ca', // KING
         text: '#e8e8e8', // QUEEN
         fore: '#A5C5D9', // EMPEROR
@@ -59,13 +61,22 @@ const words = {
         minDuration: 1000 * 2,
         parts: [
             // Gitωnosapφωllois
-            {text:'Gi', count:5.23, audio:'low'},
+/*            {text:'Gi', count:5.23, audio:'low'},
             {text:'tω', count:7.54, audio:'low'},
             {text:'no', count:5.23, audio:'low'},
             {text:'sap', count:9.51, audio:'high'},
             {text:'φωl', count:7.68, audio:'low'},
             {text:'lo', count:5.09, audio:'low'},
-            {text:'is', count:7.72, audio:'low'}
+            {text:'is', count:7.72, audio:'low'}*/
+
+            // Gitωnosapφωllois
+            {text:'Gi', count:5, audio:'low'},
+            {text:'tω', count:8, audio:'low'},
+            {text:'no', count:5, audio:'low'},
+            {text:'sap', count:12, audio:'high'},
+            {text:'φωl', count:8, audio:'low'},
+            {text:'lo', count:5, audio:'low'},
+            {text:'is', count:8, audio:'low'}
         ]
     },
     /*    'gimel':{
@@ -84,6 +95,7 @@ const words = {
             ]
         },*/
     'daleth': {
+        key: '004',
         back: '#00A550', // KING
         text: '#8ABAD3', // QUEEN
         fore: '#b2d135', // EMPEROR
@@ -101,6 +113,7 @@ const words = {
         ]
     },
     'heh':{
+        key: '005',
         back: '#ed2800', // KING
         text: '#f5ac1c', // QUEEN
         fore: '#EF3340', // EMPEROR
@@ -119,6 +132,7 @@ const words = {
         ]
     },
     'vav':{
+        key: '006',
         back: '#FF4E00', // KING
         text: '#000d59', // QUEEN
         fore: '#C7B63C', // EMPEROR
@@ -135,6 +149,7 @@ const words = {
         ]
     },
     'zain':{
+        key: '007',
         back: '#FF6D00', // KING
         text: '#c6a1cf', // QUEEN
         fore: '#e8af36', // EMPEROR
@@ -153,6 +168,7 @@ const words = {
         ]
     },
     'cheth':{
+        key: '008',
         back: '#ffb734', // KING
         text: '#800f13', // QUEEN
         fore: '#d60d0a', // EMPEROR
@@ -180,6 +196,7 @@ const words = {
         ]
     },
     'teth':{
+        key: '009',
         back: '#E5D708', // KING
         text: '#550055', // QUEEN
         fore: '#bfbfbf', // EMPEROR
@@ -202,6 +219,7 @@ const words = {
     },
 
     'yod':{
+        key: '010',
         back: '#59B934', // KING
         text: '#9faeaa', // QUEEN
         fore: '#558c70', // EMPEROR
@@ -224,6 +242,7 @@ const words = {
         ]
     },
     'kaph': {
+        key: '020',
         back: '#8C15C4', // KING
         text: '#0085ca', // QUEEN
         fore: '#990099', // EMPEROR
@@ -242,6 +261,7 @@ const words = {
         ]
     },
     'lamed':{
+        key: '030',
         text: '#0085ca',
         fore: '#008077',
         back: '#00A550',
@@ -262,6 +282,7 @@ const words = {
         ]
     },
     'mem': {
+        key: '040',
         back: '#0246bc', // KING
         text: '#149C88', // QUEEN
         fore: '#426300', // EMPEROR
@@ -271,10 +292,10 @@ const words = {
         imgSrc: '040-color.png',
         minDuration: 1000*1,
         customTimes: {
-            short3: {
+            drum03: {
                 easingFunction: EasingFunctions.easeOutQuad
             },
-            short2: {
+            drum02: {
                 easingFunction: EasingFunctions.easeOutQuad
             }
         },
@@ -285,6 +306,7 @@ const words = {
         ]
     },
     'nun':{
+        key: '050',
         text: '#664b2d',
         fore: '#211307',
         back: '#00958d',
@@ -312,6 +334,7 @@ const words = {
         ]
     },
     'samekh':{
+        key: '060',
         back: '#0085ca', // KING
         text: '#FEDD00', // QUEEN
         fore: '#00A550', // EMPEROR
@@ -334,6 +357,7 @@ const words = {
         ]
     },
     'ayin':{
+        key: '070',
         back: '#001489', // KING
         text: '#000000', // QUEEN
         fore: '#000a44', // EMPEROR
@@ -360,6 +384,7 @@ const words = {
         ]
     },
     'pe': {
+        key: '080',
         back: '#ed2800', // KING
         text: '#b32009', // QUEEN
         fore: '#EF3340', // EMPEROR
@@ -370,10 +395,10 @@ const words = {
         //minDuration: 1000*2.5,
         minDuration: 1000*4,
         customTimes: {
-            short3: {
+            drum03: {
                 easingFunction: EasingFunctions.easeOutQuad
             },
-            short2: {
+            drum02: {
                 easingFunction: EasingFunctions.easeOutQuad
             }
         },
@@ -404,6 +429,7 @@ const words = {
         ]
     },
     'tzaddi':{
+        key: '090',
         back: '#5c00cc', // KING
         text: '#8ABAD3', // QUEEN
         fore: '#ad78bd', // EMPEROR
@@ -426,6 +452,7 @@ const words = {
         ]
     },
     'qoph':{
+        key: '100',
         back: '#AE0E36', // KING
         text: '#F0DC82', // QUEEN
         fore: '#C08A80', // EMPEROR
@@ -450,6 +477,7 @@ const words = {
         ]
     },
     'resh': {
+        key: '200',
         //`Ra-a-gi o selah lad na i ma wa-iⲝ`
         text: '#FEDD00',
         fore: '#FFA500',
@@ -476,6 +504,7 @@ const words = {
         ]
     },
     'shin': {
+        key: '300',
         back: '#ff3300', // KING
         text: '#bf220a', // QUEEN
         fore: '#d92400', // EMPEROR
@@ -494,6 +523,7 @@ const words = {
         ]
     },
     'tav':{
+        key: '400',
         back: '#001489', // KING
         text: '#000000', // QUEEN
         fore: '#000a44', // EMPEROR
@@ -505,7 +535,7 @@ const words = {
         includeClicks: true,
         clicksPerMeasure: 12,
         customTimes: {
-            long: {
+            drum11: {
                 initialDuration: 1000 * 12
             },
         },
