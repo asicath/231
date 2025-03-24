@@ -97,19 +97,26 @@ const words = {
     'daleth': {
         key: '004',
         back: '#00A550', // KING
-        text: '#8ABAD3', // QUEEN
-        fore: '#b2d135', // EMPEROR
+        text: '#bfff40', // QUEEN
+        fore: '#8ABAD3', // EMPEROR
         backEnd: '#C51959', // EMPRESS
         backEndRayed: '#B2E79F',
 
         imgSrc: '004-color.png',
         minDuration: 1000 * 1.5,
         parts: [
-            {text:'dηn', count:2, audio:'high'},
+/*            {text:'dηn', count:2, audio:'high'},
             {text:'a', count:1.3, audio:'low'},
             {text:'star', count:2, audio:'high'},
             {text:'tar', count:1, audio:'high'},
-            {text:'ωθ', count:2.5, audio:'low'}
+            {text:'ωθ', count:2.5, audio:'low'}*/
+
+            {text:'Dηn', count:4, audio:'high'},
+            {text:'a', count:3, audio:'low'},
+            {text:'ⲝar', count:4, audio:'high'},
+            {text:'ta', count:2, audio:'high'},
+            {text:'rω', count:2, audio:'low'},
+            {text:'θ', count:3}
         ]
     },
     'heh':{
@@ -489,6 +496,19 @@ const words = {
         minDuration: 1000*4,
         parts: [
             {text:'Ra', count:2, audio:'high'},
+            {text:'a', count:3, audio: 'high'},
+            {text:'gi', count:2, audio: 'high'},
+            {text:'os', count:5, audio: 'high'},
+            {text:'el', count:6, audio:'low'},
+            {text:'ah', count:6, audio: 'low'},
+
+            {text:'lad', count:3, audio:'high'},
+            {text:'na', count:2, audio: 'high'},
+            {text:'i', count:5, audio: 'low'},
+            {text:'ma', count:3, audio:'high'},
+            {text:'wa', count:2, audio: 'high'},
+            {text:'iⲝ', count:9, audio: 'low'}
+/*            {text:'Ra', count:2, audio:'high'},
             {text:'a', count:3.59, audio: 'high'},
             {text:'gi', count:2, audio: 'high'},
             {text:'os', count:5.09, audio: 'high'},
@@ -500,7 +520,7 @@ const words = {
             {text:'i', count:5.24, audio: 'low'},
             {text:'ma', count:3.17, audio:'high'},
             {text:'wa', count:2.16, audio: 'high'},
-            {text:'iⲝ', count:8.10, audio: 'low'}
+            {text:'iⲝ', count:8.10, audio: 'low'}*/
         ]
     },
     'shin': {
