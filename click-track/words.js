@@ -257,14 +257,21 @@ const words = {
         backEndRayed: '#fedd00',
 
         imgSrc: '020-color.png',
-        minDuration: 1000*1.7,
+        minDuration: 1000*1.5, // 1.7
         parts: [
-            {text:'Ke', count: 6.33, audio: 'low'},
+/*            {text:'Ke', count: 6.33, audio: 'low'},
             {text:'ru', count: 9.28, audio: 'low'},
             {text:'gu', count: 6.45, audio: 'high'},
             {text:'na', count: 9.65, audio: 'high'},
             {text:'vi', count: 6.68, audio: 'high'},
-            {text:'el', count: 9.61, audio: 'low'},
+            {text:'el', count: 9.61, audio: 'low'},*/
+
+            {text:'Ke', count: 6, audio: 'high'},
+            {text:'ru', count: 10, audio: 'low'},
+            {text:'gu', count: 6, audio: 'low'},
+            {text:'na', count: 10, audio: 'high'},
+            {text:'vi', count: 6, audio: 'high'},
+            {text:'el', count: 10, audio: 'low'},
         ]
     },
     'lamed':{
@@ -400,7 +407,7 @@ const words = {
 
         imgSrc: '080-color3.png',
         //minDuration: 1000*2.5,
-        minDuration: 1000*4,
+        minDuration: 1000*3,
         customTimes: {
             drum03: {
                 easingFunction: EasingFunctions.easeOutQuad
