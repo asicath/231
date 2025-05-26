@@ -1,43 +1,11 @@
 const { createCanvas, loadImage } = require('canvas');
 const fs = require("fs");
 const EasingFunctions = require('./easing');
+const ImageHelper = require('./image-helper');
 
 const times = require('./times');
 const words = require('./words');
 const Program = require('./Program');
-
-
-async function generateForPath(path) {
-    const frameGenerator = new FrameGenerator();
-
-    await frameGenerator.execute({timing: 'drum02', path});
-    await frameGenerator.execute({timing: 'drum03', path});
-    await frameGenerator.execute({timing: 'drum11', path});
-
-    //await this.executeTimer({durationMinutes: 11, path});
-    //await this.executeTimer({durationMinutes: 3, path});
-    //await this.executeTimer({durationMinutes: 2, path});
-}
-
-async function generatePreviews() {
-    const paths = Object.keys(words);
-    for (const path of paths) {
-        await this.execute({timing: 'drum02', path, startTime: 0, outputIndex: 0});
-        await this.execute({timing: 'drum02', path, startTime: 1000 * 60 * 60, outputIndex: 1});
-    }
-}
-
-(async () => {
-    if (module.parent !== null) return;
-
-    const paths = ['beth']
-
-    //await generatePreviews();
-    //await generateForPath('mem');
-    for (const path of paths) {
-        await generateForPath(path);
-    }
-})();
 
 
 class FrameGenerator {
@@ -71,27 +39,6 @@ class FrameGenerator {
 
     resetRandomIndex() {
         this.randomIndex = 0;
-    }
-
-    async exportCanvasToJpg({canvas, name = null, filename = null}) {
-        return new Promise((resolve, reject) => {
-
-            if (filename === null) {
-                filename = `${__dirname}/output/${name}.jpg`;
-            }
-
-            const stream = canvas.createJPEGStream({
-                quality: 1,
-                chromaSubsampling: false, progressive: false
-            });
-
-            const out = fs.createWriteStream(filename);
-            stream.pipe(out);
-
-            out.on('finish', () => {
-                resolve();
-            });
-        });
     }
 
     drawBackground({canvas, color, center, radius}) {
@@ -172,7 +119,7 @@ class FrameGenerator {
             let frameKey = index.toString();
             while (frameKey.length < 9) {frameKey = "0" + frameKey;}
             const filename = `${filepath}/timer-${frameKey}.jpg`;
-            await this.exportCanvasToJpg({canvas, filename});
+            await ImageHelper.exportCanvasToJpg({canvas, filename});
 
             // log
             console.log(`${filename} was created.`);
@@ -257,7 +204,7 @@ class FrameGenerator {
 
                 this.drawNameCircle(canvas, ctx, program, Math.floor(time));
                 const filename = `${filepath}/${timing}-${frameKey}.jpg`;
-                await this.exportCanvasToJpg({canvas, filename});
+                await ImageHelper.exportCanvasToJpg({canvas, filename});
                 console.log(`${filename} was created.`);
             }
 
@@ -614,7 +561,6 @@ class FrameGenerator {
         let height = width;
         const canvas = createCanvas(width, height);
         const ctx = canvas.getContext('2d');
-        let ctx = canvas.getContext('2d');
         ctx.textAlign = 'center';
 
         //ctx.fillStyle = "#ffffff";
@@ -825,3 +771,36 @@ class FrameGenerator {
     }
 
 }
+
+
+async function generateForPath(path) {
+    const frameGenerator = new FrameGenerator();
+
+    await frameGenerator.execute({timing: 'drum02', path});
+    await frameGenerator.execute({timing: 'drum03', path});
+    await frameGenerator.execute({timing: 'drum11', path});
+
+    //await this.executeTimer({durationMinutes: 11, path});
+    //await this.executeTimer({durationMinutes: 3, path});
+    //await this.executeTimer({durationMinutes: 2, path});
+}
+
+async function generatePreviews() {
+    const paths = Object.keys(words);
+    for (const path of paths) {
+        await this.execute({timing: 'drum02', path, startTime: 0, outputIndex: 0});
+        await this.execute({timing: 'drum02', path, startTime: 1000 * 60 * 60, outputIndex: 1});
+    }
+}
+
+(async () => {
+    if (module.parent !== null) return;
+
+    const paths = ['beth']
+
+    //await generatePreviews();
+    //await generateForPath('mem');
+    for (const path of paths) {
+        await generateForPath(path);
+    }
+})();
