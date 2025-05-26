@@ -6,6 +6,40 @@ const times = require('./times');
 const words = require('./words');
 const Program = require('./Program');
 
+
+async function generateForPath(path) {
+    const frameGenerator = new FrameGenerator();
+
+    await frameGenerator.execute({timing: 'drum02', path});
+    await frameGenerator.execute({timing: 'drum03', path});
+    await frameGenerator.execute({timing: 'drum11', path});
+
+    //await this.executeTimer({durationMinutes: 11, path});
+    //await this.executeTimer({durationMinutes: 3, path});
+    //await this.executeTimer({durationMinutes: 2, path});
+}
+
+async function generatePreviews() {
+    const paths = Object.keys(words);
+    for (const path of paths) {
+        await this.execute({timing: 'drum02', path, startTime: 0, outputIndex: 0});
+        await this.execute({timing: 'drum02', path, startTime: 1000 * 60 * 60, outputIndex: 1});
+    }
+}
+
+(async () => {
+    if (module.parent !== null) return;
+
+    const paths = ['beth']
+
+    //await generatePreviews();
+    //await generateForPath('mem');
+    for (const path of paths) {
+        await generateForPath(path);
+    }
+})();
+
+
 class FrameGenerator {
 
     constructor() {
@@ -578,8 +612,8 @@ class FrameGenerator {
         // create the canvas/ctx
         let width = Math.ceil(fontSize*3 * text.length);
         let height = width;
-        //let canvas = createCanvas(width, height);
-        let canvas = createCanvas(width, height);
+        const canvas = createCanvas(width, height);
+        const ctx = canvas.getContext('2d');
         let ctx = canvas.getContext('2d');
         ctx.textAlign = 'center';
 
@@ -791,37 +825,3 @@ class FrameGenerator {
     }
 
 }
-
-
-
-async function generateForPath(path) {
-    const frameGenerator = new FrameGenerator();
-
-    await frameGenerator.execute({timing: 'drum02', path});
-    await frameGenerator.execute({timing: 'drum03', path});
-    await frameGenerator.execute({timing: 'drum11', path});
-
-    //await this.executeTimer({durationMinutes: 11, path});
-    //await this.executeTimer({durationMinutes: 3, path});
-    //await this.executeTimer({durationMinutes: 2, path});
-}
-
-async function generatePreviews() {
-    const paths = Object.keys(words);
-    for (const path of paths) {
-        await this.execute({timing: 'drum02', path, startTime: 0, outputIndex: 0});
-        await this.execute({timing: 'drum02', path, startTime: 1000 * 60 * 60, outputIndex: 1});
-    }
-}
-
-(async () => {
-    if (module.parent !== null) return;
-
-    const paths = ['beth']
-
-    //await generatePreviews();
-    //await generateForPath('mem');
-    for (const path of paths) {
-        await generateForPath(path);
-    }
-})();
