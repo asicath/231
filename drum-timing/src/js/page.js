@@ -84,7 +84,7 @@ function initPageJs() {
         wordConfig.parts.forEach(part => {
             // add the original, but with a single beat
             partsWithClick.push({text: part.text, count: 1, audio: part.audio});
-            for (let i = 0; i < part.count - 1; i++) {
+            for (let i = 0; i < part.beats - 1; i++) {
                 partsWithClick.push({text: '', count: 1, audio: 'click'});
             }
         });

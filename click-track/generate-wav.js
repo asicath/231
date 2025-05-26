@@ -233,9 +233,9 @@ function addTones(measure, data) {
 
     measure.parts.forEach(part => {
         //const part = measure.parts[0];
-        if (!part.partConfig.audio || part.partConfig.audio.length === 0) return;
+        if (!part.audio || part.audio.length === 0) return;
 
-        const tone = tones[part.partConfig.audio];
+        const tone = tones[part.audio];
         const startIndex = part.startLocal * 48;
         for (let i = 0; i < tone.length; i++) {
             data[startIndex + i] += tone[i];

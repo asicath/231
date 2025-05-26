@@ -37,7 +37,7 @@ class BeatTimer {
 
         // get the total count
         this.countTotal = this.parts.reduce((total, part) => {
-            return total + part.count;
+            return total + part.beats;
         }, 0);
 
         // assign each part a percent
@@ -45,7 +45,7 @@ class BeatTimer {
         for (let i = 0; i < this.parts.length; i++) {
             let part = this.parts[i];
             part.startPercent = p;
-            p += part.count / this.countTotal;
+            p += part.beats / this.countTotal;
         }
 
         let recalculateDuration = true; // force duration calculation on the first time
@@ -155,7 +155,7 @@ class BeatTimer {
                 // startPercent: 0
                 // text: "Ke"
                 console.log(`beat ${part.text} ${innerTime} ${this.linePercent}`);
-                this.emit('beat', Object.assign({duration: part.count * timePerCount}, part));
+                this.emit('beat', Object.assign({duration: part.beats * timePerCount}, part));
                 lastPart = part;
             }
 

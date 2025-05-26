@@ -400,7 +400,7 @@ function drawMovingPointer({center, radius, ctx, measurePercent, program}) {
 function drawWordParts({center, radius, ctx, parts, program}) {
 
     // draw the parts
-    let anglePerCount = (Math.PI * 2) / program.partCount;
+    let anglePerCount = (Math.PI * 2) / program.beatsPerMeasure;
     let angle = 0;
 
     // find the draw position of all letters
@@ -442,7 +442,7 @@ function drawWordParts({center, radius, ctx, parts, program}) {
         }
 
         // advance the angle
-        let advanceAngle = anglePerCount * part.count;
+        let advanceAngle = anglePerCount * part.beats;
         angle += advanceAngle;
 
         ctx.restore();

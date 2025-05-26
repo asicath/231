@@ -13,17 +13,17 @@ const words = {
         imgSrc: '001-color.png',
         minDuration: 1000*3.0,
         parts: [
-            {text:'A', count: 1, countx: 4.10, audio: 'high'},
-            {text:'ع', count: 1, countx: 3.86, audio: 'low'},
-            {text:'u', count: 2, countx: 7.05, audio: 'low'},
+            {text:'A', beats: 1, countx: 4.10, audio: 'high'},
+            {text:'ع', beats: 1, countx: 3.86, audio: 'low'},
+            {text:'u', beats: 2, countx: 7.05, audio: 'low'},
 
-            {text:'i', count: 1, countx: 4.08, audio: 'low'},
-            {text:'a', count: 1, countx: 3.99, audio: 'high'},
-            {text:'o', count: 2, countx: 8.17, audio: 'low'},
+            {text:'i', beats: 1, countx: 4.08, audio: 'low'},
+            {text:'a', beats: 1, countx: 3.99, audio: 'high'},
+            {text:'o', beats: 2, countx: 8.17, audio: 'low'},
 
-            {text:'u', count: 1, countx: 3.97, audio: 'low'},
-            {text:'ع', count: 1, countx: 4.44, audio: 'low'},
-            {text:'a', count: 2, countx: 8.34, audio: 'high'}
+            {text:'u', beats: 1, countx: 3.97, audio: 'low'},
+            {text:'ع', beats: 1, countx: 4.44, audio: 'low'},
+            {text:'a', beats: 2, countx: 8.34, audio: 'high'}
         ]
     },
     'beth':{
@@ -38,15 +38,15 @@ const words = {
         minDuration: 1000 * 2.5,
         parts: [
             // Beعθaoooabitom
-            {text:'Be', count:4, audio:'high'},
-            {text:'ع', count:6, audio:'low'},
-            {text:'θa', count:4, audio:'high'},
-            {text:'o', count:10, audio:'low'},
-            {text:'o', count:6, audio:'low'},
-            {text:'o', count:4, audio:'low'},
-            {text:'a', count:6, audio:'high'},
-            {text:'bi', count:4, audio:'high'},
-            {text:'tom', count:6, audio:'low'}
+            {text:'Be', beats:4, audio:'high'},
+            {text:'ع', beats:6, audio:'low'},
+            {text:'θa', beats:4, audio:'high'},
+            {text:'o', beats:10, audio:'low'},
+            {text:'o', beats:6, audio:'low'},
+            {text:'o', beats:4, audio:'low'},
+            {text:'a', beats:6, audio:'high'},
+            {text:'bi', beats:4, audio:'high'},
+            {text:'tom', beats:6, audio:'low'}
         ]
     },
     'gimel':{
@@ -61,22 +61,22 @@ const words = {
         minDuration: 1000 * 2,
         parts: [
             // Gitωnosapφωllois
-/*            {text:'Gi', count:5.23, audio:'low'},
-            {text:'tω', count:7.54, audio:'low'},
-            {text:'no', count:5.23, audio:'low'},
-            {text:'sap', count:9.51, audio:'high'},
-            {text:'φωl', count:7.68, audio:'low'},
-            {text:'lo', count:5.09, audio:'low'},
-            {text:'is', count:7.72, audio:'low'}*/
+/*            {text:'Gi', beats:5.23, audio:'low'},
+            {text:'tω', beats:7.54, audio:'low'},
+            {text:'no', beats:5.23, audio:'low'},
+            {text:'sap', beats:9.51, audio:'high'},
+            {text:'φωl', beats:7.68, audio:'low'},
+            {text:'lo', beats:5.09, audio:'low'},
+            {text:'is', beats:7.72, audio:'low'}*/
 
             // Gitωnosapφωllois
-            {text:'Gi', count:5, audio:'low'},
-            {text:'tω', count:8, audio:'low'},
-            {text:'no', count:5, audio:'low'},
-            {text:'sap', count:12, audio:'high'},
-            {text:'φωl', count:8, audio:'low'},
-            {text:'lo', count:5, audio:'low'},
-            {text:'is', count:8, audio:'low'}
+            {text:'Gi', beats:5, audio:'low'},
+            {text:'tω', beats:8, audio:'low'},
+            {text:'no', beats:5, audio:'low'},
+            {text:'sap', beats:12, audio:'high'},
+            {text:'φωl', beats:8, audio:'low'},
+            {text:'lo', beats:5, audio:'low'},
+            {text:'is', beats:8, audio:'low'}
         ]
     },
     /*    'gimel':{
@@ -85,13 +85,13 @@ const words = {
             minDuration: 1000 * 2,
             parts: [
                 // Gitωnosapφωllois
-                {text:'Gi',  count: 4.87, audio:'low'},
-                {text:'tω',  count: 7.69, audio:'low'},
-                {text:'no',  count: 4.80, audio:'low'},
-                {text:'sap', count:10.44, audio:'high'},
-                {text:'φωl', count: 7.83, audio:'low'},
-                {text:'lo',  count: 4.80, audio:'low'},
-                {text:'is',  count: 8.38, audio:'low'}
+                {text:'Gi',  beats: 4.87, audio:'low'},
+                {text:'tω',  beats: 7.69, audio:'low'},
+                {text:'no',  beats: 4.80, audio:'low'},
+                {text:'sap', beats:10.44, audio:'high'},
+                {text:'φωl', beats: 7.83, audio:'low'},
+                {text:'lo',  beats: 4.80, audio:'low'},
+                {text:'is',  beats: 8.38, audio:'low'}
             ]
         },*/
     'daleth': {
@@ -105,18 +105,18 @@ const words = {
         imgSrc: '004-color.png',
         minDuration: 1000 * 1.5,
         parts: [
-/*            {text:'dηn', count:2, audio:'high'},
-            {text:'a', count:1.3, audio:'low'},
-            {text:'star', count:2, audio:'high'},
-            {text:'tar', count:1, audio:'high'},
-            {text:'ωθ', count:2.5, audio:'low'}*/
+/*            {text:'dηn', beats:2, audio:'high'},
+            {text:'a', beats:1.3, audio:'low'},
+            {text:'star', beats:2, audio:'high'},
+            {text:'tar', beats:1, audio:'high'},
+            {text:'ωθ', beats:2.5, audio:'low'}*/
 
-            {text:'Dηn', count:4, audio:'high'},
-            {text:'a', count:3, audio:'low'},
-            {text:'ⲝar', count:4, audio:'high'},
-            {text:'ta', count:2, audio:'high'},
-            {text:'rω', count:2, audio:'low'},
-            {text:'θ', count:3}
+            {text:'Dηn', beats:4, audio:'high'},
+            {text:'a', beats:3, audio:'low'},
+            {text:'ⲝar', beats:4, audio:'high'},
+            {text:'ta', beats:2, audio:'high'},
+            {text:'rω', beats:2, audio:'low'},
+            {text:'θ', beats:3}
         ]
     },
     'heh':{
@@ -130,12 +130,12 @@ const words = {
         minDuration: 1000 * 2,
         parts: [
             // Hoo-oorω-iⲝ
-            {text:'Ho', count:1, audio:'high'},
-            {text:'o', count:1, audio:'high'},
-            {text:'o', count:1, audio:'high'},
-            {text:'o', count:2, audio:'high'},
-            {text:'rω', count:1, audio:'low'},
-            {text:'iⲝ', count:2, audio:'low'}
+            {text:'Ho', beats:1, audio:'high'},
+            {text:'o', beats:1, audio:'high'},
+            {text:'o', beats:1, audio:'high'},
+            {text:'o', beats:2, audio:'high'},
+            {text:'rω', beats:1, audio:'low'},
+            {text:'iⲝ', beats:2, audio:'low'}
         ]
     },
     'vav':{
@@ -149,10 +149,10 @@ const words = {
         minDuration: 1000 * 1.2,
         parts: [
             // Vuaretza
-            {text:'Vu', count:6, audio:'low'},
-            {text:'a', count:2, audio:'high'},
-            {text:'re', count:4, audio:'high'}, // maybe 3?
-            {text:'tza', count:5, audio:'high'}
+            {text:'Vu', beats:6, audio:'low'},
+            {text:'a', beats:2, audio:'high'},
+            {text:'re', beats:4, audio:'high'}, // maybe 3?
+            {text:'tza', beats:5, audio:'high'}
         ]
     },
     'zain':{
@@ -166,12 +166,12 @@ const words = {
         minDuration: 1000 * 2,
         parts: [
             // Zooωasar
-            {text:'Z', count:1, audio: 'chime'},
-            {text:'o', count:3, audio:'high'},
-            {text:'o', count:3, audio:'high'},
-            {text:'ω', count:4, audio:'low'},
-            {text:'a', count:2, audio:'high'},
-            {text:'sar', count:3, audio:'high'}
+            {text:'Z', beats:1, audio: 'chime'},
+            {text:'o', beats:3, audio:'high'},
+            {text:'o', beats:3, audio:'high'},
+            {text:'ω', beats:4, audio:'low'},
+            {text:'a', beats:2, audio:'high'},
+            {text:'sar', beats:3, audio:'high'}
         ]
     },
     'cheth':{
@@ -186,20 +186,20 @@ const words = {
         includeClicks: true,
         parts: [
             // Chiva-abrahadabra-cadaxviii
-            {text:'Chi', count:2, audio:'low'},
-            //{text:'', count:1, audio:'click'},
-            {text:'va', count:2, audio:'low'},
-            {text:'a', count:1, audio:'high'},
-            {text:'bra', count:1, audio:'high'},
-            {text:'ha', count:1, audio:'high'},
-            {text:'da', count:3, audio:'high'},
-            {text:'bra', count:2, audio:'high'},
+            {text:'Chi', beats:2, audio:'low'},
+            //{text:'', beats:1, audio:'click'},
+            {text:'va', beats:2, audio:'low'},
+            {text:'a', beats:1, audio:'high'},
+            {text:'bra', beats:1, audio:'high'},
+            {text:'ha', beats:1, audio:'high'},
+            {text:'da', beats:3, audio:'high'},
+            {text:'bra', beats:2, audio:'high'},
 
-            {text:'ca', count:2, audio:'low'},
-            {text:'dax', count:2, audio:'low'},
-            {text:'vi', count:2, audio:'high'},
-            {text:'i', count:2, audio:'high'},
-            {text:'i', count:4, audio:'high'},
+            {text:'ca', beats:2, audio:'low'},
+            {text:'dax', beats:2, audio:'low'},
+            {text:'vi', beats:2, audio:'high'},
+            {text:'i', beats:2, audio:'high'},
+            {text:'i', beats:4, audio:'high'},
         ]
     },
     'teth':{
@@ -214,14 +214,14 @@ const words = {
         includeClicks: true,
         clicksPerMeasure: 12,
         parts: [
-            {text:'θa', count:5, audio:'low'},
-            {text:'lع', count:3, audio:'high'},
-            {text:'ⲝer', count:8, audio:'high'},
-            {text:'ā', count:8, audio:'low'},
+            {text:'θa', beats:5, audio:'low'},
+            {text:'lع', beats:3, audio:'high'},
+            {text:'ⲝer', beats:8, audio:'high'},
+            {text:'ā', beats:8, audio:'low'},
 
-            {text:'de', count:5, audio:'high'},
-            {text:'ker', count:3, audio:'low'},
-            {text:'val', count:16, audio:'low'}
+            {text:'de', beats:5, audio:'high'},
+            {text:'ker', beats:3, audio:'low'},
+            {text:'val', beats:16, audio:'low'}
         ]
     },
 
@@ -236,16 +236,16 @@ const words = {
         minDuration: 1000 * 3,
         parts: [
             // Iehuvahaⲝanعθatan
-            {text:'I', count:2, audio:'high'},
-            {text:'e', count:2, audio:'high'},
-            {text:'hu', count:2, audio:'high'},
-            {text:'vah', count:2, audio:'high'},
+            {text:'I', beats:2, audio:'high'},
+            {text:'e', beats:2, audio:'high'},
+            {text:'hu', beats:2, audio:'high'},
+            {text:'vah', beats:2, audio:'high'},
 
-            {text:'a', count:1, audio:'low'},
-            {text:'ⲝan', count:2, audio:'low'},
-            {text:'ع', count:1, audio:'high'},
-            {text:'θa', count:1, audio:'low'},
-            {text:'tan', count:3, audio:'low'}
+            {text:'a', beats:1, audio:'low'},
+            {text:'ⲝan', beats:2, audio:'low'},
+            {text:'ع', beats:1, audio:'high'},
+            {text:'θa', beats:1, audio:'low'},
+            {text:'tan', beats:3, audio:'low'}
         ]
     },
     'kaph': {
@@ -259,19 +259,19 @@ const words = {
         imgSrc: '020-color.png',
         minDuration: 1000*1.5, // 1.7
         parts: [
-/*            {text:'Ke', count: 6.33, audio: 'low'},
-            {text:'ru', count: 9.28, audio: 'low'},
-            {text:'gu', count: 6.45, audio: 'high'},
-            {text:'na', count: 9.65, audio: 'high'},
-            {text:'vi', count: 6.68, audio: 'high'},
-            {text:'el', count: 9.61, audio: 'low'},*/
+/*            {text:'Ke', beats: 6.33, audio: 'low'},
+            {text:'ru', beats: 9.28, audio: 'low'},
+            {text:'gu', beats: 6.45, audio: 'high'},
+            {text:'na', beats: 9.65, audio: 'high'},
+            {text:'vi', beats: 6.68, audio: 'high'},
+            {text:'el', beats: 9.61, audio: 'low'},*/
 
-            {text:'Ke', count: 6, audio: 'high'},
-            {text:'ru', count: 10, audio: 'low'},
-            {text:'gu', count: 6, audio: 'low'},
-            {text:'na', count: 10, audio: 'high'},
-            {text:'vi', count: 6, audio: 'high'},
-            {text:'el', count: 10, audio: 'low'},
+            {text:'Ke', beats: 6, audio: 'high'},
+            {text:'ru', beats: 10, audio: 'low'},
+            {text:'gu', beats: 6, audio: 'low'},
+            {text:'na', beats: 10, audio: 'high'},
+            {text:'vi', beats: 6, audio: 'high'},
+            {text:'el', beats: 10, audio: 'low'},
         ]
     },
     'lamed':{
@@ -286,13 +286,13 @@ const words = {
         clicksPerMeasure: 16,
         parts: [
             // Lusana her andraton
-            {text:'Lu', count:3, audio:'low'},
-            {text:'sa', count:1, audio:'high'},
-            {text:'na', count:2, audio:'high'},
-            {text:'her', count:2, audio: 'chime'},
-            {text:'an', count:3, audio:'low'},
-            {text:'dra', count:1, audio:'high'},
-            {text:'ton', count:4, audio:'high'}
+            {text:'Lu', beats:3, audio:'low'},
+            {text:'sa', beats:1, audio:'high'},
+            {text:'na', beats:2, audio:'high'},
+            {text:'her', beats:2, audio: 'chime'},
+            {text:'an', beats:3, audio:'low'},
+            {text:'dra', beats:1, audio:'high'},
+            {text:'ton', beats:4, audio:'high'}
         ]
     },
     'mem': {
@@ -314,9 +314,9 @@ const words = {
             }
         },
         parts: [
-            {text:'Ma', count:16.14, audio:'low'},
-            {text:'la', count:16.16, audio: 'low'},
-            {text:'i',  count:15.70, audio: 'high'}
+            {text:'Ma', beats:16.14, audio:'low'},
+            {text:'la', beats:16.16, audio: 'low'},
+            {text:'i',  beats:15.70, audio: 'high'}
         ]
     },
     'nun':{
@@ -332,19 +332,19 @@ const words = {
         parts: [
             // Nadimraphoroiozعθalai
 
-            {text:'Na', count:1, audio:'high'},//4
-            {text:'dim', count:3, audio:'low'},
+            {text:'Na', beats:1, audio:'high'},//4
+            {text:'dim', beats:3, audio:'low'},
 
-            {text:'ra', count:3, audio:'high'},//15
-            {text:'pho', count:3, audio:'high'},
-            {text:'ro', count:2, audio:'high'},
-            {text:'i', count:1, audio:'high'},
-            {text:'o', count:3, audio:'high'},
-            {text:'zع', count:3, audio:'high'},
+            {text:'ra', beats:3, audio:'high'},//15
+            {text:'pho', beats:3, audio:'high'},
+            {text:'ro', beats:2, audio:'high'},
+            {text:'i', beats:1, audio:'high'},
+            {text:'o', beats:3, audio:'high'},
+            {text:'zع', beats:3, audio:'high'},
 
-            {text:'tha', count:3, audio:'low'},//11
-            {text:'la', count:3, audio:'low'},
-            {text:'i', count:5, audio:'high'}
+            {text:'tha', beats:3, audio:'low'},//11
+            {text:'la', beats:3, audio:'low'},
+            {text:'i', beats:5, audio:'high'}
         ]
     },
     'samekh':{
@@ -359,15 +359,15 @@ const words = {
         clicksPerMeasure: 14,
         parts: [
             // Salaθlala-amrodnaqعiⲝ
-            {text:'Sa', count:2, audio:'high'},
-            {text:'laθ', count:2, audio:'low'},
-            {text:'la', count:2, audio:'low'},
-            {text:'la', count:6, audio:'low'},
-            {text:'am', count:2, audio:'high'},
-            {text:'rod', count:4, audio:'high'},
-            {text:'na', count:2, audio:'low'},
-            {text:'θع', count:2, audio:'low'},
-            {text:'iⲝ', count:6, audio:'low'}
+            {text:'Sa', beats:2, audio:'high'},
+            {text:'laθ', beats:2, audio:'low'},
+            {text:'la', beats:2, audio:'low'},
+            {text:'la', beats:6, audio:'low'},
+            {text:'am', beats:2, audio:'high'},
+            {text:'rod', beats:4, audio:'high'},
+            {text:'na', beats:2, audio:'low'},
+            {text:'θع', beats:2, audio:'low'},
+            {text:'iⲝ', beats:6, audio:'low'}
         ]
     },
     'ayin':{
@@ -382,19 +382,19 @@ const words = {
         clicksPerMeasure: 16,
         parts: [
             // Oaoaaaoooع-iⲝ
-            {text:'O', count:1, audio:'low'},
-            {text:'a', count:1, audio:'high'},
-            {text:'o', count:1, audio:'low'},
-            {text:'a', count:1, audio:'high'},
-            {text:'a', count:1, audio:'high'},
-            {text:'a', count:1, audio:'high'},
-            {text:'o', count:1, audio:'low'},
-            {text:'o', count:1, audio:'low'},
-            {text:'o', count:2, audio:'low'},
+            {text:'O', beats:1, audio:'low'},
+            {text:'a', beats:1, audio:'high'},
+            {text:'o', beats:1, audio:'low'},
+            {text:'a', beats:1, audio:'high'},
+            {text:'a', beats:1, audio:'high'},
+            {text:'a', beats:1, audio:'high'},
+            {text:'o', beats:1, audio:'low'},
+            {text:'o', beats:1, audio:'low'},
+            {text:'o', beats:2, audio:'low'},
 
-            {text:'ع', count:2, audio:'low'},
-            {text:'i', count:2, audio:'high'},
-            {text:'ⲝ', count:2, audio:'click'},
+            {text:'ع', beats:2, audio:'low'},
+            {text:'i', beats:2, audio:'high'},
+            {text:'ⲝ', beats:2, audio:'click'},
         ]
     },
     'pe': {
@@ -417,29 +417,29 @@ const words = {
             }
         },
         parts: [
-            // {text:'Pu', count:5.65, audio:'low'},
-            // {text:'raθ', count:6.44, audio: 'low'},
-            // {text:'me',  count:3.07, audio: 'high'},
-            // {text:'ta',  count:3.16, audio: 'high'},
-            // {text:'i',  count:5.89, audio: 'high'},
+            // {text:'Pu', beats:5.65, audio:'low'},
+            // {text:'raθ', beats:6.44, audio: 'low'},
+            // {text:'me',  beats:3.07, audio: 'high'},
+            // {text:'ta',  beats:3.16, audio: 'high'},
+            // {text:'i',  beats:5.89, audio: 'high'},
             //
-            // {text:'a', count:5.75, audio:'low'},
-            // {text:'pη', count:5.93, audio: 'low'},
-            // {text:'me',  count:2.95, audio: 'high'},
-            // {text:'ta',  count:3.05, audio: 'high'},
-            // {text:'i',  count:6.12, audio: 'high'},
+            // {text:'a', beats:5.75, audio:'low'},
+            // {text:'pη', beats:5.93, audio: 'low'},
+            // {text:'me',  beats:2.95, audio: 'high'},
+            // {text:'ta',  beats:3.05, audio: 'high'},
+            // {text:'i',  beats:6.12, audio: 'high'},
 
-            {text:'Pu', count:2, audio:'low'},
-            {text:'raθ', count:2, audio: 'low'},
-            {text:'me',  count:1, audio: 'high'},
-            {text:'ta',  count:1, audio: 'high'},
-            {text:'i',  count:2, audio: 'high'},
+            {text:'Pu', beats:2, audio:'low'},
+            {text:'raθ', beats:2, audio: 'low'},
+            {text:'me',  beats:1, audio: 'high'},
+            {text:'ta',  beats:1, audio: 'high'},
+            {text:'i',  beats:2, audio: 'high'},
 
-            {text:'a', count:2, audio:'low'},
-            {text:'pη', count:2, audio: 'low'},
-            {text:'me',  count:1, audio: 'high'},
-            {text:'ta',  count:1, audio: 'high'},
-            {text:'i',  count:2, audio: 'high'},
+            {text:'a', beats:2, audio:'low'},
+            {text:'pη', beats:2, audio: 'low'},
+            {text:'me',  beats:1, audio: 'high'},
+            {text:'ta',  beats:1, audio: 'high'},
+            {text:'i',  beats:2, audio: 'high'},
         ]
     },
     'tzaddi':{
@@ -454,15 +454,15 @@ const words = {
         clicksPerMeasure: 6,
         parts: [
             // XanθaⲝeranⲈϘ-iⲝ
-            {text:'Xan', count:2, audio:'low'},
-            {text:'th', count:1},
-            {text:'a', count:2, audio:'high'},
-            {text:'ⲝer', count:1, audio:'high'},
-            {text:'an', count:3, audio:'high'},
-            //{text:'|', count:1},
-            {text:'ⲈϘ', count:3, audio:'low'},
-            {text:'i', count:2, audio:'low'},
-            {text:'ⲝ', count:4, audio:'chime'}
+            {text:'Xan', beats:2, audio:'low'},
+            {text:'th', beats:1},
+            {text:'a', beats:2, audio:'high'},
+            {text:'ⲝer', beats:1, audio:'high'},
+            {text:'an', beats:3, audio:'high'},
+            //{text:'|', beats:1},
+            {text:'ⲈϘ', beats:3, audio:'low'},
+            {text:'i', beats:2, audio:'low'},
+            {text:'ⲝ', beats:4, audio:'chime'}
         ]
     },
     'qoph':{
@@ -477,17 +477,17 @@ const words = {
         clicksPerMeasure: 12,
         parts: [
             // QaniΔnayx-ipamai
-            {text:'Qa', count:1, audio:'low'},
-            {text:'ni', count:1, audio:'high'},
-            {text:'d', count:1},
-            {text:'na', count:1, audio:'high'},
-            {text:'y', count:1, audio:'low'},
-            {text:'x', count:2},
+            {text:'Qa', beats:1, audio:'low'},
+            {text:'ni', beats:1, audio:'high'},
+            {text:'d', beats:1},
+            {text:'na', beats:1, audio:'high'},
+            {text:'y', beats:1, audio:'low'},
+            {text:'x', beats:2},
 
-            {text:'i', count:1, audio:'high'},
-            {text:'pa', count:1, audio:'low'},
-            {text:'ma', count:1, audio:'low'},
-            {text:'i', count:2, audio:'low'}
+            {text:'i', beats:1, audio:'high'},
+            {text:'pa', beats:1, audio:'low'},
+            {text:'ma', beats:1, audio:'low'},
+            {text:'i', beats:2, audio:'low'}
         ]
     },
     'resh': {
@@ -502,32 +502,32 @@ const words = {
         imgSrc: '200-color.png',
         minDuration: 1000*4,
         parts: [
-            {text:'Ra', count:2, audio:'high'},
-            {text:'a', count:3, audio: 'high'},
-            {text:'gi', count:2, audio: 'high'},
-            {text:'os', count:5, audio: 'high'},
-            {text:'el', count:6, audio:'low'},
-            {text:'ah', count:6, audio: 'low'},
+            {text:'Ra', beats:2, audio:'high'},
+            {text:'a', beats:3, audio: 'high'},
+            {text:'gi', beats:2, audio: 'high'},
+            {text:'os', beats:5, audio: 'high'},
+            {text:'el', beats:6, audio:'low'},
+            {text:'ah', beats:6, audio: 'low'},
 
-            {text:'lad', count:3, audio:'high'},
-            {text:'na', count:2, audio: 'high'},
-            {text:'i', count:5, audio: 'low'},
-            {text:'ma', count:3, audio:'high'},
-            {text:'wa', count:2, audio: 'high'},
-            {text:'iⲝ', count:9, audio: 'low'}
-/*            {text:'Ra', count:2, audio:'high'},
-            {text:'a', count:3.59, audio: 'high'},
-            {text:'gi', count:2, audio: 'high'},
-            {text:'os', count:5.09, audio: 'high'},
-            {text:'el', count:5.66, audio:'low'},
-            {text:'ah', count:5.66, audio: 'low'},
+            {text:'lad', beats:3, audio:'high'},
+            {text:'na', beats:2, audio: 'high'},
+            {text:'i', beats:5, audio: 'low'},
+            {text:'ma', beats:3, audio:'high'},
+            {text:'wa', beats:2, audio: 'high'},
+            {text:'iⲝ', beats:9, audio: 'low'}
+/*            {text:'Ra', beats:2, audio:'high'},
+            {text:'a', beats:3.59, audio: 'high'},
+            {text:'gi', beats:2, audio: 'high'},
+            {text:'os', beats:5.09, audio: 'high'},
+            {text:'el', beats:5.66, audio:'low'},
+            {text:'ah', beats:5.66, audio: 'low'},
 
-            {text:'lad', count:3.17, audio:'high'},
-            {text:'na', count:2.16, audio: 'high'},
-            {text:'i', count:5.24, audio: 'low'},
-            {text:'ma', count:3.17, audio:'high'},
-            {text:'wa', count:2.16, audio: 'high'},
-            {text:'iⲝ', count:8.10, audio: 'low'}*/
+            {text:'lad', beats:3.17, audio:'high'},
+            {text:'na', beats:2.16, audio: 'high'},
+            {text:'i', beats:5.24, audio: 'low'},
+            {text:'ma', beats:3.17, audio:'high'},
+            {text:'wa', beats:2.16, audio: 'high'},
+            {text:'iⲝ', beats:8.10, audio: 'low'}*/
         ]
     },
     'shin': {
@@ -542,11 +542,11 @@ const words = {
         //minDuration: 1000 * 1.5,
         minDuration: 1000 * 1.8,
         parts: [
-            {text:'shab', count:2, audio:'high'},
-            {text:'nax', count:2, audio:'high'},
-            {text:'od', count:1, audio:'low'},
-            {text:'ob', count:1, audio:'low'},
-            {text:'or', count:2, audio:'low'}
+            {text:'shab', beats:2, audio:'high'},
+            {text:'nax', beats:2, audio:'high'},
+            {text:'od', beats:1, audio:'low'},
+            {text:'ob', beats:1, audio:'low'},
+            {text:'or', beats:2, audio:'low'}
         ]
     },
     'tav':{
@@ -571,21 +571,21 @@ const words = {
 
 /*
             // 12 beats
-            {text:'Thath', count:4, audio:'low'},
-            {text:"'th'", count:2, audio:'high'},
-            {text:'thi', count:1, audio:'low'},
-            {text:'thع', count:1, audio:'low'},
-            {text:'thuth', count:2, audio:'low'},
-            {text:'thiⲝ', count:2, audio:'high'}
+            {text:'Thath', beats:4, audio:'low'},
+            {text:"'th'", beats:2, audio:'high'},
+            {text:'thi', beats:1, audio:'low'},
+            {text:'thع', beats:1, audio:'low'},
+            {text:'thuth', beats:2, audio:'low'},
+            {text:'thiⲝ', beats:2, audio:'high'}
 */
 
             // 16 beats
-            {text:'Thath', count:6, audio:'low'},
-            {text:"'th'", count:2, audio:'high'},
-            {text:'thi', count:1, audio:'low'},
-            {text:'thع', count:1, audio:'low'},
-            {text:'thuth', count:2, audio:'low'},
-            {text:'thiⲝ', count:4, audio:'high'}
+            {text:'Thath', beats:6, audio:'low'},
+            {text:"'th'", beats:2, audio:'high'},
+            {text:'thi', beats:1, audio:'low'},
+            {text:'thع', beats:1, audio:'low'},
+            {text:'thuth', beats:2, audio:'low'},
+            {text:'thiⲝ', beats:4, audio:'high'}
         ]
     }
 

@@ -8,16 +8,24 @@ const defaultConfig = {
     backFlecked: undefined
 };
 
+/**
+ * Acts as an interface between the word config and the frame and wav generators
+ */
 class Program {
 
     constructor(wordConfig, timeConfig) {
 
-        // create the conbined config
+        // create the combined config
         this.config = Object.assign({}, defaultConfig, timeConfig, wordConfig);
 
-        // total parts
-        this.partCount = this.config.parts.reduce((total, part) => {
-            return total + part.count;
+        this._calculateMeasures();
+    }
+
+    _calculateMeasures() {
+
+        // get the total part count [beats per measure]
+        this.beatsPerMeasure = this.config.parts.reduce((total, part) => {
+            return total + part.beats;
         }, 0);
 
         // create the measures
@@ -42,7 +50,7 @@ class Program {
                 start: time,
                 parts: [],
                 clicks: null,
-                timePerCount: duration / this.partCount
+                timePerCount: duration / this.beatsPerMeasure
             };
             this.measures.push(measure);
 
@@ -54,21 +62,21 @@ class Program {
             let countTotal = 0;
             let i = 0;
             while (i < this.config.parts.length) {
-                const partConfig = this.config.parts[i];
+                const part = this.config.parts[i];
 
                 // find the start from the measure
                 const startLocal = Math.floor(countTotal * measure.timePerCount);
-                const part = {
+                const measurePart = {
                     startLocal,
                     start: measure.start + startLocal,
-                    duration: Math.floor(partConfig.count * measure.timePerCount),
+                    duration: Math.floor(part.beats * measure.timePerCount),
                     partIndex: i,
-                    partConfig
+                    audio: part.audio
                 };
-                measure.parts.push(part);
+                measure.parts.push(measurePart);
 
                 // setup for next part
-                countTotal += partConfig.count;
+                countTotal += part.beats;
                 i++;
             }
 
@@ -81,7 +89,6 @@ class Program {
                 }
             }
         }
-
     }
 
 }
@@ -92,5 +99,5 @@ if (module.parent === null) {
     const times = require('./times');
     const words = require('./words');
     const program = new Program(words.qoph, times.drum11);
-    console.log(program.partCount);
+    console.log(program.beatsPerMeasure);
 }

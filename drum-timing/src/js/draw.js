@@ -78,8 +78,8 @@ function init(wordConfig, timeConfig) {
     $('body').css('background-color', state.config.back);
 
     // get the total count
-    state.partCount = state.config.parts.reduce((total, part) => {
-        return total + part.count;
+    state.beatsPerMeasure = state.config.parts.reduce((total, part) => {
+        return total + part.beats;
     }, 0);
 
     // create the timer
@@ -257,7 +257,7 @@ function drawWordParts({center, radius, ctx, parts}) {
     ctx.strokeStyle = radius.text;
 
     // draw the parts
-    let anglePerCount = (Math.PI * 2) / state.partCount;
+    let anglePerCount = (Math.PI * 2) / state.beatsPerMeasure;
     let angle = 0;
 
     // find the draw position of all letters
@@ -299,7 +299,7 @@ function drawWordParts({center, radius, ctx, parts}) {
         }
 
         // advance the angle
-        let advanceAngle = anglePerCount * part.count;
+        let advanceAngle = anglePerCount * part.beats;
         angle += advanceAngle;
 
         ctx.restore();
