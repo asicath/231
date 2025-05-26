@@ -14,11 +14,10 @@ class FrameGenerator {
         this.minImageCache = {};
         this.randomCache = [];
         this.randomIndex = 0;
+        this.backgroundCache = new Map();
     }
 
     async execute({path, timing, startTime = null, outputIndex = null, skipFrames = 0}) {
-
-        this.clearLetterCache();
 
         const program = new Program(words[path], times[timing]);
         // load the image
@@ -36,9 +35,14 @@ class FrameGenerator {
             flecked: program.config.backFlecked
         };
 
-        console.log('generating background')
-        const backgroundCanvas = createCanvas(canvas.width, canvas.height);
-        this.drawBackground({canvas: backgroundCanvas, backgroundColor});
+        if (!this.backgroundCache.has(path)) {
+            console.log('generating background');
+            const bg = createCanvas(canvas.width, canvas.height);
+            this.drawBackground({canvas: bg, backgroundColor});
+            this.backgroundCache.set(path, bg);
+        }
+
+        const backgroundCanvas = this.backgroundCache.get(path);
 
         let time = 0;
 
@@ -70,12 +74,40 @@ class FrameGenerator {
                 let frameKey = frameIndex.toString();
                 while (frameKey.length < 9) {frameKey = "0" + frameKey;}
 
+                // determine the measure and remainingCount
+                let measure, remainingCount;
+                if (time < 0) {
+                    measure = program.measures[0];
+                    remainingCount = program.measures.length;
+                }
+                else {
+                    measure = program.measures.find(measure => {
+                        return measure.start <= time && measure.start + measure.duration > time;
+                    });
+                    if (!measure) {
+                        measure = program.measures[program.measures.length - 1];
+                        remainingCount = 0;
+                    } else {
+                        remainingCount = program.measures.length - program.measures.indexOf(measure);
+                    }
+                }
+
+                // determine how far through the current measure we are
+                const measurePercent = (time - measure.start) / measure.duration;
+
+                const frameInfo = {
+                    time: Math.floor(time),
+                    remainingCount,
+                    measure,
+                    measurePercent
+                };
+
                 // draw the background
                 ctx.drawImage(backgroundCanvas, 0, 0);
                 this.fadeFill({ctx, canvas, backgroundColor, program, time})
 
                 // draw the foreground
-                this.drawNameCircle(canvas, ctx, program, Math.floor(time));
+                this.drawNameCircle(canvas, ctx, program, frameInfo);
 
                 // export to file
                 const filename = `${filepath}/${timing}-${frameKey}.jpg`;
@@ -92,10 +124,6 @@ class FrameGenerator {
 
     }
 
-    clearLetterCache() {
-        this.minImageCache = {};
-    }
-
     getRandom() {
 
         if (this.randomIndex >= this.randomCache.length) {
@@ -106,10 +134,6 @@ class FrameGenerator {
         }
         //if (this.randomIndex % 100000 === 0) console.log(this.randomIndex);
         return this.randomCache[this.randomIndex++];
-    }
-
-    resetRandomIndex() {
-        this.randomIndex = 0;
     }
 
     fadeFill({ctx, canvas, backgroundColor, time, program}) {
@@ -189,34 +213,34 @@ class FrameGenerator {
     }
 
 
-    drawNameCircle(canvas, ctx, program, time) {
-
-        // determine the measure
-        let measure, remainingCount;
-        if (time < 0) {
-            measure = program.measures[0];
-            remainingCount = program.measures.length;
-        }
-        else {
-            measure = program.measures.find(measure => {
-                return measure.start <= time && measure.start + measure.duration > time;
-            });
-            if (!measure) {
-                measure = program.measures[program.measures.length - 1];
-                remainingCount = 0;
-            } else {
-                remainingCount = program.measures.length - program.measures.indexOf(measure);
-            }
-        }
-
-        // determine how far through the current measure we are
-        const measurePercent = (time - measure.start) / measure.duration;
+    drawNameCircle(canvas, ctx, program, frameInfo) {
 
         // calc center
         const center = {x: canvas.width / 2, y: canvas.height / 2};
 
-        // calc radius
-        const radius = {
+        // calc sigilInfo
+        const sigilInfo = this.getSigilInfo(canvas, program);
+
+        this.fillCircle({ctx, center, sigilInfo});
+
+        // draw the image
+        this.drawSigil({ctx, center, sigilInfo, program});
+
+        // draw the pointer
+        this.drawMovingPointer({ctx, center, sigilInfo, frameInfo});
+
+        // draw the letters
+        this.drawWordParts({ctx, center, sigilInfo, parts: program.config.parts, program});
+
+        // draw the circles
+        this.drawCircles({ctx, center, sigilInfo});
+
+        // draw the info around the circle
+        this.drawHelperInfo({ctx, center, sigilInfo, program, frameInfo});
+    }
+
+    getSigilInfo(canvas, program) {
+        const sigilInfo = {
             max: canvas.height / 2,
             text: program.config.text,
             fore: program.config.fore,
@@ -226,29 +250,15 @@ class FrameGenerator {
         };
 
         // find the top and bottom of text draw area
-        radius.textTop = radius.max * 0.915; // should be aligned with the UV template lip
-        radius.textBottom = radius.max * 0.7; // allow for the text plus margins
+        sigilInfo.textTop = sigilInfo.max * 0.915; // should be aligned with the UV template lip
+        sigilInfo.textBottom = sigilInfo.max * 0.7; // allow for the text plus margins
         let innerCircleWidth = 6;
-        radius.innerCircle = radius.textBottom - innerCircleWidth;
+        sigilInfo.innerCircle = sigilInfo.textBottom - innerCircleWidth;
 
-        this.fillCircle({ctx, center, radius, program});
-
-        // draw the image
-        this.drawSigil({ctx, center, radius, program});
-
-        // draw the pointer
-        this.drawMovingPointer({ctx, center, radius, measurePercent, program});
-
-        // draw the letters
-        this.drawWordParts({ctx, center, radius, parts: program.config.parts, program});
-
-        // draw the circles
-        this.drawCircles({ctx, center, radius, program});
-
-        // draw the info around the circle
-        this.drawHelperInfo({ctx, center, radius, canvas, program, time, measure, remainingCount});
+        return sigilInfo;
     }
-    drawSigil({center, radius, ctx, program}) {
+
+    drawSigil({center, sigilInfo, ctx, program}) {
         ctx.save();
         ctx.translate(center.x, center.y);
 
@@ -256,8 +266,8 @@ class FrameGenerator {
         //let imgRadius = program.img.height / 2;
         let imgRadius = Math.sqrt(Math.pow(program.img.width, 2) + Math.pow(program.img.height, 2)) / 2;
 
-        let imgScale = (radius.textBottom) / imgRadius;
-        imgScale *= radius.sigilRatio;
+        let imgScale = (sigilInfo.textBottom) / imgRadius;
+        imgScale *= sigilInfo.sigilRatio;
         let scaledWidth = program.img.width*imgScale;
         let scaledHeight = program.img.height*imgScale;
 
@@ -267,18 +277,18 @@ class FrameGenerator {
         ctx.restore();
     }
 
-    drawMovingPointer({center, radius, ctx, measurePercent, program}) {
+    drawMovingPointer({center, sigilInfo, ctx, frameInfo}) {
         ctx.save();
         ctx.translate(center.x, center.y);
 
-        let max = radius.textBottom;
-        let angle = Math.PI * 2 * measurePercent - Math.PI/2;
-        let x0 = Math.cos(angle) * max * radius.sigilRatio;
-        let y0 = Math.sin(angle) * max * radius.sigilRatio;
+        let max = sigilInfo.textBottom;
+        let angle = Math.PI * 2 * frameInfo.measurePercent - Math.PI/2;
+        let x0 = Math.cos(angle) * max * sigilInfo.sigilRatio;
+        let y0 = Math.sin(angle) * max * sigilInfo.sigilRatio;
         let x1 = Math.cos(angle) * max;
         let y1 = Math.sin(angle) * max;
 
-        ctx.strokeStyle = radius.text;
+        ctx.strokeStyle = sigilInfo.text;
         ctx.lineWidth = 3;
         ctx.beginPath();
         ctx.moveTo(x0, y0);
@@ -288,7 +298,7 @@ class FrameGenerator {
         ctx.restore();
     }
 
-    drawWordParts({center, radius, ctx, parts, program}) {
+    drawWordParts({center, sigilInfo, ctx, parts, program}) {
 
         // draw the parts
         let anglePerCount = (Math.PI * 2) / program.beatsPerMeasure;
@@ -310,22 +320,22 @@ class FrameGenerator {
                 const letter = text[i];
 
                 // generate the letter image
-                const trimmed = this.getTrimmedLetter(letter, radius.text);
+                const trimmed = this.getTrimmedLetter(letter, sigilInfo.text);
 
                 // draw the pre generated trimmed letter image
                 let x = 0;
-                let y = -1 * (radius.textTop + radius.textBottom) / 2;
+                let y = -1 * (sigilInfo.textTop + sigilInfo.textBottom) / 2;
                 x -= trimmed.width / 2;
                 y -= trimmed.height / 2;
                 ctx.drawImage(trimmed.image, x, y, trimmed.width, trimmed.height);
 
                 // little line as a tick
                 if (i === 0) {
-                    ctx.strokeStyle = radius.fore;
+                    ctx.strokeStyle = sigilInfo.fore;
                     ctx.lineWidth = 2;
                     ctx.beginPath();
-                    ctx.moveTo(0, -radius.textBottom*0.9);
-                    ctx.lineTo(0, -radius.textBottom*1.05);
+                    ctx.moveTo(0, -sigilInfo.textBottom*0.9);
+                    ctx.lineTo(0, -sigilInfo.textBottom*1.05);
                     ctx.stroke();
                 }
 
@@ -340,85 +350,85 @@ class FrameGenerator {
         }
     }
 
-    fillCircle({center, radius, ctx, program}) {
+    fillCircle({center, sigilInfo, ctx}) {
         ctx.save();
         ctx.translate(center.x, center.y);
 
         // outer circle lines
         ctx.beginPath();
-        ctx.arc(0, 0, radius.textTop + 8, 0, 2 * Math.PI, false);
+        ctx.arc(0, 0, sigilInfo.textTop + 8, 0, 2 * Math.PI, false);
         ctx.lineWidth = 4;
 
-        ctx.fillStyle = radius.back;
+        ctx.fillStyle = sigilInfo.back;
         ctx.fill();
 
         ctx.restore();
     }
 
-    drawCircles({center, radius, ctx, program}) {
+    drawCircles({center, sigilInfo, ctx}) {
         ctx.save();
         ctx.translate(center.x, center.y);
 
         // outer circle lines
         ctx.beginPath();
-        ctx.arc(0, 0, radius.textTop + 8, 0, 2 * Math.PI, false);
+        ctx.arc(0, 0, sigilInfo.textTop + 8, 0, 2 * Math.PI, false);
         ctx.lineWidth = 4;
-        ctx.strokeStyle = radius.fore;
+        ctx.strokeStyle = sigilInfo.fore;
         ctx.stroke();
 
         ctx.beginPath();
-        ctx.arc(0, 0, radius.textTop, 0, 2 * Math.PI, false);
+        ctx.arc(0, 0, sigilInfo.textTop, 0, 2 * Math.PI, false);
         ctx.lineWidth = 4;
-        ctx.strokeStyle = radius.fore;
+        ctx.strokeStyle = sigilInfo.fore;
         ctx.stroke();
 
         // inner circle line
         ctx.beginPath();
-        ctx.arc(0, 0, radius.textBottom, 0, 2 * Math.PI, false);
+        ctx.arc(0, 0, sigilInfo.textBottom, 0, 2 * Math.PI, false);
         ctx.lineWidth = 4;
-        ctx.strokeStyle = radius.fore;
+        ctx.strokeStyle = sigilInfo.fore;
         ctx.stroke();
 
         ctx.restore();
     }
 
-    drawHelperInfo({center, radius, ctx, canvas, program, time, measure, remainingCount}) {
+    drawHelperInfo({center, sigilInfo, ctx, program, frameInfo}) {
         ctx.save();
         ctx.translate(center.x, center.y);
 
-        ctx.fillStyle = radius.text;
-        ctx.strokeStyle = radius.text;
+        ctx.fillStyle = sigilInfo.text;
+        ctx.strokeStyle = sigilInfo.text;
 
         (() => {
-            this.drawTimeLine(ctx, -1 * (radius.textTop-10), radius.textTop - 160, 100, 100, program, time);
+            this.drawTimeLine(ctx, -1 * (sigilInfo.textTop-10), sigilInfo.textTop - 160, 100, 100, program, frameInfo.time);
 
             // remaining time
             let fontSize = 50;
             let fontName = 'consolas';
             ctx.font = `${fontSize}pt "${fontName}"`;
 
-            if (time < 0) {
+            if (frameInfo.time < 0) {
                 // "start"
                 ctx.font = `${fontSize/2}pt "${fontName}"`;
                 ctx.textAlign = 'right';
-                ctx.fillText("starts in:", radius.textTop, -radius.textTop + fontSize*0.5);
+                ctx.fillText("starts in:", sigilInfo.textTop, -sigilInfo.textTop + fontSize*0.5);
 
                 // now the actual timer
                 ctx.font = `${fontSize}pt "${fontName}"`;
-                let countDownText = `${Math.ceil(-time/1000)}`;
+                let countDownText = `${Math.ceil(-frameInfo.time/1000)}`;
                 ctx.textAlign = 'right';
-                ctx.fillText(countDownText, radius.textTop, -radius.textTop + fontSize * 1.8);
+                ctx.fillText(countDownText, sigilInfo.textTop, -sigilInfo.textTop + fontSize * 1.8);
             }
 
             // upper left - count remaining
             ctx.font = `${fontSize}pt "${fontName}"`;
-            let measuresRemaining = (program.measures.length - measure.index).toString();
-            measuresRemaining = remainingCount;
+            let measuresRemaining = (program.measures.length - frameInfo.measure.index).toString();
+            measuresRemaining = frameInfo.remainingCount;
             ctx.textAlign = 'left';
-            ctx.fillText(measuresRemaining, -radius.textTop, -radius.textTop + fontSize * 1.8);
+            ctx.fillText(measuresRemaining, -sigilInfo.textTop, -sigilInfo.textTop + fontSize * 1.8);
 
             // lower right - time remaining
-            let timeRemaining = program.config.totalTime - Math.max(time, 0);
+            let timeRemaining = program.config.totalTime - Math.max(frameInfo.time, 0);
             let timeRemainingNeg = timeRemaining < 0 ? "-" : "";
             timeRemaining = Math.ceil(Math.abs(timeRemaining) / 1000);
             let minutes = Math.floor(timeRemaining / 60);
@@ -427,16 +437,16 @@ class FrameGenerator {
 
             let remainingText = `${timeRemainingNeg}${minutes}:${seconds}`;
             ctx.textAlign = 'right';
-            ctx.fillText(remainingText, radius.textTop, radius.textTop);
+            ctx.fillText(remainingText, sigilInfo.textTop, sigilInfo.textTop);
 
             // time per rotation
-            let lineDuration = measure.duration;
+            let lineDuration = frameInfo.measure.duration;
             lineDuration = Math.floor(lineDuration / 100) / 10;
 
             let lineDurationText = lineDuration.toString();
             if (lineDurationText.indexOf(".") === -1) lineDurationText = lineDurationText + ".0";
             ctx.textAlign = 'left';
-            ctx.fillText(lineDurationText, -radius.textTop, radius.textTop);
+            ctx.fillText(lineDurationText, -sigilInfo.textTop, sigilInfo.textTop);
         })();
 
         ctx.restore();
@@ -793,13 +803,12 @@ async function generateForPath(path) {
 }
 
 async function generatePreviews() {
-    const frameGenerator = new FrameGenerator();
-
     const paths = Object.keys(words);
     for (const path of paths) {
-        await frameGenerator.execute({timing: 'drum02', path, startTime: 0, outputIndex: 0});
-        await frameGenerator.execute({timing: 'drum02', path, startTime: 1000 * 60 * 1, outputIndex: 1});
-        await frameGenerator.execute({timing: 'drum02', path, startTime: 1000 * 60 * 3, outputIndex: 2});
+        const frameGenerator = new FrameGenerator();
+        for (let i = 0; i <= 12; i++) {
+            await frameGenerator.execute({timing: 'drum11', path, startTime: 1000 * 60 * i, outputIndex: i});
+        }
     }
 }
 
