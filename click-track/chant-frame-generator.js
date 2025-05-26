@@ -7,63 +7,98 @@ const times = require('./times');
 const words = require('./words');
 const Program = require('./Program');
 
+class ChantFrameGenerator {
 
-class FrameGenerator {
+    constructor(path) {
 
-    constructor() {
+        this.path = path;
+
         this.minImageCache = {};
         this.randomCache = [];
         this.randomIndex = 0;
-        this.backgroundCache = new Map();
-    }
+        this.backgroundCanvas = null;
+        this.sigilImage = null;
+        this.programCache = new Map();
 
-    async execute({path, timing, startTime = null, outputIndex = null, skipFrames = 0}) {
-
-        const program = new Program(words[path], times[timing]);
-        // load the image
-        program.img = await loadImage(`./img/${program.config.imgSrc}`);
-
-        const width = 1920;
-        const height = 1080;
-        const canvas = createCanvas(width, height);
-        const ctx = canvas.getContext('2d');
-
-        const backgroundColor = {
-            colorInitial: program.config.back,
-            color: program.config.backEnd,
-            rayed: program.config.backEndRayed,
-            flecked: program.config.backFlecked
+        this.width = 1920;
+        this.height = 1080;
+        this.center = {
+            x: this.width / 2,
+            y: this.height / 2
         };
 
-        if (!this.backgroundCache.has(path)) {
-            console.log('generating background');
-            const bg = createCanvas(canvas.width, canvas.height);
-            this.drawBackground({canvas: bg, backgroundColor});
-            this.backgroundCache.set(path, bg);
+        this.word = words[this.path];
+
+        this.backgroundColor = {
+            colorInitial: this.word.back,
+            color: this.word.backEnd,
+            rayed: this.word.backEndRayed,
+            flecked: this.word.backFlecked
+        };
+    }
+
+    generateBackground() {
+        console.log('generating background');
+        const bg = createCanvas(this.width, this.height);
+        this.drawBackground({canvas: bg, backgroundColor: this.backgroundColor});
+        this.backgroundCanvas = bg;
+    }
+
+    async loadSigilImage() {
+        this.sigilImage = await loadImage(`./img/${this.word.imgSrc}`);
+    }
+
+    async setup(timing) {
+        // create background image
+        if (this.backgroundCanvas === null) {
+            this.generateBackground();
+        }
+        // load the sigil image
+        if (this.sigilImage === null) {
+            await this.loadSigilImage();
         }
 
-        const backgroundCanvas = this.backgroundCache.get(path);
-
-        let time = 0;
-
-        // start behind
-        time = -program.measures[0].duration;
-
         // make sure the directories exist
-        const filepathParent = `./output/${path}`;
+        const filepathParent = `./output/${this.path}`;
         if (!fs.existsSync(filepathParent)) {
             fs.mkdirSync(filepathParent);
         }
-        const filepath = `./output/${path}/${timing}`;
+        const filepath = `./output/${this.path}/${timing}`;
         if (!fs.existsSync(filepath)) {
             fs.mkdirSync(filepath);
         }
+
+        if (!this.programCache.has(timing)) {
+            const program = new Program(this.word, times[timing]);
+            this.programCache.set(timing, program);
+        }
+
+        return {
+            filepath,
+            program: this.programCache.get(timing)
+        };
+    }
+
+    async execute({timing, startTime = null, outputIndex = null, skipFrames = 0}) {
+
+        const {filepath, program} = await this.setup(timing);
+
+        const canvas = createCanvas(this.width, this.height);
+        const ctx = canvas.getContext('2d');
+
+        let time = 0;
+
+        // start behind by one measure
+        time = -program.measures[0].duration;
 
         let frameIndex = outputIndex || 0;
         const frameTime = 1000 / 60;
         while (time < program.config.totalTime * 1.05) {
 
+            // advance time to the specified time (inside the loop to bypass the check)
             if (startTime !== null) time = startTime;
+
+            const frameInfo = this.calculateFrameInfo(program, frameIndex, time);
 
             if (skipFrames > 0) {
                 skipFrames--;
@@ -71,57 +106,64 @@ class FrameGenerator {
 
             // actually generate the frame
             else {
-                let frameKey = frameIndex.toString();
-                while (frameKey.length < 9) {frameKey = "0" + frameKey;}
-
-                // determine the measure and remainingCount
-                let measure, remainingCount;
-                if (time < 0) {
-                    measure = program.measures[0];
-                    remainingCount = program.measures.length;
-                }
-                else {
-                    measure = program.measures.find(measure => {
-                        return measure.start <= time && measure.start + measure.duration > time;
-                    });
-                    if (!measure) {
-                        measure = program.measures[program.measures.length - 1];
-                        remainingCount = 0;
-                    } else {
-                        remainingCount = program.measures.length - program.measures.indexOf(measure);
-                    }
-                }
-
-                // determine how far through the current measure we are
-                const measurePercent = (time - measure.start) / measure.duration;
-
-                const frameInfo = {
-                    time: Math.floor(time),
-                    remainingCount,
-                    measure,
-                    measurePercent
-                };
 
                 // draw the background
-                ctx.drawImage(backgroundCanvas, 0, 0);
-                this.fadeFill({ctx, canvas, backgroundColor, program, time})
+                ctx.drawImage(this.backgroundCanvas, 0, 0);
+                this.fadeFill({ctx, backgroundColor: this.backgroundColor, program, time})
 
                 // draw the foreground
-                this.drawNameCircle(canvas, ctx, program, frameInfo);
+                this.drawNameCircle(ctx, program, frameInfo);
 
                 // export to file
-                const filename = `${filepath}/${timing}-${frameKey}.jpg`;
+                const filename = `${filepath}/${timing}-${frameInfo.frameKey}.jpg`;
                 await ImageHelper.exportCanvasToJpg({canvas, filename});
                 console.log(`${filename} was created.`);
             }
 
-            frameIndex++;
+            // advance the time and index
             time += frameTime;
+            frameIndex++;
 
             // startTime is for debugging, only one frame required
             if (startTime !== null) break;
         }
 
+    }
+
+
+    calculateFrameInfo(program, frameIndex, time) {
+        let frameKey = frameIndex.toString();
+        while (frameKey.length < 9) {frameKey = "0" + frameKey;}
+
+        // determine the measure and remainingCount
+        let measure, remainingCount;
+        if (time < 0) {
+            measure = program.measures[0];
+            remainingCount = program.measures.length;
+        }
+        else {
+            measure = program.measures.find(measure => {
+                return measure.start <= time && measure.start + measure.duration > time;
+            });
+            if (!measure) {
+                measure = program.measures[program.measures.length - 1];
+                remainingCount = 0;
+            } else {
+                remainingCount = program.measures.length - program.measures.indexOf(measure);
+            }
+        }
+
+        // determine how far through the current measure we are
+        const measurePercent = (time - measure.start) / measure.duration;
+
+        return {
+            time: Math.floor(time),
+            frameIndex,
+            frameKey,
+            remainingCount,
+            measure,
+            measurePercent
+        };
     }
 
     getRandom() {
@@ -136,7 +178,7 @@ class FrameGenerator {
         return this.randomCache[this.randomIndex++];
     }
 
-    fadeFill({ctx, canvas, backgroundColor, time, program}) {
+    fadeFill({ctx, backgroundColor, time, program}) {
 
         let percent = 1 - Math.max(0, Math.min(1, time / program.config.totalTime));
 
@@ -145,103 +187,36 @@ class FrameGenerator {
         let hex = Math.floor(255 * percent).toString(16);
         if (hex.length === 1) hex = "0" + hex;
         ctx.fillStyle = backgroundColor.colorInitial + hex;
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillRect(0, 0, this.width, this.height);
     }
 
-    async executeTimer({durationMinutes, path, framesPerSecond = 60}) {
-
-        const filepath = `./output/${path}/timer${durationMinutes.toString()}`;
-        if (!fs.existsSync(filepath)) {
-            fs.mkdirSync(filepath);
-        }
-
-        const width = 1920;
-        const height = 1080;
-        const canvas = createCanvas(width, height);
-
-        let time = 0;
-        let index = 0;
-        const duration =  1000 * 60 * durationMinutes;
-
-        while (time <= duration) {
-
-            // draw
-            this.drawTimer_time(canvas, duration, time);
-
-            // output
-            let frameKey = index.toString();
-            while (frameKey.length < 9) {frameKey = "0" + frameKey;}
-            const filename = `${filepath}/timer-${frameKey}.jpg`;
-            await ImageHelper.exportCanvasToJpg({canvas, filename});
-
-            // log
-            console.log(`${filename} was created.`);
-
-            // setup next frame
-            time += 1000 / framesPerSecond;
-            index++;
-        }
-
-    }
-
-    drawTimer_time(canvas, duration, time) {
-
-        // determine text
-        const totalSeconds = Math.max(0, Math.floor((duration - time) / 1000));
-        const seconds = totalSeconds % 60;
-        const minutes = (totalSeconds - seconds) / 60;
-        const ss = `${seconds < 10 ? '0' : ''}${seconds}`;
-        const mm = `${minutes < 10 ? ' ' : ''}${minutes}`;
-        const text = `${mm}:${ss}`;
-
-        const ctx = canvas.getContext('2d');
-
-        ctx.fillStyle = '#000000';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-        ctx.save();
-        ctx.translate(canvas.width / 2, canvas.height / 2);
-
-        const fontSize = 50;
-        const fontName = 'consolas';
-        ctx.font = `${fontSize}pt "${fontName}"`;
-        ctx.textAlign = 'center';
-        ctx.fillStyle = '#808080';
-        ctx.fillText(text, 0, fontSize * 0.45);
-
-        ctx.restore();
-    }
-
-
-    drawNameCircle(canvas, ctx, program, frameInfo) {
-
-        // calc center
-        const center = {x: canvas.width / 2, y: canvas.height / 2};
+    drawNameCircle(ctx, program, frameInfo) {
 
         // calc sigilInfo
-        const sigilInfo = this.getSigilInfo(canvas, program);
+        const sigilInfo = this.getSigilInfo(program);
 
-        this.fillCircle({ctx, center, sigilInfo});
+        this.fillCircle({ctx, sigilInfo});
 
         // draw the image
-        this.drawSigil({ctx, center, sigilInfo, program});
+        this.drawSigil({ctx, sigilInfo});
 
         // draw the pointer
-        this.drawMovingPointer({ctx, center, sigilInfo, frameInfo});
+        this.drawMovingPointer({ctx, sigilInfo, frameInfo});
 
         // draw the letters
-        this.drawWordParts({ctx, center, sigilInfo, parts: program.config.parts, program});
+        this.drawWordParts({ctx, sigilInfo, parts: program.config.parts, program});
 
         // draw the circles
-        this.drawCircles({ctx, center, sigilInfo});
+        this.drawCircles({ctx, sigilInfo});
 
         // draw the info around the circle
-        this.drawHelperInfo({ctx, center, sigilInfo, program, frameInfo});
+        this.drawHelperInfo({ctx, sigilInfo, program, frameInfo});
     }
 
-    getSigilInfo(canvas, program) {
+    getSigilInfo(program) {
+
         const sigilInfo = {
-            max: canvas.height / 2,
+            max: this.height / 2,
             text: program.config.text,
             fore: program.config.fore,
             back: program.config.back, // the back of circle
@@ -258,28 +233,28 @@ class FrameGenerator {
         return sigilInfo;
     }
 
-    drawSigil({center, sigilInfo, ctx, program}) {
+    drawSigil({sigilInfo, ctx}) {
         ctx.save();
-        ctx.translate(center.x, center.y);
+        ctx.translate(this.center.x, this.center.y);
 
         // max size should be innerCircle / 2
-        //let imgRadius = program.img.height / 2;
-        let imgRadius = Math.sqrt(Math.pow(program.img.width, 2) + Math.pow(program.img.height, 2)) / 2;
+        //let imgRadius = this.sigilImage.height / 2;
+        let imgRadius = Math.sqrt(Math.pow(this.sigilImage.width, 2) + Math.pow(this.sigilImage.height, 2)) / 2;
 
         let imgScale = (sigilInfo.textBottom) / imgRadius;
         imgScale *= sigilInfo.sigilRatio;
-        let scaledWidth = program.img.width*imgScale;
-        let scaledHeight = program.img.height*imgScale;
+        let scaledWidth = this.sigilImage.width*imgScale;
+        let scaledHeight = this.sigilImage.height*imgScale;
 
-        ctx.drawImage(program.img,
-            0,0,program.img.width,program.img.height,
+        ctx.drawImage(this.sigilImage,
+            0,0,this.sigilImage.width,this.sigilImage.height,
             -scaledWidth / 2, -scaledHeight / 2, scaledWidth, scaledHeight);
         ctx.restore();
     }
 
-    drawMovingPointer({center, sigilInfo, ctx, frameInfo}) {
+    drawMovingPointer({sigilInfo, ctx, frameInfo}) {
         ctx.save();
-        ctx.translate(center.x, center.y);
+        ctx.translate(this.center.x, this.center.y);
 
         let max = sigilInfo.textBottom;
         let angle = Math.PI * 2 * frameInfo.measurePercent - Math.PI/2;
@@ -298,7 +273,7 @@ class FrameGenerator {
         ctx.restore();
     }
 
-    drawWordParts({center, sigilInfo, ctx, parts, program}) {
+    drawWordParts({sigilInfo, ctx, parts, program}) {
 
         // draw the parts
         let anglePerCount = (Math.PI * 2) / program.beatsPerMeasure;
@@ -308,7 +283,7 @@ class FrameGenerator {
         for (let i = 0; i < program.config.parts.length; i++) {
 
             ctx.save();
-            ctx.translate(center.x, center.y);
+            ctx.translate(this.center.x, this.center.y);
 
             ctx.rotate(angle);
 
@@ -350,9 +325,9 @@ class FrameGenerator {
         }
     }
 
-    fillCircle({center, sigilInfo, ctx}) {
+    fillCircle({sigilInfo, ctx}) {
         ctx.save();
-        ctx.translate(center.x, center.y);
+        ctx.translate(this.center.x, this.center.y);
 
         // outer circle lines
         ctx.beginPath();
@@ -365,9 +340,9 @@ class FrameGenerator {
         ctx.restore();
     }
 
-    drawCircles({center, sigilInfo, ctx}) {
+    drawCircles({sigilInfo, ctx}) {
         ctx.save();
-        ctx.translate(center.x, center.y);
+        ctx.translate(this.center.x, this.center.y);
 
         // outer circle lines
         ctx.beginPath();
@@ -392,9 +367,9 @@ class FrameGenerator {
         ctx.restore();
     }
 
-    drawHelperInfo({center, sigilInfo, ctx, program, frameInfo}) {
+    drawHelperInfo({sigilInfo, ctx, program, frameInfo}) {
         ctx.save();
-        ctx.translate(center.x, center.y);
+        ctx.translate(this.center.x, this.center.y);
 
         ctx.fillStyle = sigilInfo.text;
         ctx.strokeStyle = sigilInfo.text;
@@ -620,11 +595,9 @@ class FrameGenerator {
     }
 
     drawRays(canvas, ctx, color) {
-        // calc center
-        const center = {x: canvas.width / 2, y: canvas.height / 2};
 
         ctx.save();
-        ctx.translate(center.x, center.y);
+        ctx.translate(this.center.x, this.center.y);
         const angleOffset = (Math.PI / 24) * 3;
 
         const rayAngle = (Math.PI * 2 / 24);
@@ -660,7 +633,6 @@ class FrameGenerator {
         let radius = 1;
         let angle = 0;
         let maxRadius = Math.max(canvas.width, canvas.height);
-        let center = {x:canvas.width/2, y: canvas.height/2};
 
         let ratio = canvas.height / 1200;
 
@@ -674,8 +646,8 @@ class FrameGenerator {
 
         while (radius < maxRadius && maxTimes > 0) {
             // find point
-            let x = Math.cos(angle) * radius + center.x;
-            let y = Math.sin(angle) * radius + center.y;
+            let x = Math.cos(angle) * radius + this.center.x;
+            let y = Math.sin(angle) * radius + this.center.y;
 
             // add some random
             const randomSwing = 100;
@@ -791,23 +763,18 @@ class FrameGenerator {
 
 
 async function generateForPath(path) {
-    const frameGenerator = new FrameGenerator();
-
-    await frameGenerator.execute({timing: 'drum02', path});
-    await frameGenerator.execute({timing: 'drum03', path});
-    await frameGenerator.execute({timing: 'drum11', path});
-
-    //await this.executeTimer({durationMinutes: 11, path});
-    //await this.executeTimer({durationMinutes: 3, path});
-    //await this.executeTimer({durationMinutes: 2, path});
+    const frameGenerator = new ChantFrameGenerator(path);
+    await frameGenerator.execute({timing: 'drum02'});
+    await frameGenerator.execute({timing: 'drum03'});
+    await frameGenerator.execute({timing: 'drum11'});
 }
 
 async function generatePreviews() {
     const paths = Object.keys(words);
     for (const path of paths) {
-        const frameGenerator = new FrameGenerator();
+        const frameGenerator = new ChantFrameGenerator(path);
         for (let i = 0; i <= 12; i++) {
-            await frameGenerator.execute({timing: 'drum11', path, startTime: 1000 * 60 * i, outputIndex: i});
+            await frameGenerator.execute({timing: 'drum11', startTime: 1000 * 60 * i, outputIndex: i});
         }
     }
 }
@@ -815,11 +782,11 @@ async function generatePreviews() {
 (async () => {
     if (module.parent !== null) return;
 
-    const paths = ['beth']
-
     await generatePreviews();
+
     //await generateForPath('mem');
 
+    // const paths = ['beth']
     // for (const path of paths) {
     //     await generateForPath(path);
     // }
