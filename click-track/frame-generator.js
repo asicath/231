@@ -14,15 +14,86 @@ class FrameGenerator {
         this.minImageCache = {};
         this.randomCache = [];
         this.randomIndex = 0;
-        this.backgroundCanvas = null;
+    }
+
+    async execute({path, timing, startTime = null, outputIndex = null, skipFrames = 0}) {
+
+        this.clearLetterCache();
+
+        const program = new Program(words[path], times[timing]);
+        // load the image
+        program.img = await loadImage(`./img/${program.config.imgSrc}`);
+
+        const width = 1920;
+        const height = 1080;
+        const canvas = createCanvas(width, height);
+        const ctx = canvas.getContext('2d');
+
+        const backgroundColor = {
+            colorInitial: program.config.back,
+            color: program.config.backEnd,
+            rayed: program.config.backEndRayed,
+            flecked: program.config.backFlecked
+        };
+
+        console.log('generating background')
+        const backgroundCanvas = createCanvas(canvas.width, canvas.height);
+        this.drawBackground({canvas: backgroundCanvas, backgroundColor});
+
+        let time = 0;
+
+        // start behind
+        time = -program.measures[0].duration;
+
+        // make sure the directories exist
+        const filepathParent = `./output/${path}`;
+        if (!fs.existsSync(filepathParent)) {
+            fs.mkdirSync(filepathParent);
+        }
+        const filepath = `./output/${path}/${timing}`;
+        if (!fs.existsSync(filepath)) {
+            fs.mkdirSync(filepath);
+        }
+
+        let frameIndex = outputIndex || 0;
+        const frameTime = 1000 / 60;
+        while (time < program.config.totalTime * 1.05) {
+
+            if (startTime !== null) time = startTime;
+
+            if (skipFrames > 0) {
+                skipFrames--;
+            }
+
+            // actually generate the frame
+            else {
+                let frameKey = frameIndex.toString();
+                while (frameKey.length < 9) {frameKey = "0" + frameKey;}
+
+                // draw the background
+                ctx.drawImage(backgroundCanvas, 0, 0);
+                this.fadeFill({ctx, canvas, backgroundColor, program, time})
+
+                // draw the foreground
+                this.drawNameCircle(canvas, ctx, program, Math.floor(time));
+
+                // export to file
+                const filename = `${filepath}/${timing}-${frameKey}.jpg`;
+                await ImageHelper.exportCanvasToJpg({canvas, filename});
+                console.log(`${filename} was created.`);
+            }
+
+            frameIndex++;
+            time += frameTime;
+
+            // startTime is for debugging, only one frame required
+            if (startTime !== null) break;
+        }
+
     }
 
     clearLetterCache() {
         this.minImageCache = {};
-    }
-
-    resetBackgroundCanvas() {
-        this.backgroundCanvas = null;
     }
 
     getRandom() {
@@ -41,49 +112,7 @@ class FrameGenerator {
         this.randomIndex = 0;
     }
 
-    drawBackground({canvas, color, center, radius}) {
-
-        let ctx = canvas.getContext('2d');
-        ctx.fillStyle = radius.background.color;
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-        // rays!
-        if (radius.background.rayed) {
-            ctx.save();
-            ctx.translate(center.x, center.y);
-            const angleOffset = (Math.PI / 24) * 3;
-
-            const rayAngle = (Math.PI * 2 / 24);
-            const margin = rayAngle * 0.02;
-
-            for (let i = 0; i < 12; i++) {
-                // outer circle lines
-                const angle0 = angleOffset + margin + rayAngle * i*2;
-                const angle1 = angleOffset - margin + rayAngle * (i*2+1);
-                let x0 = Math.cos(angle0) * 4000;
-                let y0 = Math.sin(angle0) * 4000;
-                let x1 = Math.cos(angle1) * 4000;
-                let y1 = Math.sin(angle1) * 4000;
-
-                ctx.beginPath();
-                ctx.moveTo(0,0);
-                ctx.lineTo(x0, y0);
-                ctx.lineTo(x1, y1);
-                ctx.closePath();
-                ctx.fillStyle = radius.background.rayed;
-                ctx.fill();
-            }
-        }
-
-        // flecked
-        if (radius.background.flecked) {
-            this.fleckIt(canvas, ctx, radius.background.flecked);
-        }
-
-        ctx.restore();
-    }
-
-    fadeFill({ctx, canvas, color, center, radius, time, program}) {
+    fadeFill({ctx, canvas, backgroundColor, time, program}) {
 
         let percent = 1 - Math.max(0, Math.min(1, time / program.config.totalTime));
 
@@ -91,7 +120,7 @@ class FrameGenerator {
 
         let hex = Math.floor(255 * percent).toString(16);
         if (hex.length === 1) hex = "0" + hex;
-        ctx.fillStyle = radius.background.colorInitial + hex;
+        ctx.fillStyle = backgroundColor.colorInitial + hex;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
     }
 
@@ -159,64 +188,6 @@ class FrameGenerator {
         ctx.restore();
     }
 
-    async execute({path, timing, startTime = null, outputIndex = null, skipFrames = 0}) {
-        this.resetBackgroundCanvas();
-        this.clearLetterCache();
-
-        const program = new Program(words[path], times[timing]);
-        // load the image
-        program.img = await loadImage(`./img/${program.config.imgSrc}`);
-
-        const width = 1920;
-        const height = 1080;
-        const canvas = createCanvas(width, height);
-        const ctx = canvas.getContext('2d');
-
-        let time = 0;
-
-        // start behind
-        time = -program.measures[0].duration;
-
-        // make sure the directories exist
-        const filepathParent = `./output/${path}`;
-        if (!fs.existsSync(filepathParent)) {
-            fs.mkdirSync(filepathParent);
-        }
-        const filepath = `./output/${path}/${timing}`;
-        if (!fs.existsSync(filepath)) {
-            fs.mkdirSync(filepath);
-        }
-
-        let frameIndex = outputIndex || 0;
-        const frameTime = 1000 / 60;
-        while (time < program.config.totalTime * 1.05) {
-            this.resetRandomIndex();
-
-            if (startTime !== null) time = startTime;
-
-            if (skipFrames > 0) {
-                skipFrames--;
-            }
-            // actually generate the frame
-            else {
-                let frameKey = frameIndex.toString();
-                while (frameKey.length < 9) {frameKey = "0" + frameKey;}
-
-                this.drawNameCircle(canvas, ctx, program, Math.floor(time));
-                const filename = `${filepath}/${timing}-${frameKey}.jpg`;
-                await ImageHelper.exportCanvasToJpg({canvas, filename});
-                console.log(`${filename} was created.`);
-            }
-
-            frameIndex++;
-            time += frameTime;
-
-            // startTime is for debugging, only one frame required
-            if (startTime !== null) break;
-        }
-
-    }
-
 
     drawNameCircle(canvas, ctx, program, time) {
 
@@ -251,14 +222,7 @@ class FrameGenerator {
             fore: program.config.fore,
             back: program.config.back, // the back of circle
 
-            sigilRatio: 0.75,
-
-            background: {
-                colorInitial: program.config.back,
-                color: program.config.backEnd,
-                rayed: program.config.backEndRayed,
-                flecked: program.config.backFlecked
-            }
+            sigilRatio: 0.75
         };
 
         // find the top and bottom of text draw area
@@ -266,15 +230,6 @@ class FrameGenerator {
         radius.textBottom = radius.max * 0.7; // allow for the text plus margins
         let innerCircleWidth = 6;
         radius.innerCircle = radius.textBottom - innerCircleWidth;
-
-        if (this.backgroundCanvas === null) {
-            console.log('generate background')
-            this.backgroundCanvas = createCanvas(canvas.width, canvas.height);
-            this.drawBackground({canvas: this.backgroundCanvas, color: program.config.background, center, radius});
-        }
-        ctx.drawImage(this.backgroundCanvas, 0, 0);
-
-        this.fadeFill({ctx, canvas, color: program.config.background, center, radius, program, time})
 
         this.fillCircle({ctx, center, radius, program});
 
@@ -635,7 +590,59 @@ class FrameGenerator {
         return value;
     }
 
-    fleckIt(canvas, ctx, color) {
+    drawBackground({canvas, backgroundColor}) {
+
+        const ctx = canvas.getContext('2d');
+
+        // the base color
+        ctx.fillStyle = backgroundColor.color;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // draw rays
+        if (backgroundColor.rayed) {
+            this.drawRays(canvas, ctx, backgroundColor.rayed)
+        }
+
+        // draw flecks
+        if (backgroundColor.flecked) {
+            this.drawFlecks(canvas, ctx, backgroundColor.flecked);
+        }
+    }
+
+    drawRays(canvas, ctx, color) {
+        // calc center
+        const center = {x: canvas.width / 2, y: canvas.height / 2};
+
+        ctx.save();
+        ctx.translate(center.x, center.y);
+        const angleOffset = (Math.PI / 24) * 3;
+
+        const rayAngle = (Math.PI * 2 / 24);
+        const margin = rayAngle * 0.02;
+
+        for (let i = 0; i < 12; i++) {
+            // outer circle lines
+            const angle0 = angleOffset + margin + rayAngle * i*2;
+            const angle1 = angleOffset - margin + rayAngle * (i*2+1);
+
+            const x0 = Math.cos(angle0) * 4000;
+            const y0 = Math.sin(angle0) * 4000;
+            const x1 = Math.cos(angle1) * 4000;
+            const y1 = Math.sin(angle1) * 4000;
+
+            ctx.beginPath();
+            ctx.moveTo(0,0);
+            ctx.lineTo(x0, y0);
+            ctx.lineTo(x1, y1);
+            ctx.closePath();
+            ctx.fillStyle = color;
+            ctx.fill();
+        }
+
+        ctx.restore();
+    }
+
+    drawFlecks(canvas, ctx, color) {
 
         let colorArray = Array.isArray(color) ? color : [color];
         let colorIndex = 0;
@@ -786,10 +793,13 @@ async function generateForPath(path) {
 }
 
 async function generatePreviews() {
+    const frameGenerator = new FrameGenerator();
+
     const paths = Object.keys(words);
     for (const path of paths) {
-        await this.execute({timing: 'drum02', path, startTime: 0, outputIndex: 0});
-        await this.execute({timing: 'drum02', path, startTime: 1000 * 60 * 60, outputIndex: 1});
+        await frameGenerator.execute({timing: 'drum02', path, startTime: 0, outputIndex: 0});
+        await frameGenerator.execute({timing: 'drum02', path, startTime: 1000 * 60 * 1, outputIndex: 1});
+        await frameGenerator.execute({timing: 'drum02', path, startTime: 1000 * 60 * 3, outputIndex: 2});
     }
 }
 
@@ -798,9 +808,10 @@ async function generatePreviews() {
 
     const paths = ['beth']
 
-    //await generatePreviews();
+    await generatePreviews();
     //await generateForPath('mem');
-    for (const path of paths) {
-        await generateForPath(path);
-    }
+
+    // for (const path of paths) {
+    //     await generateForPath(path);
+    // }
 })();
