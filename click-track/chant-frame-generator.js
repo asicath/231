@@ -115,9 +115,7 @@ class ChantFrameGenerator {
                 this.drawNameCircle(ctx, program, frameInfo);
 
                 // export to file
-                const filename = `${filepath}/${timing}-${frameInfo.frameKey}.jpg`;
-                await ImageHelper.exportCanvasToJpg({canvas, filename});
-                console.log(`${filename} was created.`);
+                await this.exportImage(canvas, filepath, frameInfo.frameKey);
             }
 
             // advance the time and index
@@ -130,6 +128,12 @@ class ChantFrameGenerator {
 
     }
 
+    async exportImage(canvas, filepath, frameNumber) {
+        const filename = `${filepath}/${frameNumber}.jpg`;
+        await ImageHelper.exportCanvasToJpg({canvas, filename});
+        console.log(`${filename} was created.`);
+    }
+
 
     calculateFrameInfo(program, frameIndex, time) {
         let frameKey = frameIndex.toString();
@@ -137,20 +141,28 @@ class ChantFrameGenerator {
 
         // determine the measure and remainingCount
         let measure, remainingCount;
+
+        // find maxTime
+        const lastMeasure = program.measures[program.measures.length - 1];
+        const maxTime = lastMeasure.start + lastMeasure.duration;
+
+        // if the time is before the start
         if (time < 0) {
             measure = program.measures[0];
             remainingCount = program.measures.length;
         }
+        // if the time is after the end
+        else if (time > maxTime) {
+            measure = lastMeasure;
+            remainingCount = 0;
+        }
         else {
+            // find the current measure based on the specified time
             measure = program.measures.find(measure => {
                 return measure.start <= time && measure.start + measure.duration > time;
             });
-            if (!measure) {
-                measure = program.measures[program.measures.length - 1];
-                remainingCount = 0;
-            } else {
-                remainingCount = program.measures.length - program.measures.indexOf(measure);
-            }
+
+            remainingCount = program.measures.length - program.measures.indexOf(measure);
         }
 
         // determine how far through the current measure we are
@@ -782,9 +794,9 @@ async function generatePreviews() {
 (async () => {
     if (module.parent !== null) return;
 
-    await generatePreviews();
+    //await generatePreviews();
 
-    //await generateForPath('mem');
+    await generateForPath('aleph');
 
     // const paths = ['beth']
     // for (const path of paths) {
