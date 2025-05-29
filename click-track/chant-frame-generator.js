@@ -9,16 +9,16 @@ const Program = require('./Program');
 
 class ChantFrameGenerator {
 
-    constructor(path) {
+    constructor(path, timing) {
 
         this.path = path;
+        this.timing = timing;
 
         this.minImageCache = {};
         this.randomCache = [];
         this.randomIndex = 0;
         this.backgroundCanvas = null;
         this.sigilImage = null;
-        this.programCache = new Map();
 
         this.width = 1920;
         this.height = 1080;
@@ -28,6 +28,11 @@ class ChantFrameGenerator {
         };
 
         this.word = words[this.path];
+
+        this.program = new Program(this.word, times[this.timing]);
+
+        this.filepathParent = `./output/${this.path}`;
+        this.filepath = `./output/${this.path}/${this.timing}`;
 
         this.backgroundColor = {
             colorInitial: this.word.back,
@@ -48,40 +53,31 @@ class ChantFrameGenerator {
         this.sigilImage = await loadImage(`./img/${this.word.imgSrc}`);
     }
 
-    async setup(timing) {
+    async initialize() {
+
         // create background image
         if (this.backgroundCanvas === null) {
             this.generateBackground();
         }
+
         // load the sigil image
         if (this.sigilImage === null) {
             await this.loadSigilImage();
         }
 
         // make sure the directories exist
-        const filepathParent = `./output/${this.path}`;
-        if (!fs.existsSync(filepathParent)) {
-            fs.mkdirSync(filepathParent);
+        if (!fs.existsSync(this.filepathParent)) {
+            fs.mkdirSync(this.filepathParent);
         }
-        const filepath = `./output/${this.path}/${timing}`;
-        if (!fs.existsSync(filepath)) {
-            fs.mkdirSync(filepath);
+        if (!fs.existsSync(this.filepath)) {
+            fs.mkdirSync(this.filepath);
         }
 
-        if (!this.programCache.has(timing)) {
-            const program = new Program(this.word, times[timing]);
-            this.programCache.set(timing, program);
-        }
-
-        return {
-            filepath,
-            program: this.programCache.get(timing)
-        };
     }
 
-    async execute({timing, startTime = null, outputIndex = null, skipFrames = 0}) {
+    async execute({startTime = null, outputIndex = null, skipFrames = 0}) {
 
-        const {filepath, program} = await this.setup(timing);
+        await this.initialize();
 
         const canvas = createCanvas(this.width, this.height);
         const ctx = canvas.getContext('2d');
@@ -89,16 +85,16 @@ class ChantFrameGenerator {
         let time = 0;
 
         // start behind by one measure
-        time = -program.measures[0].duration;
+        time = -this.program.measures[0].duration;
 
         let frameIndex = outputIndex || 0;
         const frameTime = 1000 / 60;
-        while (time < program.config.totalTime * 1.05) {
+        while (time < this.program.config.totalTime * 1.05) {
 
             // advance time to the specified time (inside the loop to bypass the check)
             if (startTime !== null) time = startTime;
 
-            const frameInfo = this.calculateFrameInfo(program, frameIndex, time);
+            const frameInfo = this.calculateFrameInfo(frameIndex, time);
 
             if (skipFrames > 0) {
                 skipFrames--;
@@ -109,13 +105,13 @@ class ChantFrameGenerator {
 
                 // draw the background
                 ctx.drawImage(this.backgroundCanvas, 0, 0);
-                this.fadeFill({ctx, backgroundColor: this.backgroundColor, program, time})
+                this.fadeFill({ctx, backgroundColor: this.backgroundColor, time})
 
                 // draw the foreground
-                this.drawNameCircle(ctx, program, frameInfo);
+                this.drawNameCircle(ctx, frameInfo);
 
                 // export to file
-                await this.exportImage(canvas, filepath, frameInfo.frameKey);
+                await this.exportImage(canvas, this.filepath, frameInfo.frameKey);
             }
 
             // advance the time and index
@@ -135,7 +131,7 @@ class ChantFrameGenerator {
     }
 
 
-    calculateFrameInfo(program, frameIndex, time) {
+    calculateFrameInfo(frameIndex, time) {
         let frameKey = frameIndex.toString();
         while (frameKey.length < 9) {frameKey = "0" + frameKey;}
 
@@ -143,13 +139,13 @@ class ChantFrameGenerator {
         let measure, remainingCount;
 
         // find maxTime
-        const lastMeasure = program.measures[program.measures.length - 1];
+        const lastMeasure = this.program.measures[this.program.measures.length - 1];
         const maxTime = lastMeasure.start + lastMeasure.duration;
 
         // if the time is before the start
         if (time < 0) {
-            measure = program.measures[0];
-            remainingCount = program.measures.length;
+            measure = this.program.measures[0];
+            remainingCount = this.program.measures.length;
         }
         // if the time is after the end
         else if (time > maxTime) {
@@ -158,11 +154,11 @@ class ChantFrameGenerator {
         }
         else {
             // find the current measure based on the specified time
-            measure = program.measures.find(measure => {
+            measure = this.program.measures.find(measure => {
                 return measure.start <= time && measure.start + measure.duration > time;
             });
 
-            remainingCount = program.measures.length - program.measures.indexOf(measure);
+            remainingCount = this.program.measures.length - this.program.measures.indexOf(measure);
         }
 
         // determine how far through the current measure we are
@@ -190,11 +186,11 @@ class ChantFrameGenerator {
         return this.randomCache[this.randomIndex++];
     }
 
-    fadeFill({ctx, backgroundColor, time, program}) {
+    fadeFill({ctx, backgroundColor, time}) {
 
-        let percent = 1 - Math.max(0, Math.min(1, time / program.config.totalTime));
+        let percent = 1 - Math.max(0, Math.min(1, time / this.program.config.totalTime));
 
-        percent = program.config.easingFunction(percent);
+        percent = this.program.config.easingFunction(percent);
 
         let hex = Math.floor(255 * percent).toString(16);
         if (hex.length === 1) hex = "0" + hex;
@@ -202,10 +198,10 @@ class ChantFrameGenerator {
         ctx.fillRect(0, 0, this.width, this.height);
     }
 
-    drawNameCircle(ctx, program, frameInfo) {
+    drawNameCircle(ctx, frameInfo) {
 
         // calc sigilInfo
-        const sigilInfo = this.getSigilInfo(program);
+        const sigilInfo = this.getSigilInfo();
 
         this.fillCircle({ctx, sigilInfo});
 
@@ -216,22 +212,22 @@ class ChantFrameGenerator {
         this.drawMovingPointer({ctx, sigilInfo, frameInfo});
 
         // draw the letters
-        this.drawWordParts({ctx, sigilInfo, parts: program.config.parts, program});
+        this.drawWordParts({ctx, sigilInfo, parts: this.program.config.parts});
 
         // draw the circles
         this.drawCircles({ctx, sigilInfo});
 
         // draw the info around the circle
-        this.drawHelperInfo({ctx, sigilInfo, program, frameInfo});
+        this.drawHelperInfo({ctx, sigilInfo, frameInfo});
     }
 
-    getSigilInfo(program) {
+    getSigilInfo() {
 
         const sigilInfo = {
             max: this.height / 2,
-            text: program.config.text,
-            fore: program.config.fore,
-            back: program.config.back, // the back of circle
+            text: this.program.config.text,
+            fore: this.program.config.fore,
+            back: this.program.config.back, // the back of circle
 
             sigilRatio: 0.75
         };
@@ -285,14 +281,14 @@ class ChantFrameGenerator {
         ctx.restore();
     }
 
-    drawWordParts({sigilInfo, ctx, parts, program}) {
+    drawWordParts({sigilInfo, ctx, parts}) {
 
         // draw the parts
-        let anglePerCount = (Math.PI * 2) / program.beatsPerMeasure;
+        let anglePerCount = (Math.PI * 2) / this.program.beatsPerMeasure;
         let angle = 0;
 
         // find the draw position of all letters
-        for (let i = 0; i < program.config.parts.length; i++) {
+        for (let i = 0; i < this.program.config.parts.length; i++) {
 
             ctx.save();
             ctx.translate(this.center.x, this.center.y);
@@ -379,7 +375,7 @@ class ChantFrameGenerator {
         ctx.restore();
     }
 
-    drawHelperInfo({sigilInfo, ctx, program, frameInfo}) {
+    drawHelperInfo({sigilInfo, ctx, frameInfo}) {
         ctx.save();
         ctx.translate(this.center.x, this.center.y);
 
@@ -387,7 +383,7 @@ class ChantFrameGenerator {
         ctx.strokeStyle = sigilInfo.text;
 
         (() => {
-            this.drawTimeLine(ctx, -1 * (sigilInfo.textTop-10), sigilInfo.textTop - 160, 100, 100, program, frameInfo.time);
+            this.drawTimeLine(ctx, -1 * (sigilInfo.textTop-10), sigilInfo.textTop - 160, 100, 100, frameInfo.time);
 
             // remaining time
             let fontSize = 50;
@@ -409,13 +405,13 @@ class ChantFrameGenerator {
 
             // upper left - count remaining
             ctx.font = `${fontSize}pt "${fontName}"`;
-            let measuresRemaining = (program.measures.length - frameInfo.measure.index).toString();
+            let measuresRemaining = (this.program.measures.length - frameInfo.measure.index).toString();
             measuresRemaining = frameInfo.remainingCount;
             ctx.textAlign = 'left';
             ctx.fillText(measuresRemaining, -sigilInfo.textTop, -sigilInfo.textTop + fontSize * 1.8);
 
             // lower right - time remaining
-            let timeRemaining = program.config.totalTime - Math.max(frameInfo.time, 0);
+            let timeRemaining = this.program.config.totalTime - Math.max(frameInfo.time, 0);
             let timeRemainingNeg = timeRemaining < 0 ? "-" : "";
             timeRemaining = Math.ceil(Math.abs(timeRemaining) / 1000);
             let minutes = Math.floor(timeRemaining / 60);
@@ -439,7 +435,7 @@ class ChantFrameGenerator {
         ctx.restore();
     }
 
-    drawTimeLine(ctx, x, y, width, height, program, time) {
+    drawTimeLine(ctx, x, y, width, height, time) {
 
         //generate x/y points
 
@@ -448,7 +444,7 @@ class ChantFrameGenerator {
         let pointCount = 50;
         for (let i = 0; i < pointCount; i++) {
             let x = i / pointCount;
-            let y = program.config.easingFunction(x);
+            let y = this.program.config.easingFunction(x);
             points.push({x, y});
         }
 
@@ -462,7 +458,7 @@ class ChantFrameGenerator {
         ctx.stroke();
 
         //draw the current state
-        const programPercent = time / program.config.totalTime;
+        const programPercent = time / this.program.config.totalTime;
         let p = Math.min(1, Math.max(programPercent, 0));
         let index = Math.min(Math.floor(p * pointCount), points.length - 1);
         let xI = points[index].x * width + x;
@@ -775,10 +771,14 @@ class ChantFrameGenerator {
 
 
 async function generateForPath(path) {
-    const frameGenerator = new ChantFrameGenerator(path);
-    await frameGenerator.execute({timing: 'drum02'});
-    await frameGenerator.execute({timing: 'drum03'});
-    await frameGenerator.execute({timing: 'drum11'});
+    const frameGenerator02 = new ChantFrameGenerator(path,'drum02');
+    await frameGenerator02.execute({});
+
+    const frameGenerator03 = new ChantFrameGenerator(path,'drum03');
+    await frameGenerator03.execute({});
+
+    const frameGenerator11 = new ChantFrameGenerator(path,'drum11');
+    await frameGenerator11.execute({});
 }
 
 async function generatePreviews() {
