@@ -4,7 +4,9 @@
   "description": "",
   "main": "wav.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "drum02": "node ./chant-frame-generator.js shin drum02",
+    "drum03": "node ./chant-frame-generator.js shin drum03",
+    "drum11": "node ./chant-frame-generator.js shin drum11"
   },
   "author": "",
   "license": "ISC",

@@ -770,17 +770,6 @@ class ChantFrameGenerator {
 }
 
 
-async function generateForPath(path) {
-    const frameGenerator02 = new ChantFrameGenerator(path,'drum02');
-    await frameGenerator02.execute({});
-
-    const frameGenerator03 = new ChantFrameGenerator(path,'drum03');
-    await frameGenerator03.execute({});
-
-    const frameGenerator11 = new ChantFrameGenerator(path,'drum11');
-    await frameGenerator11.execute({});
-}
-
 async function generatePreviews() {
     const paths = Object.keys(words);
     for (const path of paths) {
@@ -795,8 +784,12 @@ async function generatePreviews() {
     if (module.parent !== null) return;
 
     //await generatePreviews();
+    
+    const path = process.argv[2];
+    const timing = process.argv[3];
 
-    await generateForPath('aleph');
+    const frameGenerator = new ChantFrameGenerator(path, timing);
+    await frameGenerator.execute({});
 
     // const paths = ['beth']
     // for (const path of paths) {
