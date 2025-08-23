@@ -6,7 +6,8 @@
   "scripts": {
     "drum02": "node ./chant-frame-generator.js shin drum02",
     "drum03": "node ./chant-frame-generator.js shin drum03",
-    "drum11": "node ./chant-frame-generator.js shin drum11"
+    "drum11": "node ./chant-frame-generator.js shin drum11",
+    "all": "npm run drum02 && npm run drum03 && npm run drum11"
   },
   "author": "",
   "license": "ISC",
