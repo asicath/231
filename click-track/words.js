@@ -533,7 +533,7 @@ const words = {
     'shin': {
         key: '300',
         back: '#ff3300', // KING
-        text: '#bf220a', // QUEEN
+        text: '#efae00', // QUEEN
         fore: '#d92400', // EMPEROR
         backEnd: '#D9381E', // EMPRESS
         backFlecked: ['#AE0E36', '#00A550'],

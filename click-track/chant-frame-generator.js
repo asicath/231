@@ -211,11 +211,11 @@ class ChantFrameGenerator {
         // draw the pointer
         this.drawMovingPointer({ctx, sigilInfo, frameInfo});
 
-        // draw the letters
-        this.drawWordParts({ctx, sigilInfo, parts: this.program.config.parts});
-
         // draw the circles
         this.drawCircles({ctx, sigilInfo});
+
+        // draw the letters
+        this.drawWordParts({ctx, sigilInfo, parts: this.program.config.parts});
 
         // draw the info around the circle
         this.drawHelperInfo({ctx, sigilInfo, frameInfo});
@@ -771,11 +771,14 @@ class ChantFrameGenerator {
 
 
 async function generatePreviews() {
-    const paths = Object.keys(words);
+    const paths = Object.keys(words)
+        .filter(o => {
+            return o === 'tav'
+        });
     for (const path of paths) {
-        const frameGenerator = new ChantFrameGenerator(path);
+        const frameGenerator = new ChantFrameGenerator(path, 'drum11');
         for (let i = 0; i <= 12; i++) {
-            await frameGenerator.execute({timing: 'drum11', startTime: 1000 * 60 * i, outputIndex: i});
+            await frameGenerator.execute({startTime: 1000 * 60 * i, outputIndex: i});
         }
     }
 }
@@ -783,7 +786,8 @@ async function generatePreviews() {
 (async () => {
     if (module.parent !== null) return;
 
-    //await generatePreviews();
+    await generatePreviews();
+    return;
     
     const path = process.argv[2];
     const timing = process.argv[3];
