@@ -1,7 +1,13 @@
-const {findValidSets, generateRange, calcMagicConstant, filterPotentialSiblingSets, findAllPotentialSets} = require('./svastika-fast');
+const SwastikaFast = require('./svastika-fast');
 const fs = require('fs');
+const pino = require("pino");
+const pretty = require("pino-pretty");
 
-const size = 4;
-const sets = findAllPotentialSets(size);
-//expect(sets.length).toEqual(6);
-fs.writeFileSync('./set5.json', JSON.stringify(sets));
+const logger = pino(pretty({ sync: true }));
+
+
+const size = 5;
+const svastika = new SwastikaFast(size, logger);
+
+svastika.findAllMagicSquares();
+

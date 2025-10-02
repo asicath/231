@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "svastika-old.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "find-squares": "node ./run.js --max-old-space-size=16384"
   },
   "author": "",
   "license": "ISC",
