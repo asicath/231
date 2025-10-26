@@ -16,7 +16,9 @@ async function exportCanvasToJpg({canvas, name = null, filename = null}) {
         stream.pipe(out);
 
         out.on('finish', () => {
-            resolve();
+            out.end(() => {
+                resolve();
+            });
         });
     });
 }

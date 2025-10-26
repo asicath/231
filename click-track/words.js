@@ -552,8 +552,8 @@ const words = {
     'tav':{
         key: '400',
         back: '#001489', // KING
-        text: '#000000', // QUEEN
-        fore: '#000a44', // EMPEROR
+        text:'#000a44' , // QUEEN
+        fore: '#000000', // EMPEROR
         backEnd: '#000000', // EMPRESS
         backEndRayed: '#0085ca',
 

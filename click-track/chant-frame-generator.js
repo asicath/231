@@ -786,8 +786,8 @@ async function generatePreviews() {
 (async () => {
     if (module.parent !== null) return;
 
-    await generatePreviews();
-    return;
+    //await generatePreviews();
+    //return;
     
     const path = process.argv[2];
     const timing = process.argv[3];

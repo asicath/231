@@ -103,7 +103,7 @@ function readWavAsPercent(filename, amp = 0.5) {
         'qoph'
     ];*/
 
-    const paths = ['ayin']
+    const paths = ['aleph']
 
     for (const path of paths) {
         await execute({timing: 'drum11', path, toneSet, measuresToEase: 0});
@@ -214,7 +214,7 @@ function easeAmp(data, startPercent = 0, endPercent = 1) {
         const innerPercent = i / data.length;
         // figure out the percent of the total amount of easing
         const percent = ((endPercent - startPercent) * innerPercent) + startPercent;
-        const easePercent = EasingFunctions.easeInOutSine(percent);
+        const easePercent = EasingFunctions.easeInQuad(percent);
         const amp = ((maxAmp - minAmp) * easePercent) + minAmp;
 
         // apply

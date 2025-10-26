@@ -4,10 +4,11 @@
   "description": "",
   "main": "wav.js",
   "scripts": {
-    "drum02": "node ./chant-frame-generator.js shin drum02",
-    "drum03": "node ./chant-frame-generator.js shin drum03",
-    "drum11": "node ./chant-frame-generator.js shin drum11",
-    "all": "npm run drum02 && npm run drum03 && npm run drum11"
+    "drum02": "node ./chant-frame-generator.js aleph drum02",
+    "drum03": "node ./chant-frame-generator.js aleph drum03",
+    "drum11": "node ./chant-frame-generator.js aleph drum11",
+    "all": "npm run drum02 && npm run drum03 && npm run drum11",
+    "make": "npm run drum11 & ./output/aleph/build.cmd"
   },
   "author": "",
   "license": "ISC",
